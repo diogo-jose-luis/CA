@@ -1,0 +1,53 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f17"/>
+      <stop offset="0.55" stop-color="#111827"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <radialGradient id="brandGlow" cx="35%" cy="22%" r="62%">
+      <stop offset="0" stop-color="#873746" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#873746" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#873746" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="blueGlow" cx="76%" cy="74%" r="70%">
+      <stop offset="0" stop-color="#1d4ed8" stop-opacity="0.25"/>
+      <stop offset="0.55" stop-color="#1d4ed8" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#1d4ed8" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="blur40" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="
+        1 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        0 0 0 .14 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <g filter="url(#blur40)">
+    <circle cx="520" cy="210" r="430" fill="url(#brandGlow)"/>
+    <circle cx="1210" cy="690" r="560" fill="url(#blueGlow)"/>
+    <path d="M-120 640 C 180 560 240 820 560 730 C 880 640 980 760 1240 720 C 1500 680 1690 740 1780 780 L 1780 980 L -120 980 Z"
+          fill="#0b0f17" opacity="0.56"/>
+  </g>
+
+  <g opacity="0.22">
+    <path d="M120 120 H1480" stroke="#94a3b8" stroke-width="1"/>
+    <path d="M120 180 H1480" stroke="#94a3b8" stroke-width="1" opacity="0.7"/>
+    <path d="M120 240 H1480" stroke="#94a3b8" stroke-width="1" opacity="0.45"/>
+  </g>
+
+  <g filter="url(#grain)" opacity="0.55">
+    <rect width="1600" height="900" fill="#000"/>
+  </g>
+</svg>
