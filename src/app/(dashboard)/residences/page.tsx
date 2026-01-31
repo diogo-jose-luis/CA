@@ -17,6 +17,21 @@ import {
 /* =======================
    Mock data
 ======================= */
+type Morador = {
+  nome: string;
+  tipo: "adulto" | "crianca";
+  telefone?: string;
+};
+
+type Moradia = {
+  imagem?: string;
+  codigo: string;
+  bloco: string;
+  proprietario: string;
+  ocupantes: number;
+  estado: "Ocupada" | "Livre";
+  moradores: Morador[];
+};
 
 const stats = [
   {
@@ -88,12 +103,13 @@ function EstadoBadge({ estado }: { estado: string }) {
   const map: Record<string, string> = {
     Ocupada:
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    Livre:
-      "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+    Livre: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   };
 
   return (
-    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${map[estado]}`}>
+    <span
+      className={`px-2.5 py-1 rounded-full text-xs font-medium ${map[estado]}`}
+    >
       {estado}
     </span>
   );
@@ -105,7 +121,7 @@ function EstadoBadge({ estado }: { estado: string }) {
 
 export default function Page() {
   const [showNew, setShowNew] = useState(false);
-  const [showDetails, setShowDetails] = useState<any>(null);
+  const [showDetails, setShowDetails] = useState<Moradia | null>(null);
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -134,11 +150,11 @@ export default function Page() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm ca-muted">{item.label}</div>
-                <div className="text-2xl font-semibold mt-1">
-                  {item.value}
-                </div>
+                <div className="text-2xl font-semibold mt-1">{item.value}</div>
               </div>
-              <div className={`h-11 w-11 rounded-2xl flex items-center justify-center ${item.bg}`}>
+              <div
+                className={`h-11 w-11 rounded-2xl flex items-center justify-center ${item.bg}`}
+              >
                 <item.icon className={item.color} size={20} />
               </div>
             </div>
@@ -171,9 +187,7 @@ export default function Page() {
             <option>3–4</option>
             <option>5+</option>
           </select>
-          <button className="ca-btn md:col-span-5">
-            Aplicar filtros
-          </button>
+          <button className="ca-btn md:col-span-5">Aplicar filtros</button>
         </div>
       </div>
 
@@ -194,7 +208,10 @@ export default function Page() {
 
           <tbody className="divide-y ca-border">
             {mockData.map((row, idx) => (
-              <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+              <tr
+                key={idx}
+                className="hover:bg-slate-50 dark:hover:bg-slate-800/30"
+              >
                 <td className="px-4 py-3">
                   <div className="h-12 w-16 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
                     {row.imagem ? (
@@ -226,7 +243,7 @@ export default function Page() {
                     <button
                       className="ca-icon-btn"
                       title="Ver detalhes"
-                      onClick={() => setShowDetails(row)}
+                      onClick={() => setShowDetails(row as Moradia)}
                     >
                       <Eye size={16} />
                     </button>
@@ -279,7 +296,7 @@ export default function Page() {
                 )}
 
                 <div className="space-y-2">
-                  {showDetails.moradores.map((m: any, idx: number) => (
+                  {showDetails.moradores.map((m, idx) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between border rounded-xl px-3 py-2"
@@ -332,12 +349,26 @@ export default function Page() {
             </div>
 
             <form className="p-4 space-y-4 flex-1 overflow-y-auto ca-scroll">
-              <input className="ca-input" placeholder="Código da moradia (ex: A-12)" />
+              <input
+                className="ca-input"
+                placeholder="Código da moradia (ex: A-12)"
+              />
               <input className="ca-input" placeholder="Bloco" />
-              <input className="ca-input" placeholder="Proprietário (opcional)" />
-              <input type="number" className="ca-input" placeholder="Número de ocupantes" />
+              <input
+                className="ca-input"
+                placeholder="Proprietário (opcional)"
+              />
+              <input
+                type="number"
+                className="ca-input"
+                placeholder="Número de ocupantes"
+              />
               <input type="file" className="ca-input" />
-              <textarea className="ca-input" placeholder="Observações (opcional)" rows={3} />
+              <textarea
+                className="ca-input"
+                placeholder="Observações (opcional)"
+                rows={3}
+              />
             </form>
 
             <div className="p-4 border-t ca-border flex justify-end gap-2">
