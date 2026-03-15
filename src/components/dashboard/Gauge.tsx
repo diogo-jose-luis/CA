@@ -1,3 +1,4 @@
+//app/%5Blocale%5D/%28dashboard%29/dashboard/page.tsx
 "use client";
 import React from "react";
 

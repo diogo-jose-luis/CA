@@ -1,14 +1,59 @@
+// src/components/layout/Sidebar.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import React from "react";
 import Link from "next/link";
 import {
-  LayoutDashboard, UsersRound, CreditCard, Truck, Home, Cctv, FileText, Settings,
-  ChevronLeft, ChevronRight,
+  LayoutDashboard,
+  UsersRound,
+  CreditCard,
+  Truck,
+  Home,
+  Cctv,
+  FileText,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  UserCog,
+  Users,
+  User,
+  UserPlus,
+  UserCheck,
+  UserX,
+  UserMinus,
+  Mail,
 } from "lucide-react";
 
 export type SidebarIconKey =
-  | "dashboard" | "people" | "cards" | "vehicles" | "homes" | "cctv" | "reports" | "settings";
+  | "dashboard"
+  | "people"
+  | "cards"
+  | "vehicles"
+  | "homes"
+  | "cctv"
+  | "reports"
+  | "settings"
+  | "shield"
+  | "users"
+  | "user"
+  | "user-cog"
+  | "user-plus"
+  | "user-check"
+  | "user-x"
+  | "user-minus"
+  | "square"
+  | "file"
+  | "folder"
+  | "tag"
+  | "tags"
+  | "calendar"
+  | "clock"
+  | "mail"
+  | "message-circle"
+  | "building"
+  | "buildings";
 
 export type SidebarItem =
   | { label: string; href: string; icon: SidebarIconKey; divider?: false }
@@ -20,7 +65,7 @@ type Props = {
   items: SidebarItem[];
   activePath: string;
   appName: string;
-  orgName: string;
+  organization: any;
 };
 
 const iconMap: Record<SidebarIconKey, React.ElementType> = {
@@ -32,21 +77,81 @@ const iconMap: Record<SidebarIconKey, React.ElementType> = {
   cctv: Cctv,
   reports: FileText,
   settings: Settings,
+  shield: Shield,
+  users: Users,
+  user: User,
+  "user-cog": UserCog,
+  "user-plus": UserPlus,
+  "user-check": UserCheck,
+  "user-x": UserX,
+  "user-minus": UserMinus,
+  square: () => <div className="h-4 w-4 bg-current rounded-sm" />,
+  file: () => <div className="h-4 w-3 bg-current rounded-sm" />,
+  folder: () => (
+    <div className="h-3 w-4 bg-current rounded-sm relative">
+      <div className="h-2 w-3 bg-current rounded-sm absolute -top-1 -left-1" />
+    </div>
+  ),
+  tag: () => <div className="h-3 w-3 bg-current rounded-sm rotate-45" />,
+  tags: () => (
+    <div className="h-3 w-3 bg-current rounded-sm rotate-45 relative">
+      <div className="h-3 w-3 bg-current rounded-sm rotate-45 absolute -top-1 -left-1" />
+    </div>
+  ),
+  calendar: () => (
+    <div className="h-4 w-3 bg-current rounded-sm relative">
+      <div className="h-1 w-full bg-current rounded-sm absolute top-0" />
+      <div className="h-1 w-full bg-current rounded-sm absolute bottom-0" />
+    </div>
+  ),
+  clock: () => (
+    <div className="h-4 w-4 rounded-full border-2 border-current relative">
+      <div className="h-1 w-1 bg-current rounded-sm absolute top-1 left-1" />
+      <div className="h-1 w-1 bg-current rounded-sm absolute top-1 right-1" />
+    </div>
+  ),
+  mail: Mail,
+  "message-circle": () => (
+    <div className="h-4 w-4 bg-current rounded-sm relative">
+      <div className="h-3 w-4 bg-current rounded-sm absolute top-0" />
+      <div className="h-2 w-3 bg-current rounded-sm absolute bottom-0 left-0" />
+    </div>
+  ),
+  building: () => (
+    <div className="h-4 w-4 bg-current rounded-sm relative">
+      <div className="h-3 w-2 bg-current rounded-sm absolute top-0 left-0" />
+    </div>
+  ),
+  buildings: () => (
+    <div className="h-4 w-4 bg-current rounded-sm relative">
+      <div className="h-3 w-2 bg-current rounded-sm absolute top-0 left-0" />
+      <div className="h-3 w-2 bg-current rounded-sm absolute top-0 right-0" />
+    </div>
+  ),
 };
 
 function isActive(activePath: string, href: string) {
-  if (activePath === href) return true;
-  if (href !== "/" && activePath.startsWith(href + "/")) return true;
+  if (activePath == href) return true;
+  if (href != "/" && activePath.startsWith(href + "/")) return true;
   return false;
 }
 
 export default function Sidebar({
-  collapsed, items, activePath, onToggleCollapse, appName, orgName,
+  collapsed,
+  items,
+  activePath,
+  onToggleCollapse,
+  appName,
+  organization,
 }: Props) {
   const width = collapsed ? "w-[84px]" : "w-[280px]";
 
+  const t = useTranslations("sidebar");
+
   return (
-    <aside className={`${width} shrink-0 border-r ca-border ca-panel flex flex-col`}>
+    <aside
+      className={`${width} shrink-0 border-r ca-border ca-panel flex flex-col`}
+    >
       {/* Top logos area */}
       <div className="p-3">
         <div className="ca-card shadow-none p-3">
@@ -55,7 +160,10 @@ export default function Sidebar({
               {/* Logo CA slot */}
               <div
                 className="h-11 w-11 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ background: "rgba(135,55,70,0.14)", color: "var(--brand)" }}
+                style={{
+                  background: "rgba(135,55,70,0.14)",
+                  color: "var(--brand)",
+                }}
                 title="Logo CA"
               >
                 <LayoutDashboard size={18} />
@@ -63,9 +171,10 @@ export default function Sidebar({
 
               {!collapsed && (
                 <div className="min-w-0">
-                  <div className="text-xs ca-muted">Sistema</div>
-                  <div className="font-semibold leading-tight truncate">{appName}</div>
-                  <div className="text-xs ca-muted truncate">{orgName}</div>
+                  <div className="text-xs ca-muted">{t("system")}</div>
+                  <div className="font-semibold leading-tight truncate">
+                    {appName}
+                  </div>
                 </div>
               )}
             </div>
@@ -74,9 +183,13 @@ export default function Sidebar({
               className="ca-icon-btn h-10 w-10"
               type="button"
               onClick={onToggleCollapse}
-              title={collapsed ? "Expandir menu" : "Colapsar menu"}
+              title={collapsed ? t("expandMenu") : t("collapseMenu")}
             >
-              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+              {collapsed ? (
+                <ChevronRight size={18} />
+              ) : (
+                <ChevronLeft size={18} />
+              )}
             </button>
           </div>
         </div>
@@ -117,30 +230,23 @@ export default function Sidebar({
         </div>
       </nav>
 
-      {/* Client logo slot */}
+      {/* Organização selecionada */}
       <div className="p-3">
         <div className="ca-card shadow-none p-3">
           <div className="flex items-center gap-3">
-            <div
-              className="h-10 w-10 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ background: "rgba(148,163,184,0.18)" }}
-              title="Logo do Cliente"
-            >
-               <img
-                        src="/jardim.jpg"
-                        alt="Moradia"
-                        className="h-full w-full object-cover rounded"
-                        width={18}
-                        onError={(e) =>
-                          ((e.target as HTMLImageElement).src =
-                            "/houses/placeholder.jpg")
-                        }
-                      />
+            <div className="h-10 w-10 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700">
+              <img
+                src={organization?.logotipo || "/houses/placeholder.jpg"}
+                className="h-full w-full object-cover"
+              />
             </div>
+
             {!collapsed && (
               <div className="min-w-0">
-                <div className="text-xs ca-muted">Condominio</div>
-                <div className="text-sm font-medium truncate">Jardim das Rosas</div>
+                <div className="text-xs ca-muted">{t("organization")}</div>
+                <div className="text-sm font-medium truncate">
+                  {organization?.tipo} : {organization?.nome}
+                </div>
               </div>
             )}
           </div>

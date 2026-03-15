@@ -1,0 +1,569 @@
+{
+  "topbar": {
+    "title": "Painel de Gestão · Controle de Acesso",
+    "menu": "Menu",
+    "switchOrg": "Trocar organização",
+    "logout": "Sair",
+    "user": "Utilizador",
+    "lang": {
+      "pt": "Português",
+      "en": "Inglês",
+      "fr": "Francês"
+    }
+  },
+  "login": {
+    "system": "Controle de Acesso",
+    "title": "Entrar",
+    "subtitle": "Aceda ao seu painel de gestão.",
+    "email": "E-mail",
+    "password": "Senha",
+    "loginButton": "Entrar",
+    "loading": "A entrar...",
+    "bannerTitle": "Plataforma inteligente de gestão de acesso",
+    "bannerDescription": "Segurança, controlo e monitorização centralizada para condomínios e ambientes industriais.",
+    "errors": {
+      "invalidCredentials": "Credenciais inválidas.",
+      "authError": "Erro ao autenticar."
+    },
+    "lang": {
+      "pt": "Português",
+      "en": "Inglês",
+      "fr": "Francês"
+    }
+  },
+  "sidebar": {
+    "system": "Sistema",
+    "organization": "Organização",
+    "expandMenu": "Expandir menu",
+    "collapseMenu": "Colapsar menu",
+
+    "dashboard": "Dashboard",
+    "peopleAccess": "Acesso de Pessoas",
+    "vehicleAccess": "Acesso de Veículos",
+    "alerts": "Avisos",
+    "reports": "Relatórios",
+
+    "incidents": "Ocorrências",
+    "orders": "Encomendas",
+    "serviceReview": "Avaliação de Serviços",
+    "keyDelivery": "Entrega de Chaves",
+
+    "organizationMenu": "Organização",
+    "residences": "Moradias",
+    "areas": "Áreas",
+    "cards": "Cartões",
+    "cameras": "Câmeras",
+    "residents": "Moradores",
+    "employees": "Colaboradores",
+    "guests": "Visitantes",
+    "suppliers": "Fornecedores",
+    "clients": "Clientes",
+    "guards": "Porteiros",
+    "users": "Utilizadores",
+    "settings": "Configurações",
+
+    "sections": {
+      "operator": "Operador",
+      "manager": "Gestor",
+      "admin": "Admin"
+    }
+  },
+  "selectOrg": {
+    "title": "Selecionar Organização",
+    "subtitle": "Escolha a organização que pretende gerir.",
+    "logout": "Sair",
+    "user": "Utilizador",
+    "system": "Controle de Acesso",
+    "organization": "Organização",
+    "expandMenu": "Expandir menu",
+    "collapseMenu": "Colapsar menu",
+    "loading": "A carregar organizações…",
+    "empty": "Nenhuma organização ativa disponível.",
+    "lang": {
+      "pt": "Português",
+      "en": "Inglês",
+      "fr": "Francês"
+    },
+    "orgLoadError": "Não foi possível carregar a sua organização. Contacte o administrador."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Indicadores de portaria e segurança patrimonial.",
+    "slaMissing": "Sem Registar Saída no SLA",
+    "irregularAttempts": "Tentativas de Acesso Irregular",
+    "deniedAccess": "Acessos Negados",
+    "avgRelease": "Tempo Médio de Liberação",
+    "vsLastMonth": "vs mês anterior",
+    "totalAccessPeriod": "Total de Acessos no Período",
+    "visitorsVsEmployees": "Visitantes x Colaboradores",
+    "vehicleAccess": "Acesso de Veículos",
+    "vehicleByCategory": "Por categoria no período",
+    "expiredCards": "Cartões Vencidos / Inativos",
+    "cardsWithoutValidity": "Cartões sem validade",
+    "criticalIncidents": "ocorrências críticas",
+    "updatedAt": "Atualizado em",
+    "total": "Total",
+    "risk": "Risco"
+  },
+  "peopleAccess": {
+    "title": "Acesso de Pessoas",
+    "subtitle": "Registo e controlo de entradas e saídas, incluindo o destino dentro do recinto.",
+    "newAccess": "Registar novo acesso",
+
+    "filters": {
+      "nameOrDocument": "Nome ou documento",
+      "destination": "Destino",
+      "type": "Tipo",
+      "status": "Estado",
+      "apply": "Aplicar filtros"
+    },
+
+    "types": {
+      "visitor": "Visitante",
+      "employee": "Colaborador",
+      "contractor": "Prestador"
+    },
+
+    "status": {
+      "inside": "No interior",
+      "left": "Saiu",
+      "late": "Atrasado"
+    },
+
+    "table": {
+      "person": "Pessoa",
+      "name": "Nome",
+      "type": "Tipo",
+      "document": "Documento",
+      "destination": "Destino",
+      "entry": "Entrada",
+      "exit": "Saída",
+      "status": "Estado",
+      "actions": "Ações"
+    },
+
+    "form": {
+      "title": "Registar novo acesso",
+      "fullName": "Nome completo",
+      "personType": "Tipo de pessoa",
+      "document": "Documento / Identificação",
+      "destination": "Destino (moradia / sector)",
+      "notes": "Observações",
+      "register": "Registar acesso"
+    },
+
+    "cancel": "Cancelar"
+  },
+  "vehicleAccess": {
+    "title": "Acesso de Veículos",
+    "subtitle": "Controlo de entrada e saída de viaturas no perímetro da portaria.",
+    "newAccess": "Registar novo acesso",
+
+    "stats": {
+      "inside": "Veículos no Interior",
+      "entriesToday": "Entradas Hoje",
+      "exitsRegistered": "Saídas Registadas",
+      "pendingIrregular": "Pendentes / Irregulares"
+    },
+
+    "details": {
+      "title": "Registo fotográfico do veículo",
+      "caption": "Fotos capturadas durante a entrada e inspeção do veículo."
+    },
+
+    "table": {
+      "vehicle": "Veículo",
+      "plate": "Matrícula",
+      "type": "Tipo",
+      "driver": "Condutor / Empresa",
+      "entity": "Entidade",
+      "destination": "Destino",
+      "entry": "Entrada",
+      "exit": "Saída",
+      "status": "Estado",
+      "actions": "Ações"
+    },
+
+    "actions": {
+      "view": "Ver detalhes",
+      "edit": "Editar",
+      "remove": "Remover"
+    },
+
+    "status": {
+      "inside": "No interior",
+      "left": "Saiu",
+      "late": "Atrasado"
+    },
+
+    "types": {
+      "light": "Ligeiro",
+      "heavy": "Pesado",
+      "bus": "Autocarro"
+    },
+
+    "form": {
+      "title": "Registar acesso de veículo",
+      "plate": "Matrícula do veículo",
+      "vehicleType": "Tipo de veículo",
+      "driver": "Condutor / Empresa",
+      "notes": "Observações (opcional)",
+      "register": "Registar acesso"
+    },
+
+    "cancel": "Cancelar"
+  },
+  "notices": {
+    "title": "Avisos",
+    "subtitle": "Avisos do síndico ou da gestão do condomínio para os residentes.",
+    "newNotice": "Novo aviso",
+
+    "stats": {
+      "active": "Avisos Activos",
+      "highPriority": "Alta Prioridade",
+      "informative": "Informativos"
+    },
+
+    "filters": {
+      "search": "Pesquisar por título",
+      "category": "Categoria",
+      "priority": "Prioridade",
+      "status": "Estado",
+      "apply": "Aplicar filtros"
+    },
+
+    "categories": {
+      "maintenance": "Manutenção",
+      "meeting": "Reunião",
+      "information": "Informação"
+    },
+
+    "priority": {
+      "high": "Alta",
+      "normal": "Normal"
+    },
+
+    "status": {
+      "active": "Activo",
+      "closed": "Encerrado"
+    },
+
+    "table": {
+      "title": "Título",
+      "category": "Categoria",
+      "priority": "Prioridade",
+      "published": "Publicado em",
+      "status": "Estado",
+      "actions": "Ações"
+    },
+
+    "actions": {
+      "view": "Ver aviso",
+      "edit": "Editar",
+      "remove": "Remover"
+    },
+
+    "form": {
+      "title": "Novo aviso",
+      "titlePlaceholder": "Título do aviso",
+      "message": "Mensagem do aviso",
+      "publish": "Publicar aviso"
+    },
+
+    "cancel": "Cancelar"
+  },
+  "reports": {
+    "title": "Relatórios",
+    "subtitle": "Geração e exportação de relatórios operacionais e administrativos.",
+
+    "stats": {
+      "generatedMonth": "Relatórios Gerados (Mês)",
+      "accessReports": "Relatórios de Acessos",
+      "vehicleReports": "Relatórios de Veículos",
+      "adminReports": "Relatórios Administrativos"
+    },
+
+    "filters": {
+      "reportType": "Tipo de relatório",
+      "apply": "Aplicar filtros"
+    },
+
+    "modules": {
+      "access": "Acessos",
+      "vehicles": "Veículos",
+      "cards": "Cartões",
+      "residences": "Moradias",
+      "notices": "Avisos"
+    },
+
+    "available": "Relatórios disponíveis",
+    "module": "Módulo",
+
+    "history": {
+      "title": "Histórico de relatórios gerados",
+      "report": "Relatório",
+      "period": "Período",
+      "format": "Formato",
+      "generated": "Gerado em",
+      "actions": "Ações"
+    },
+
+    "actions": {
+      "generatePDF": "Gerar PDF",
+      "generateExcel": "Gerar Excel",
+      "view": "Visualizar"
+    }
+  },
+  "occurrences": {
+    "title": "Ocorrências",
+    "subtitle": "Registo e acompanhamento de incidentes",
+    "new": "Nova ocorrência",
+
+    "stats": {
+      "total": "Total de ocorrências",
+      "highRisk": "Alto risco",
+      "security": "Reportadas pela segurança"
+    },
+
+    "filters": {
+      "search": "Pesquisar...",
+      "type": "Tipo",
+      "category": "Categoria",
+      "period": "Período",
+      "apply": "Aplicar filtros"
+    },
+
+    "types": {
+      "client": "Cliente",
+      "security": "Segurança"
+    },
+
+    "categories": {
+      "accident": "Acidente",
+      "theft": "Furto",
+      "robbery": "Roubo"
+    },
+
+    "period": {
+      "day": "Diurno",
+      "night": "Noturno"
+    },
+
+    "table": {
+      "order": "Ordem",
+      "date": "Data",
+      "time": "Hora",
+      "type": "Tipo",
+      "category": "Categoria",
+      "description": "Descrição",
+      "risk": "Nível de risco",
+      "period": "Período",
+      "actions": "Ações"
+    },
+
+    "form": {
+      "title": "Nova ocorrência",
+      "order": "Número da ocorrência",
+      "description": "Descrição do incidente",
+      "risk": "Nível de risco",
+      "actionTaken": "Medida tomada",
+      "recommendations": "Recomendações",
+      "save": "Guardar"
+    },
+
+    "cancel": "Cancelar"
+  },
+  "packages": {
+    "title": "Encomendas",
+    "subtitle": "Registo de encomendas recebidas na portaria",
+    "new": "Nova encomenda",
+
+    "stats": {
+      "total": "Total de encomendas",
+      "pending": "Pendentes",
+      "delivered": "Entregues"
+    },
+
+    "filters": {
+      "search": "Pesquisar...",
+      "status": "Estado",
+      "apply": "Aplicar filtros"
+    },
+
+    "status": {
+      "pending": "Pendente",
+      "delivered": "Entregue"
+    },
+
+    "table": {
+      "order": "Ordem",
+      "date": "Data",
+      "time": "Hora",
+      "sender": "Remetente",
+      "receiver": "Destinatário",
+      "description": "Descrição",
+      "status": "Estado",
+      "deliveredTo": "Entregue a",
+      "actions": "Ações"
+    },
+
+    "form": {
+      "title": "Nova encomenda",
+      "order": "Número da encomenda",
+      "sender": "Remetente",
+      "receiver": "Destinatário",
+      "description": "Descrição",
+      "security": "Recebido por (Segurança)",
+      "notes": "Observações",
+      "save": "Guardar"
+    },
+
+    "cancel": "Cancelar"
+  },
+  "keys": {
+    "title": "Entrega de Chaves",
+    "subtitle": "Controlo de chaves entregues aos colaboradores",
+    "new": "Novo Registo",
+
+    "stats": {
+      "total": "Total de Registos",
+      "returned": "Chaves Devolvidas",
+      "sectors": "Total de Setores",
+      "employees": "Colaboradores"
+    },
+
+    "filters": {
+      "search": "Pesquisar...",
+      "sector": "Setor",
+      "apply": "Aplicar filtros"
+    },
+
+    "table": {
+      "id": "ID",
+      "date": "Data",
+      "sector": "Setor",
+      "employee": "Colaborador que Solicita",
+      "exitTime": "Horário de Saída",
+      "signature": "Assinatura do Solicitante",
+      "returnedBy": "Devolvida Por",
+      "returnTime": "Horário da Devolução",
+      "actions": "Ações"
+    },
+
+    "form": {
+      "title": "Novo Registo de Chave",
+      "employee": "Colaborador",
+      "sector": "Setor",
+      "notes": "Observações",
+      "save": "Guardar"
+    },
+
+    "cancel": "Cancelar"
+  },
+  "organizacao": {
+    "title": "Organização",
+    "subtitle": "Gestão de empresas e condomínios registados no sistema.",
+    "new": "Nova organização",
+    "stats": {
+      "total": "Total de Organizações",
+      "ativas": "Ativas",
+      "desativadas": "Desativadas"
+    },
+    "filters": {
+      "search": "Pesquisar por designação",
+      "tipo": "Tipo",
+      "estado": "Estado",
+      "apply": "Aplicar filtros",
+      "all": "Todos",
+      "empresa": "Empresa",
+      "condominio": "Condomínio",
+      "ativo": "Ativo",
+      "desativado": "Desativado"
+    },
+    "table": {
+      "logo": "Logótipo",
+      "designacao": "Designação",
+      "descricao": "Descrição",
+      "estado": "Estado",
+      "tipo": "Tipo",
+      "actions": "Ações"
+    },
+    "form": {
+      "new": "Nova organização",
+      "edit": "Editar organização",
+      "designacao": "Designação",
+      "descricao": "Descrição",
+      "tipo": "Tipo",
+      "estado": "Estado",
+      "imagem": "Imagem / Logótipo",
+      "currentImage": "Imagem actual",
+      "register": "Registar",
+      "save": "Guardar"
+    },
+    "bulk": {
+      "selected": "selecionada(s)",
+      "ativar": "Ativar em grupo",
+      "desativar": "Desativar em grupo",
+      "eliminar": "Eliminar em grupo"
+    },
+    "actions": {
+      "edit": "Editar",
+      "remove": "Remover",
+      "ativar": "Ativar",
+      "desativar": "Desativar"
+    },
+    "cancel": "Cancelar",
+    "loading": "A carregar…",
+    "empty": "Nenhuma organização encontrada.",
+    "toast": {
+      "created": "Organização registada com sucesso.",
+      "updated": "Organização atualizada com sucesso.",
+      "deleted": "Organização eliminada com sucesso.",
+      "activated": "Organização ativada com sucesso.",
+      "deactivated": "Organização desativada com sucesso.",
+      "bulkActivated": "Organizações ativadas com sucesso.",
+      "bulkDeactivated": "Organizações desativadas com sucesso.",
+      "bulkDeleted": "Organizações eliminadas com sucesso.",
+      "error": "Ocorreu um erro. Tente novamente."
+    }
+  },
+  "serviceEvaluation": {
+    "title": "Avaliação dos Serviços",
+    "subtitle": "Avaliação mensal do serviço de segurança e portaria",
+    "newEvaluation": "Nova Avaliação",
+
+    "stats": {
+      "total": "Total de Avaliações",
+      "average": "Média Geral",
+      "year": "Avaliações Este Ano",
+      "last": "Última Avaliação"
+    },
+
+    "table": {
+      "month": "Mês",
+      "year": "Ano",
+      "quality": "Qualidade do Serviço",
+      "professionalism": "Profissionalismo",
+      "response": "Tempo de Resposta",
+      "communication": "Comunicação",
+      "general": "Avaliação Geral",
+      "comments": "Comentários",
+      "date": "Data de Submissão",
+      "actions": "Ações"
+    },
+
+    "form": {
+      "title": "Nova Avaliação",
+      "month": "Mês",
+      "year": "Ano",
+      "quality": "Qualidade do Serviço (1-5)",
+      "professionalism": "Profissionalismo (1-5)",
+      "response": "Tempo de Resposta (1-5)",
+      "communication": "Comunicação (1-5)",
+      "comments": "Comentários",
+      "submit": "Submeter Avaliação"
+    },
+
+    "cancel": "Cancelar"
+  }
+}

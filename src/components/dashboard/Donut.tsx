@@ -1,5 +1,10 @@
+//app/%5Blocale%5D/%28dashboard%29/dashboard/page.tsx
 "use client";
 import React from "react";
+import useLocale from "@/hooks/useLocale";
+import { useTranslations } from "next-intl";
+
+
 
 export default function Donut({ a, b, size = 180 }: { a: number; b: number; size?: number }) {
   const total = a + b || 1;
@@ -11,6 +16,10 @@ export default function Donut({ a, b, size = 180 }: { a: number; b: number; size
 
   const aLen = c * aPct;
   const bLen = c - aLen;
+
+  const locale = useLocale();
+
+  const t = useTranslations("dashboard");
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -43,8 +52,8 @@ export default function Donut({ a, b, size = 180 }: { a: number; b: number; size
       </svg>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-xs ca-muted">Total</div>
-        <div className="text-lg font-semibold">{total.toLocaleString("pt-PT")}</div>
+        <div className="text-xs ca-muted">{t("total")}</div>
+        <div className="text-lg font-semibold">{total.toLocaleString(locale)}</div>
       </div>
     </div>
   );

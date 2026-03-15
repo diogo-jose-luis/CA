@@ -1,0 +1,568 @@
+{
+  "topbar": {
+    "title": "Management Panel · Access Control",
+    "menu": "Menu",
+    "switchOrg": "Switch organization",
+    "logout": "Logout",
+    "user": "User",
+    "lang": {
+      "pt": "Portuguese",
+      "en": "English",
+      "fr": "French"
+    }
+  },
+  "login": {
+    "system": "Access Control",
+    "title": "Sign in",
+    "subtitle": "Access your management dashboard.",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Sign in",
+    "loading": "Signing in...",
+    "bannerTitle": "Smart access management platform",
+    "bannerDescription": "Security, control and centralized monitoring for condominiums and industrial environments.",
+    "errors": {
+      "invalidCredentials": "Invalid credentials.",
+      "authError": "Authentication error."
+    },
+    "lang": {
+      "pt": "Portuguese",
+      "en": "English",
+      "fr": "French"
+    }
+  },
+  "sidebar": {
+    "system": "System",
+    "organization": "Organization",
+    "expandMenu": "Expand menu",
+    "collapseMenu": "Collapse menu",
+
+    "dashboard": "Dashboard",
+    "peopleAccess": "People Access",
+    "vehicleAccess": "Vehicle Access",
+    "alerts": "Alerts",
+    "reports": "Reports",
+    "incidents": "Incidents",
+    "orders": "Orders",
+    "serviceReview": "Service Review",
+    "keyDelivery": "Key Delivery",
+
+    "organizationMenu": "Organization",
+    "residences": "Residences",
+    "areas": "Areas",
+    "cards": "Cards",
+    "cameras": "Cameras",
+    "residents": "Residents",
+    "employees": "Employees",
+    "guests": "Guests",
+    "suppliers": "Suppliers",
+    "clients": "Clients",
+    "guards": "Guards",
+    "users": "Users",
+    "settings": "Settings",
+
+    "sections": {
+      "operator": "Operator",
+      "manager": "Manager",
+      "admin": "Admin"
+    }
+  },
+  "selectOrg": {
+    "title": "Select Organization",
+    "subtitle": "Choose the organization you want to manage.",
+    "logout": "Logout",
+    "user": "User",
+    "system": "Access Control",
+    "organization": "Organization",
+    "expandMenu": "Expand menu",
+    "collapseMenu": "Collapse menu",
+    "loading": "Loading organizations…",
+    "empty": "No active organizations available.",
+    "lang": {
+      "pt": "Portuguese",
+      "en": "English",
+      "fr": "French"
+    },
+    "orgLoadError": "Could not load your organization. Please contact the administrator."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Gate and security monitoring indicators.",
+    "slaMissing": "Exit Not Registered in SLA",
+    "irregularAttempts": "Irregular Access Attempts",
+    "deniedAccess": "Denied Access",
+    "avgRelease": "Average Release Time",
+    "vsLastMonth": "vs last month",
+    "totalAccessPeriod": "Total Accesses in Period",
+    "visitorsVsEmployees": "Visitors vs Employees",
+    "vehicleAccess": "Vehicle Access",
+    "vehicleByCategory": "By category in period",
+    "expiredCards": "Expired / Inactive Cards",
+    "cardsWithoutValidity": "Cards without validity",
+    "criticalIncidents": "critical incidents",
+    "updatedAt": "Updated at",
+    "total": "Total",
+    "risk": "Risk"
+  },
+  "peopleAccess": {
+    "title": "People Access",
+    "subtitle": "Registration and control of entries and exits, including the destination inside the facility.",
+    "newAccess": "Register new access",
+
+    "filters": {
+      "nameOrDocument": "Name or document",
+      "destination": "Destination",
+      "type": "Type",
+      "status": "Status",
+      "apply": "Apply filters"
+    },
+
+    "types": {
+      "visitor": "Visitor",
+      "employee": "Employee",
+      "contractor": "Contractor"
+    },
+
+    "status": {
+      "inside": "Inside",
+      "left": "Left",
+      "late": "Late"
+    },
+
+    "table": {
+      "person": "Person",
+      "name": "Name",
+      "type": "Type",
+      "document": "Document",
+      "destination": "Destination",
+      "entry": "Entry",
+      "exit": "Exit",
+      "status": "Status",
+      "actions": "Actions"
+    },
+
+    "form": {
+      "title": "Register new access",
+      "fullName": "Full name",
+      "personType": "Person type",
+      "document": "Document / Identification",
+      "destination": "Destination",
+      "notes": "Notes",
+      "register": "Register access"
+    },
+
+    "cancel": "Cancel"
+  },
+  "vehicleAccess": {
+    "title": "Vehicle Access",
+    "subtitle": "Control of vehicle entry and exit within the gate perimeter.",
+    "newAccess": "Register new access",
+
+    "stats": {
+      "inside": "Vehicles Inside",
+      "entriesToday": "Entries Today",
+      "exitsRegistered": "Registered Exits",
+      "pendingIrregular": "Pending / Irregular"
+    },
+
+    "details": {
+      "title": "Vehicle photographic record",
+      "caption": "Photos captured during vehicle entry and inspection."
+    },
+
+    "table": {
+      "vehicle": "Vehicle",
+      "plate": "Plate",
+      "type": "Type",
+      "driver": "Driver / Company",
+      "entity": "Entity",
+      "destination": "Destination",
+      "entry": "Entry",
+      "exit": "Exit",
+      "status": "Status",
+      "actions": "Actions"
+    },
+
+    "actions": {
+      "view": "View details",
+      "edit": "Edit",
+      "remove": "Remove"
+    },
+
+    "status": {
+      "inside": "Inside",
+      "left": "Left",
+      "late": "Late"
+    },
+
+    "types": {
+      "light": "Light",
+      "heavy": "Heavy",
+      "bus": "Bus"
+    },
+
+    "form": {
+      "title": "Register vehicle access",
+      "plate": "Vehicle plate",
+      "vehicleType": "Vehicle type",
+      "driver": "Driver / Company",
+      "notes": "Notes (optional)",
+      "register": "Register access"
+    },
+
+    "cancel": "Cancel"
+  },
+  "notices": {
+    "title": "Notices",
+    "subtitle": "Notices from the building management for residents.",
+    "newNotice": "New notice",
+
+    "stats": {
+      "active": "Active Notices",
+      "highPriority": "High Priority",
+      "informative": "Informative"
+    },
+
+    "filters": {
+      "search": "Search by title",
+      "category": "Category",
+      "priority": "Priority",
+      "status": "Status",
+      "apply": "Apply filters"
+    },
+
+    "categories": {
+      "maintenance": "Maintenance",
+      "meeting": "Meeting",
+      "information": "Information"
+    },
+
+    "priority": {
+      "high": "High",
+      "normal": "Normal"
+    },
+
+    "status": {
+      "active": "Active",
+      "closed": "Closed"
+    },
+
+    "table": {
+      "title": "Title",
+      "category": "Category",
+      "priority": "Priority",
+      "published": "Published on",
+      "status": "Status",
+      "actions": "Actions"
+    },
+
+    "actions": {
+      "view": "View notice",
+      "edit": "Edit",
+      "remove": "Remove"
+    },
+
+    "form": {
+      "title": "New notice",
+      "titlePlaceholder": "Notice title",
+      "message": "Notice message",
+      "publish": "Publish notice"
+    },
+
+    "cancel": "Cancel"
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Generation and export of operational and administrative reports.",
+
+    "stats": {
+      "generatedMonth": "Reports Generated (Month)",
+      "accessReports": "Access Reports",
+      "vehicleReports": "Vehicle Reports",
+      "adminReports": "Administrative Reports"
+    },
+
+    "filters": {
+      "reportType": "Report type",
+      "apply": "Apply filters"
+    },
+
+    "modules": {
+      "access": "Access",
+      "vehicles": "Vehicles",
+      "cards": "Cards",
+      "residences": "Residences",
+      "notices": "Notices"
+    },
+
+    "available": "Available reports",
+    "module": "Module",
+
+    "history": {
+      "title": "Generated reports history",
+      "report": "Report",
+      "period": "Period",
+      "format": "Format",
+      "generated": "Generated on",
+      "actions": "Actions"
+    },
+
+    "actions": {
+      "generatePDF": "Generate PDF",
+      "generateExcel": "Generate Excel",
+      "view": "View"
+    }
+  },
+  "occurrences": {
+    "title": "Occurrences",
+    "subtitle": "Incident registration and monitoring",
+    "new": "New occurrence",
+
+    "stats": {
+      "total": "Total occurrences",
+      "highRisk": "High risk",
+      "security": "Reported by security"
+    },
+
+    "filters": {
+      "search": "Search...",
+      "type": "Type",
+      "category": "Category",
+      "period": "Period",
+      "apply": "Apply filters"
+    },
+
+    "types": {
+      "client": "Client",
+      "security": "Security"
+    },
+
+    "categories": {
+      "accident": "Accident",
+      "theft": "Theft",
+      "robbery": "Robbery"
+    },
+
+    "period": {
+      "day": "Day",
+      "night": "Night"
+    },
+
+    "table": {
+      "order": "Order",
+      "date": "Date",
+      "time": "Time",
+      "type": "Type",
+      "category": "Category",
+      "description": "Description",
+      "risk": "Risk level",
+      "period": "Period",
+      "actions": "Actions"
+    },
+
+    "form": {
+      "title": "New occurrence",
+      "order": "Occurrence number",
+      "description": "Incident description",
+      "risk": "Risk level",
+      "actionTaken": "Action taken",
+      "recommendations": "Recommendations",
+      "save": "Save"
+    },
+
+    "cancel": "Cancel"
+  },
+  "packages": {
+    "title": "Packages",
+    "subtitle": "Packages registered at the gate",
+    "new": "New package",
+
+    "stats": {
+      "total": "Total packages",
+      "pending": "Pending",
+      "delivered": "Delivered"
+    },
+
+    "filters": {
+      "search": "Search...",
+      "status": "Status",
+      "apply": "Apply filters"
+    },
+
+    "status": {
+      "pending": "Pending",
+      "delivered": "Delivered"
+    },
+
+    "table": {
+      "order": "Order",
+      "date": "Date",
+      "time": "Time",
+      "sender": "Sender",
+      "receiver": "Receiver",
+      "description": "Description",
+      "status": "Status",
+      "deliveredTo": "Delivered to",
+      "actions": "Actions"
+    },
+
+    "form": {
+      "title": "New package",
+      "order": "Package number",
+      "sender": "Sender",
+      "receiver": "Receiver",
+      "description": "Description",
+      "security": "Received by (Security)",
+      "notes": "Notes",
+      "save": "Save"
+    },
+
+    "cancel": "Cancel"
+  },
+  "keys": {
+    "title": "Key Delivery",
+    "subtitle": "Control of keys delivered to employees",
+    "new": "New Record",
+
+    "stats": {
+      "total": "Total Records",
+      "returned": "Returned Keys",
+      "sectors": "Total Sectors",
+      "employees": "Employees"
+    },
+
+    "filters": {
+      "search": "Search...",
+      "sector": "Sector",
+      "apply": "Apply filters"
+    },
+
+    "table": {
+      "id": "ID",
+      "date": "Date",
+      "sector": "Sector",
+      "employee": "Employee Requesting",
+      "exitTime": "Exit Time",
+      "signature": "Requester Signature",
+      "returnedBy": "Returned By",
+      "returnTime": "Return Time",
+      "actions": "Actions"
+    },
+
+    "form": {
+      "title": "New Key Record",
+      "employee": "Employee",
+      "sector": "Sector",
+      "notes": "Notes",
+      "save": "Save"
+    },
+
+    "cancel": "Cancel"
+  },
+  "organizacao": {
+    "title": "Organization",
+    "subtitle": "Management of companies and condominiums registered in the system.",
+    "new": "New organization",
+    "stats": {
+      "total": "Total Organizations",
+      "ativas": "Active",
+      "desativadas": "Inactive"
+    },
+    "filters": {
+      "search": "Search by name",
+      "tipo": "Type",
+      "estado": "Status",
+      "apply": "Apply filters",
+      "all": "All",
+      "empresa": "Company",
+      "condominio": "Condominium",
+      "ativo": "Active",
+      "desativado": "Inactive"
+    },
+    "table": {
+      "logo": "Logo",
+      "designacao": "Name",
+      "descricao": "Description",
+      "estado": "Status",
+      "tipo": "Type",
+      "actions": "Actions"
+    },
+    "form": {
+      "new": "New organization",
+      "edit": "Edit organization",
+      "designacao": "Name",
+      "descricao": "Description",
+      "tipo": "Type",
+      "estado": "Status",
+      "imagem": "Image / Logo",
+      "currentImage": "Current image",
+      "register": "Register",
+      "save": "Save"
+    },
+    "bulk": {
+      "selected": "selected",
+      "ativar": "Activate selected",
+      "desativar": "Deactivate selected",
+      "eliminar": "Delete selected"
+    },
+    "actions": {
+      "edit": "Edit",
+      "remove": "Remove",
+      "ativar": "Activate",
+      "desativar": "Deactivate"
+    },
+    "cancel": "Cancel",
+    "loading": "Loading…",
+    "empty": "No organizations found.",
+    "toast": {
+      "created": "Organization created successfully.",
+      "updated": "Organization updated successfully.",
+      "deleted": "Organization deleted successfully.",
+      "activated": "Organization activated successfully.",
+      "deactivated": "Organization deactivated successfully.",
+      "bulkActivated": "Organizations activated successfully.",
+      "bulkDeactivated": "Organizations deactivated successfully.",
+      "bulkDeleted": "Organizations deleted successfully.",
+      "error": "An error occurred. Please try again."
+    }
+  },
+  "serviceEvaluation": {
+    "title": "Service Evaluation",
+    "subtitle": "Monthly evaluation of security and gate services",
+    "newEvaluation": "New Evaluation",
+
+    "stats": {
+      "total": "Total Evaluations",
+      "average": "Average Rating",
+      "year": "Evaluations This Year",
+      "last": "Last Evaluation"
+    },
+
+    "table": {
+      "month": "Month",
+      "year": "Year",
+      "quality": "Service Quality",
+      "professionalism": "Professionalism",
+      "response": "Response Time",
+      "communication": "Communication",
+      "general": "Overall Rating",
+      "comments": "Comments",
+      "date": "Submission Date",
+      "actions": "Actions"
+    },
+
+    "form": {
+      "title": "New Evaluation",
+      "month": "Month",
+      "year": "Year",
+      "quality": "Service Quality (1–5)",
+      "professionalism": "Professionalism (1–5)",
+      "response": "Response Time (1–5)",
+      "communication": "Communication (1–5)",
+      "comments": "Comments",
+      "submit": "Submit Evaluation"
+    },
+
+    "cancel": "Cancel"
+  }
+}
