@@ -48,8 +48,9 @@ export default function LoginPage() {
 
       const data = loginRes.data;
       if (data?.user && data?.access_token) {
-        await fetch("/api/auth/session", {
+        const sessionRes = await fetch("/api/auth/session", {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             user: {
@@ -66,6 +67,10 @@ export default function LoginPage() {
             token: data.access_token,
           }),
         });
+        if (!sessionRes.ok) {
+          setError(t("errors.authError"));
+          return;
+        }
         router.replace(`/${locale}/post-login`);
         return;
       }

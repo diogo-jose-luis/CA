@@ -1,10 +1,11 @@
 // Gestão de sessão via cookie (substitui NextAuth session)
 
 import { cookies } from "next/headers";
+import type { NextResponse } from "next/server";
 import type { Session } from "@/types/auth";
 
 export const SESSION_COOKIE = "ca_session";
-const MAX_AGE = 30 * 24 * 60 * 60; // 30 dias em segundos
+export const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 dias em segundos
 
 function encodeSession(session: Session): string {
   return Buffer.from(JSON.stringify(session), "utf-8").toString("base64url");
@@ -28,11 +29,27 @@ export async function getSession(): Promise<Session | null> {
   return decodeSession(value);
 }
 
-export function sessionCookieHeader(session: Session): string {
+const secureCookies =
+  process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+
+/** Preferir isto em Route Handlers: encoding e Secure em produção ficam corretos no Vercel. */
+export function applySessionCookie(res: NextResponse, session: Session) {
   const value = encodeSession(session);
-  return `${SESSION_COOKIE}=${value}; Path=/; Max-Age=${MAX_AGE}; SameSite=Lax; HttpOnly`;
+  res.cookies.set(SESSION_COOKIE, value, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: SESSION_MAX_AGE,
+    path: "/",
+    secure: secureCookies,
+  });
 }
 
-export function clearSessionCookieHeader(): string {
-  return `${SESSION_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax; HttpOnly`;
+export function clearSessionCookie(res: NextResponse) {
+  res.cookies.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/",
+    secure: secureCookies,
+  });
 }

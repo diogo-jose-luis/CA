@@ -19,12 +19,14 @@ function getLocale(pathname: string): string {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Rotas de API não devem passar pelo next-intl: em produção isso pode gerar
+  // redirecionamentos (ex.: 307) e o browser pode não persistir o Set-Cookie do login.
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/api")
   ) {
-    return intlMiddleware(req);
+    return NextResponse.next();
   }
 
   const locale = getLocale(pathname);
