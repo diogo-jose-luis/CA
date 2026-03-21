@@ -51,11 +51,11 @@ const DOC_TIPO_OUTRO = "outro_generico";
 function inferDocumentUi(row: AcessoPessoa): DocumentUiKey {
   const d = row.documento ?? row.user?.documento ?? null;
   const tipo = (row.documento_tipo ?? "").trim().toLowerCase();
-  if (d === 1) return "bi";
-  if (d === 2) return "passport";
-  if (d === 3) {
-    if (tipo === DOC_TIPO_CARTA.toLowerCase() || /carta|condu|driving|permis|drive/.test(tipo)) return "carta";
-    if (tipo === DOC_TIPO_OUTRO.toLowerCase()) return "outro";
+  if (d == 1) return "bi";
+  if (d == 2) return "passport";
+  if (d == 3) {
+    if (tipo == DOC_TIPO_CARTA.toLowerCase() || /carta|condu|driving|permis|drive/.test(tipo)) return "carta";
+    if (tipo == DOC_TIPO_OUTRO.toLowerCase()) return "outro";
     return "outro";
   }
   if (/pass|passeport/i.test(tipo)) return "passport";
@@ -124,7 +124,7 @@ function localDateTimeToApi(value: string): string {
 }
 
 function parseApiErrors(err: unknown, fallback: string): string {
-  if (err && typeof err === "object" && "response" in err) {
+  if (err && typeof err == "object" && "response" in err) {
     const data = (err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } })
       .response?.data;
     if (data?.errors) {
@@ -132,7 +132,7 @@ function parseApiErrors(err: unknown, fallback: string): string {
         .flat()
         .join(" ");
     }
-    if (typeof data?.message === "string") return data.message;
+    if (typeof data?.message == "string") return data.message;
   }
   return fallback;
 }
@@ -152,19 +152,19 @@ function parseLookupItems(payload: unknown): LookupItem[] {
         designacao?: string;
         descricao?: string;
       };
-      const id = typeof raw.id === "number" ? raw.id : Number(raw.id);
+      const id = typeof raw.id == "number" ? raw.id : Number(raw.id);
       const nome =
-        typeof raw.designacao === "string"
+        typeof raw.designacao == "string"
           ? raw.designacao.trim()
-          : typeof raw.nome === "string"
+          : typeof raw.nome == "string"
             ? raw.nome.trim()
-            : typeof raw.descricao === "string"
+            : typeof raw.descricao == "string"
               ? raw.descricao.trim()
               : "";
       if (!Number.isFinite(id) || id <= 0 || !nome) return null;
       return { id, nome };
     })
-    .filter((v): v is LookupItem => v !== null);
+    .filter((v): v is LookupItem => v != null);
 }
 
 async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Promise<Utilizador[]> {
@@ -176,7 +176,7 @@ async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Pro
           params: { per_page: 100, page: 1 },
         });
         for (const u of res.data?.data ?? []) {
-          if (u?.id && typeof u.id === "number") map.set(u.id, u);
+          if (u?.id && typeof u.id == "number") map.set(u.id, u);
         }
       } catch {
         /* ignore per-source failures */
@@ -188,7 +188,7 @@ async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Pro
 
 function rowVisualStatus(row: AcessoPessoa, t: (k: string) => string): { key: string; className: string; label: string } {
   const ap = row.aprovado;
-  if (ap === 0) {
+  if (ap == 0) {
     return {
       key: "pending",
       label: t("status.pending"),
@@ -292,7 +292,7 @@ export default function Page() {
   /** Skip refetching host/user lists when reopening the panel for the same organization. */
   const panelSelectsPrimedRef = useRef<{ orgId: number } | null>(null);
 
-  const isCondominio = orgTipoNum === 2;
+  const isCondominio = orgTipoNum == 2;
 
   const destinoApi = isCondominio ? 2 : 1;
 
@@ -304,10 +304,10 @@ export default function Page() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as StoredOrg;
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
       const tn = parsed?.tipoNum;
-      setOrgTipoNum(typeof tn === "number" && Number.isFinite(tn) ? tn : null);
+      setOrgTipoNum(typeof tn == "number" && Number.isFinite(tn) ? tn : null);
     } catch {
       // noop
     }
@@ -347,7 +347,7 @@ export default function Page() {
           params: { estado: 1, per_page: 200 },
         });
         const rows = Array.isArray(res.data?.data) ? res.data.data : [];
-        setResidencias(rows.filter((r) => typeof r?.id === "number"));
+        setResidencias(rows.filter((r) => typeof r?.id == "number"));
         setDepartamentos([]);
       } else {
         const res = await http.get(`/departamentos/${organizacaoId}/ativados`);
@@ -405,7 +405,7 @@ export default function Page() {
       const includeDestinations = opts?.includeDestinations ?? false;
       if (!organizacaoId) return;
       const primed = panelSelectsPrimedRef.current;
-      if (!force && primed?.orgId === organizacaoId) return;
+      if (!force && primed?.orgId == organizacaoId) return;
 
       const tasks: Promise<unknown>[] = [fetchAnfitrioes(), fetchAllUsersForSelect()];
       if (includeDestinations) tasks.unshift(fetchDestinations());
@@ -436,7 +436,7 @@ export default function Page() {
       }
       if (filtroData1.trim()) params.data1 = filtroData1.trim();
       if (filtroData2.trim()) params.data2 = filtroData2.trim();
-      if (filtroAprovado === "0" || filtroAprovado === "1" || filtroAprovado === "2") {
+      if (filtroAprovado == "0" || filtroAprovado == "1" || filtroAprovado == "2") {
         params.aprovado = Number(filtroAprovado);
       }
 
@@ -542,7 +542,7 @@ export default function Page() {
     (u?: Utilizador | null) => {
       const raw = u?.tipo;
       if (raw == null) return "—";
-      const tipo = typeof raw === "number" ? raw : Number(raw);
+      const tipo = typeof raw == "number" ? raw : Number(raw);
       if (!Number.isFinite(tipo)) return "—";
       if (tipo >= 1 && tipo <= 7) {
         return t(`visitorsTipoSelect.${tipo}` as "visitorsTipoSelect.1");
@@ -598,12 +598,12 @@ export default function Page() {
 
   const destinoLabel = useCallback(
     (row: AcessoPessoa) => {
-      if (row.destino === 1 && row.destino_id) {
-        const d = departamentos.find((x) => x.id === row.destino_id);
+      if (row.destino == 1 && row.destino_id) {
+        const d = departamentos.find((x) => x.id == row.destino_id);
         return d?.nome ?? `—`;
       }
-      if (row.destino === 2 && row.destino_id) {
-        const r = residencias.find((x) => x.id === row.destino_id);
+      if (row.destino == 2 && row.destino_id) {
+        const r = residencias.find((x) => x.id == row.destino_id);
         if (!r) return `—`;
         const bloco = r.bloco?.designacao ?? r.bloco?.nome ?? "";
         return bloco ? `${r.designacao} (${bloco})` : r.designacao;
@@ -721,7 +721,7 @@ export default function Page() {
       return;
     }
 
-    if (solicitanteMode === "existing") {
+    if (solicitanteMode == "existing") {
       if (!formUserId.trim()) {
         showToast(t("toast.solicitanteRequired"), true);
         return;
@@ -755,11 +755,11 @@ export default function Page() {
       observacoes: formObservacoes.trim() || null,
       motivo: formMotivo.trim() || null,
     };
-    if (formAprovado === "0" || formAprovado === "1" || formAprovado === "2") {
+    if (formAprovado == "0" || formAprovado == "1" || formAprovado == "2") {
       payload.aprovado = Number(formAprovado);
     }
 
-    if (solicitanteMode === "existing") {
+    if (solicitanteMode == "existing") {
       payload.user_id = Number(formUserId);
       payload.documento = documento;
       if (docTipoApi) payload.documento_tipo = docTipoApi;
@@ -786,11 +786,11 @@ export default function Page() {
 
       if (editingId) {
         const res = await http.put<SaveRes>(`${API_PREFIX}/${organizacaoId}/${editingId}`, payload);
-        const novo = res.data?.visitante_novo_registado === true;
+        const novo = res.data?.visitante_novo_registado == true;
         showToast(novo ? t("toast.updatedVisitanteNovo") : t("toast.updated"));
       } else {
         const res = await http.post<SaveRes>(`${API_PREFIX}/${organizacaoId}`, payload);
-        const novo = res.data?.visitante_novo_registado === true;
+        const novo = res.data?.visitante_novo_registado == true;
         showToast(novo ? t("toast.createdVisitanteNovo") : t("toast.created"));
       }
       void fetchAllUsersForSelect();
@@ -845,8 +845,8 @@ export default function Page() {
       showToast(t("toast.deleted"));
       fetchList();
       fetchStats();
-      if (detailRow?.id === id) setDetailRow(null);
-      if (attachmentsAcessoId === id) closeAttachmentsPanel();
+      if (detailRow?.id == id) setDetailRow(null);
+      if (attachmentsAcessoId == id) closeAttachmentsPanel();
     } catch {
       showToast(t("toast.deleteError"), true);
     }
@@ -1079,7 +1079,7 @@ export default function Page() {
                   </tr>
                 </thead>
                 <tbody className="divide-y ca-border">
-                  {list.length === 0 ? (
+                  {list.length == 0 ? (
                     <tr>
                       <td colSpan={13} className="px-4 py-8 text-center ca-muted">
                         {t("table.empty")}
@@ -1171,7 +1171,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
-              {list.length === 0 ? (
+              {list.length == 0 ? (
                 <div className="py-12 text-center text-sm ca-muted">{t("table.empty")}</div>
               ) : (
                 list.map((row) => {
@@ -1425,20 +1425,20 @@ export default function Page() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    className={`flex-1 py-2 rounded-xl text-sm border ${solicitanteMode === "existing" ? "ca-btn" : "border ca-border"}`}
+                    className={`flex-1 py-2 rounded-xl text-sm border ${solicitanteMode == "existing" ? "ca-btn" : "border ca-border"}`}
                     onClick={() => setSolicitanteMode("existing")}
                   >
                     {t("form.solicitanteExisting")}
                   </button>
                   <button
                     type="button"
-                    className={`flex-1 py-2 rounded-xl text-sm border ${solicitanteMode === "visitante" ? "ca-btn" : "border ca-border"}`}
+                    className={`flex-1 py-2 rounded-xl text-sm border ${solicitanteMode == "visitante" ? "ca-btn" : "border ca-border"}`}
                     onClick={() => setSolicitanteMode("visitante")}
                   >
                     {t("form.solicitanteVisitante")}
                   </button>
                 </div>
-                {solicitanteMode === "existing" ? (
+                {solicitanteMode == "existing" ? (
                   <select
                     className="ca-input w-full"
                     value={formUserId}
@@ -1510,7 +1510,7 @@ export default function Page() {
                   value={formDocumentoRef}
                   onChange={(e) => setFormDocumentoRef(e.target.value)}
                   placeholder={t("form.documentRefPlaceholder")}
-                  required={solicitanteMode === "visitante"}
+                  required={solicitanteMode == "visitante"}
                 />
               </div>
 
@@ -1636,7 +1636,7 @@ export default function Page() {
         </div>
       )}
 
-      {attachmentsOpen && attachmentsAcessoId !== null && (
+      {attachmentsOpen && attachmentsAcessoId != null && (
         <div className="fixed top-0 left-0 right-0 bottom-0 z-[110] flex">
           <button
             type="button"
@@ -1688,7 +1688,7 @@ export default function Page() {
                 <div className="flex justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
                 </div>
-              ) : attachmentsImagens.length === 0 ? (
+              ) : attachmentsImagens.length == 0 ? (
                 <p className="text-sm ca-muted text-center py-10">{t("attachments.empty")}</p>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
@@ -1710,10 +1710,10 @@ export default function Page() {
                             type="button"
                             className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-600 text-white shadow-md hover:bg-red-700 disabled:opacity-50"
                             title={t("attachments.remove")}
-                            disabled={attachmentsDeletingId === img.id}
+                            disabled={attachmentsDeletingId == img.id}
                             onClick={() => void handleDeleteAttachmentImage(img.id)}
                           >
-                            {attachmentsDeletingId === img.id ? (
+                            {attachmentsDeletingId == img.id ? (
                               <Loader2 size={14} className="animate-spin" />
                             ) : (
                               <Trash2 size={14} />

@@ -6,12 +6,12 @@ import { Moon, Sun } from "lucide-react";
 type Theme = "light" | "dark";
 
 function applyTheme(theme: Theme) {
-  document.documentElement.classList.toggle("dark", theme === "dark");
+  document.documentElement.classList.toggle("dark", theme == "dark");
 }
 
 function getPreferredTheme(): Theme {
   const saved = localStorage.getItem("ca.theme") as Theme | null;
-  if (saved === "light" || saved === "dark") return saved;
+  if (saved == "light" || saved == "dark") return saved;
 
   const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
   return prefersDark ? "dark" : "light";
@@ -28,7 +28,7 @@ export default function ThemeToggle() {
 
   function toggle() {
     setTheme((t) => {
-      const next = t === "dark" ? "light" : "dark";
+      const next = t == "dark" ? "light" : "dark";
       localStorage.setItem("ca.theme", next);
       applyTheme(next);
       return next;
@@ -37,7 +37,7 @@ export default function ThemeToggle() {
 
   return (
     <button className="ca-icon-btn" onClick={toggle} type="button" title="Alternar tema">
-      {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+      {theme == "dark" ? <Sun size={18} /> : <Moon size={18} />}
     </button>
   );
 }

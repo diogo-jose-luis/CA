@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-/* =======================
+/* ================
    Stats
-======================= */
+================ */
 
 const stats = [
   {
@@ -41,9 +41,9 @@ const stats = [
   },
 ];
 
-/* =======================
+/* ================
    Mock Data
-======================= */
+================ */
 
 const mockData = [
   {
@@ -68,9 +68,9 @@ const mockData = [
   },
 ];
 
-/* =======================
+/* ================
    Status Badge
-======================= */
+================ */
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
@@ -87,9 +87,9 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-/* =======================
+/* ================
    Page
-======================= */
+================ */
 
 export default function Page() {
   const t = useTranslations("packages");

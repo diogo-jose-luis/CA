@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-/* =======================
+/* ================
    Mock data
-======================= */
+================ */
 
 const stats = [
   {
@@ -79,9 +79,9 @@ const mockData = [
   },
 ];
 
-/* =======================
+/* ================
    Helpers
-======================= */
+================ */
 
 function PrioridadeBadge({ prioridade }: { prioridade: string }) {
   const t = useTranslations("notices");
@@ -129,9 +129,9 @@ function EstadoBadge({ estado }: { estado: string }) {
   );
 }
 
-/* =======================
+/* ================
    Page
-======================= */
+================ */
 
 export default function Page() {
   const t = useTranslations("notices");

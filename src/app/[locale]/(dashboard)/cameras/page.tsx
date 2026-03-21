@@ -49,7 +49,7 @@ const DEPARTAMENTOS_API_PREFIX = "/departamentos";
 const ORG_KEY = "ca.selected.organization";
 
 function EstadoBadge({ estado, t }: { estado?: number; t: ReturnType<typeof useTranslations> }) {
-  const active = estado === 1;
+  const active = estado == 1;
   return (
     <span className="flex items-center gap-1 text-xs font-medium">
       <span className={`h-2 w-2 rounded-full ${active ? "bg-green-600" : "bg-red-600"}`} />
@@ -102,7 +102,7 @@ export default function Page() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
     } catch {
       // noop
@@ -156,8 +156,8 @@ export default function Page() {
     try {
       const params: Record<string, string | number> = { per_page: perPage, page: currentPage };
       if (filtroDesignacao.trim()) params.designacao = filtroDesignacao.trim();
-      if (filtroBlocoId !== "all") params.bloco_id = Number(filtroBlocoId);
-      if (filtroEstado === "0" || filtroEstado === "1") params.estado = Number(filtroEstado);
+      if (filtroBlocoId != "all") params.bloco_id = Number(filtroBlocoId);
+      if (filtroEstado == "0" || filtroEstado == "1") params.estado = Number(filtroEstado);
 
       const res = await http.get<CameraListResponse>(`${API_PREFIX}/${organizacaoId}`, { params });
       setList(res.data?.data ?? []);
@@ -280,7 +280,7 @@ export default function Page() {
       fetchList();
     } catch (err: unknown) {
       const msg =
-        err && typeof err === "object" && "response" in err
+        err && typeof err == "object" && "response" in err
           ? (err as { response?: { data?: { errors?: Record<string, string[]> } } }).response?.data?.errors
             ? Object.values((err as { response: { data: { errors: Record<string, string[]> } } }).response.data.errors)
                 .flat()
@@ -313,10 +313,10 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    const endpoint = row.estado === 1 ? "desativar" : "ativar";
+    const endpoint = row.estado == 1 ? "desativar" : "ativar";
     try {
       await http.post(`${API_PREFIX}/${organizacaoId}/${row.id}/${endpoint}`);
-      showToast(row.estado === 1 ? t("toast.deactivated") : t("toast.activated"));
+      showToast(row.estado == 1 ? t("toast.deactivated") : t("toast.activated"));
       fetchList();
     } catch {
       showToast(t("toast.statusError"), true);
@@ -334,7 +334,7 @@ export default function Page() {
   };
 
   const toggleRowSelection = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]));
   };
 
   const handleBulkAction = async (action: "ativar" | "desativar" | "eliminar") => {
@@ -342,11 +342,11 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (selectedIds.length === 0) {
+    if (selectedIds.length == 0) {
       showToast(t("toast.selectAtLeastOne"), true);
       return;
     }
-    if (action === "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
+    if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
     const endpointByAction = {
       ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
@@ -374,8 +374,8 @@ export default function Page() {
 
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const camerasStats = useMemo(() => {
-    const ativos = list.filter((c) => c.estado === 1).length;
-    const inativos = list.filter((c) => c.estado === 0).length;
+    const ativos = list.filter((c) => c.estado == 1).length;
+    const inativos = list.filter((c) => c.estado == 0).length;
     return { total: list.length, ativos, inativos };
   }, [list]);
 
@@ -532,18 +532,18 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
-                  {bulkActionLoading === "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
+                  {bulkActionLoading == "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
                 </button>
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
-                  {bulkActionLoading === "desativar" ? (
+                  {bulkActionLoading == "desativar" ? (
                     <Loader2 size={14} className="animate-spin" />
                   ) : (
                     t("bulk.deactivate")
@@ -552,10 +552,10 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
-                  {bulkActionLoading === "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
+                  {bulkActionLoading == "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
                 </button>
               </div>
             </div>
@@ -610,13 +610,13 @@ export default function Page() {
                       <button
                         type="button"
                         className="ca-icon-btn"
-                        title={cam.estado === 1 ? t("actions.deactivate") : t("actions.activate")}
+                        title={cam.estado == 1 ? t("actions.deactivate") : t("actions.activate")}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleEstado(cam);
                         }}
                       >
-                        {cam.estado === 1 ? <CircleOff size={16} /> : <CheckCircle2 size={16} />}
+                        {cam.estado == 1 ? <CircleOff size={16} /> : <CheckCircle2 size={16} />}
                       </button>
                       <button
                         type="button"
@@ -635,7 +635,7 @@ export default function Page() {
               ))}
             </div>
 
-            {list.length === 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
+            {list.length == 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t ca-border">
                 <span className="text-sm ca-muted">
@@ -715,7 +715,7 @@ export default function Page() {
                 {form.imagemPreviewUrl && (
                   <img src={form.imagemPreviewUrl} alt={t("form.imagePreviewAlt")} className="w-full h-36 object-cover rounded-xl" />
                 )}
-                {editingId !== null && (
+                {editingId != null && (
                   <select
                     className="ca-input"
                     value={form.estado}

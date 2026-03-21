@@ -32,9 +32,9 @@ export default function Page() {
         </p>
       </div>
 
-      {/* =====================
+      {/* ==============
           Dados do Condomínio
-      ===================== */}
+      ============== */}
       <div className="ca-card p-5 space-y-4">
         <div className="flex items-center gap-2 font-medium">
           <Building size={18} />
@@ -49,9 +49,9 @@ export default function Page() {
         </div>
       </div>
 
-      {/* =====================
+      {/* ==============
           Regras de Acesso
-      ===================== */}
+      ============== */}
       <div className="ca-card p-5 space-y-4">
         <div className="flex items-center gap-2 font-medium">
           <Shield size={18} />
@@ -86,9 +86,9 @@ export default function Page() {
         </div>
       </div>
 
-      {/* =====================
+      {/* ==============
           Horários
-      ===================== */}
+      ============== */}
       <div className="ca-card p-5 space-y-4">
         <div className="flex items-center gap-2 font-medium">
           <Clock size={18} />
@@ -106,9 +106,9 @@ export default function Page() {
         </div>
       </div>
 
-      {/* =====================
+      {/* ==============
           Notificações
-      ===================== */}
+      ============== */}
       <div className="ca-card p-5 space-y-4">
         <div className="flex items-center gap-2 font-medium">
           <Bell size={18} />
@@ -133,9 +133,9 @@ export default function Page() {
         </div>
       </div>
 
-      {/* =====================
+      {/* ==============
           Aparência
-      ===================== */}
+      ============== */}
       <div className="ca-card p-5 space-y-4">
         <div className="flex items-center gap-2 font-medium">
           <Palette size={18} />
@@ -158,9 +158,9 @@ export default function Page() {
         </p>
       </div>
 
-      {/* =====================
+      {/* ==============
           Guardar
-      ===================== */}
+      ============== */}
       <div className="flex justify-end">
         <button
           type="submit"

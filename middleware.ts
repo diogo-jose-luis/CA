@@ -28,7 +28,7 @@ export function middleware(req: NextRequest) {
   }
 
   const locale = getLocale(pathname);
-  const isLogin = /^\/(pt|en|fr)\/login\/?$/.test(pathname) || pathname === "/login";
+  const isLogin = /^\/(pt|en|fr)\/login\/?$/.test(pathname) || pathname == "/login";
   const hasSession = Boolean(req.cookies.get(SESSION_COOKIE)?.value);
 
   if (isLogin && hasSession) {

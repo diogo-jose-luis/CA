@@ -25,9 +25,9 @@ import { NIVEL_LABEL } from "@/types/utilizador";
 const API_PREFIX = "/utilizadores";
 const ORG_KEY = "ca.selected.organization";
 
-/* =======================
+/* ================
    Stats (dinâmicas via API)
-======================= */
+================ */
 
 function NivelBadge({ nivel }: { nivel: number }) {
   const label = NIVEL_LABEL[nivel] ?? "n/d";
@@ -96,7 +96,7 @@ export default function Page() {
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
       const id =
-        typeof parsed?.id === "number"
+        typeof parsed?.id == "number"
           ? parsed.id
           : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
@@ -140,7 +140,7 @@ export default function Page() {
       if (filtroEmail.trim()) params.email = filtroEmail.trim();
       if (filtroNivel && ["1", "2", "3", "4"].includes(filtroNivel))
         params.nivel = Number(filtroNivel);
-      if (filtroEstado === "0" || filtroEstado === "1") params.estado = Number(filtroEstado);
+      if (filtroEstado == "0" || filtroEstado == "1") params.estado = Number(filtroEstado);
 
       const res = await http.get<UtilizadorListResponse>(
         `${API_PREFIX}/${organizacaoId}`,
@@ -270,7 +270,7 @@ export default function Page() {
       fetchList();
     } catch (err: unknown) {
       const msg =
-        err && typeof err === "object" && "response" in err
+        err && typeof err == "object" && "response" in err
           ? (err as { response?: { data?: { errors?: Record<string, string[]> } } })
               .response?.data?.errors
             ? Object.values(
@@ -363,7 +363,7 @@ export default function Page() {
 
   const toggleRowSelection = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]
     );
   };
 
@@ -372,11 +372,11 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (selectedIds.length === 0) {
+    if (selectedIds.length == 0) {
       showToast(t("toast.selectAtLeastOne"), true);
       return;
     }
-    if (action === "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
+    if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
     const endpointByAction = {
       ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
@@ -413,8 +413,8 @@ export default function Page() {
     return {
       total: list.length,
       por_nivel: porNivel,
-      ativos: list.filter((u) => u.estado === 1).length,
-      inativos: list.filter((u) => u.estado === 0).length,
+      ativos: list.filter((u) => u.estado == 1).length,
+      inativos: list.filter((u) => u.estado == 0).length,
     };
   }, [list]);
 
@@ -556,11 +556,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "ativar" ? (
+                    {bulkActionLoading == "ativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CheckCircle2 size={14} />
@@ -571,11 +571,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "desativar" ? (
+                    {bulkActionLoading == "desativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CircleOff size={14} />
@@ -586,11 +586,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "eliminar" ? (
+                    {bulkActionLoading == "eliminar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <Trash2 size={14} />
@@ -668,7 +668,7 @@ export default function Page() {
                       <td className="px-4 py-3 ca-muted">{row.email}</td>
                       <td className="px-4 py-3">{row.telefone ?? "—"}</td>
                       <td className="px-4 py-3">
-                        {row.estado === 1 ? (
+                        {row.estado == 1 ? (
                           <span className="text-green-600 dark:text-green-400 text-xs font-medium">
                             {t("status.active")}
                           </span>
@@ -696,7 +696,7 @@ export default function Page() {
                           >
                             <Pencil size={16} />
                           </button>
-                          {row.estado === 1 ? (
+                          {row.estado == 1 ? (
                             <button
                               type="button"
                               className="ca-icon-btn text-amber-600"
@@ -730,7 +730,7 @@ export default function Page() {
                 })}
               </tbody>
             </table>
-            {list.length === 0 && !loading && (
+            {list.length == 0 && !loading && (
               <div className="py-8 text-center ca-muted text-sm">
                 {t("empty")}
               </div>
@@ -819,7 +819,7 @@ export default function Page() {
                   <option value="3">Operador</option>
                   <option value="4">Cliente</option>
                 </select>
-                {editingId !== null && (
+                {editingId != null && (
                   <select
                     className="ca-input"
                     value={form.estado}

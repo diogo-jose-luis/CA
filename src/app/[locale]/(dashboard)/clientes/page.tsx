@@ -61,7 +61,7 @@ export default function Page() {
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
       const id =
-        typeof parsed?.id === "number"
+        typeof parsed?.id == "number"
           ? parsed.id
           : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
@@ -163,7 +163,7 @@ export default function Page() {
     setEditingId(u.id);
     setForm({
       name: u.name ?? "",
-      area: getAreaLabel(u) === "—" ? "" : getAreaLabel(u),
+      area: getAreaLabel(u) == "—" ? "" : getAreaLabel(u),
       email: u.email ?? "",
       telefone: u.telefone ?? "",
       site: u.site ?? "",
@@ -230,7 +230,7 @@ export default function Page() {
       fetchList();
     } catch (err: unknown) {
       const msg =
-        err && typeof err === "object" && "response" in err
+        err && typeof err == "object" && "response" in err
           ? (err as { response?: { data?: { errors?: Record<string, string[]> } } }).response?.data
               ?.errors
             ? Object.values(
@@ -274,7 +274,7 @@ export default function Page() {
 
   const toggleRowSelection = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]
     );
   };
 
@@ -283,11 +283,11 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (selectedIds.length === 0) {
+    if (selectedIds.length == 0) {
       showToast(t("toast.selectAtLeastOne"), true);
       return;
     }
-    if (action === "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
+    if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
     const endpointByAction = {
       ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
@@ -442,11 +442,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "ativar" ? (
+                    {bulkActionLoading == "ativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CheckCircle2 size={14} />
@@ -457,11 +457,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "desativar" ? (
+                    {bulkActionLoading == "desativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CircleOff size={14} />
@@ -472,11 +472,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "eliminar" ? (
+                    {bulkActionLoading == "eliminar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <Trash2 size={14} />
@@ -546,7 +546,7 @@ export default function Page() {
                       <td className="px-4 py-3">{row.telefone ?? "—"}</td>
                       <td className="px-4 py-3 text-blue-600">{row.site ?? "—"}</td>
                       <td className="px-4 py-3">
-                        {row.estado === 1 ? (
+                        {row.estado == 1 ? (
                           <span className="text-green-600 dark:text-green-400 text-xs font-medium">
                             {t("status.active")}
                           </span>
@@ -581,7 +581,7 @@ export default function Page() {
                 })}
               </tbody>
             </table>
-            {list.length === 0 && !loading && (
+            {list.length == 0 && !loading && (
               <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>
             )}
             {totalPages > 1 && (

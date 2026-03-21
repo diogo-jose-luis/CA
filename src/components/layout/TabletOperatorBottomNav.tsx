@@ -7,8 +7,8 @@ import { LayoutDashboard, UsersRound, Truck, AlertTriangle } from "lucide-react"
 import useLocale from "@/hooks/useLocale";
 
 function pathActive(activePath: string, href: string) {
-  if (activePath === href) return true;
-  if (href !== "/" && activePath.startsWith(href + "/")) return true;
+  if (activePath == href) return true;
+  if (href != "/" && activePath.startsWith(href + "/")) return true;
   return false;
 }
 

@@ -38,7 +38,7 @@ export default function DashboardPage() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
     } catch {
       // noop

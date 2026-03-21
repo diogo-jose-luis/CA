@@ -32,7 +32,7 @@ export default function Topbar({
   const [langOpen, setLangOpen] = useState(false);
 
   const [language, setLanguage] = useState(
-    typeof window !== "undefined"
+    typeof window != "undefined"
       ? window.location.pathname.split("/")[1]
       : "pt",
   );
@@ -87,9 +87,9 @@ export default function Topbar({
             onClick={() => setLangOpen((v) => !v)}
             className="flex items-center gap-1 border ca-border rounded-xl px-3 py-2 ca-panel text-sm"
           >
-            {language === "pt" && "🇵🇹"}
-            {language === "en" && "🇬🇧"}
-            {language === "fr" && "🇫🇷"}
+            {language == "pt" && "🇵🇹"}
+            {language == "en" && "🇬🇧"}
+            {language == "fr" && "🇫🇷"}
             <ChevronDown size={14} />
           </button>
 

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Theme tokens ===== */
+/* ==== Theme tokens ==== */
 :root {
   --bg: #ffffff;
   --fg: #101828;
@@ -57,13 +57,13 @@ body {
 /* Sem scroll externo */
 .app-root { height: 100%; }
 
-/* ===== Semantic helpers ===== */
+/* ==== Semantic helpers ==== */
 .ca-panel { background: var(--panel); }
 .ca-panel-alt { background: var(--panel-2); }
 .ca-border { border-color: var(--border); }
 .ca-muted { color: var(--muted); }
 
-/* ===== Components ===== */
+/* ==== Components ==== */
 .ca-card { @apply rounded-2xl border ca-border ca-panel shadow-soft; }
 
 .ca-icon-btn {

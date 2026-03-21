@@ -365,7 +365,7 @@ export default function Page() {
   };
 
   const toggleRowSelection = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]));
   };
 
   const handleBulkAction = async (action: "ativar" | "desativar" | "ocupar" | "libertar" | "eliminar") => {
@@ -552,7 +552,7 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length == 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -563,7 +563,7 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length == 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -574,7 +574,7 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length == 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -585,7 +585,7 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length == 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ocupar")}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -596,7 +596,7 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length == 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("libertar")}
                 >
                   <span className="inline-flex items-center gap-2">

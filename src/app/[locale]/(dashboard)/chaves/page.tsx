@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-/* =======================
+/* ================
    Stats
-======================= */
+================ */
 
 const stats = [
   {
@@ -49,9 +49,9 @@ const stats = [
   },
 ];
 
-/* =======================
+/* ================
    Mock Data
-======================= */
+================ */
 
 const mockData = [
   {
@@ -76,9 +76,9 @@ const mockData = [
   },
 ];
 
-/* =======================
+/* ================
    Page
-======================= */
+================ */
 
 export default function Page() {
   const t = useTranslations("keys");

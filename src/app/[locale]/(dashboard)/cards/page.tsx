@@ -67,9 +67,9 @@ function toDateLabel(date?: string | null): string {
 }
 
 function tipoLabel(tipo?: number | null): string {
-  if (tipo === 1) return "RFID";
-  if (tipo === 2) return "QR";
-  if (tipo === 3) return "Outro";
+  if (tipo == 1) return "RFID";
+  if (tipo == 2) return "QR";
+  if (tipo == 3) return "Outro";
   return "—";
 }
 
@@ -82,12 +82,12 @@ function isExpired(validade?: string | null): boolean {
 
 function EstadoBadge({ estado, t }: { estado?: number; t: ReturnType<typeof useTranslations> }) {
   const color =
-    estado === 1
+    estado == 1
       ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
       : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
   return (
     <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${color}`}>
-      {estado === 1 ? t("status.active") : t("status.inactive")}
+      {estado == 1 ? t("status.active") : t("status.inactive")}
     </span>
   );
 }
@@ -136,7 +136,7 @@ export default function Page() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
     } catch {
       // noop
@@ -163,8 +163,8 @@ export default function Page() {
       if (filtroCodigo.trim()) params.codigo = filtroCodigo.trim();
       if (filtroTitular.trim()) params.titular = filtroTitular.trim();
       if (filtroDescricao.trim()) params.descricao = filtroDescricao.trim();
-      if (filtroTipo === "1" || filtroTipo === "2" || filtroTipo === "3") params.tipo = Number(filtroTipo);
-      if (filtroEstado === "0" || filtroEstado === "1") params.estado = Number(filtroEstado);
+      if (filtroTipo == "1" || filtroTipo == "2" || filtroTipo == "3") params.tipo = Number(filtroTipo);
+      if (filtroEstado == "0" || filtroEstado == "1") params.estado = Number(filtroEstado);
 
       const res = await http.get<CartaoListResponse>(`${API_PREFIX}/${organizacaoId}`, { params });
       setList(res.data?.data ?? []);
@@ -198,7 +198,7 @@ export default function Page() {
     const arr = Array.isArray(root) ? root : Array.isArray(root?.data) ? root.data : [];
     return arr
       .map((u) => u as Partial<Utilizador>)
-      .filter((u): u is Utilizador => typeof u?.id === "number" && typeof u?.name === "string");
+      .filter((u): u is Utilizador => typeof u?.id == "number" && typeof u?.name == "string");
   };
 
   const fetchTitulares = useCallback(async () => {
@@ -219,7 +219,7 @@ export default function Page() {
 
       const merged = new Map<number, Utilizador>();
       for (const res of responses) {
-        if (res.status !== "fulfilled") continue;
+        if (res.status != "fulfilled") continue;
         for (const user of normalizeUsers(res.value.data)) {
           if (!merged.has(user.id)) merged.set(user.id, user);
         }
@@ -250,9 +250,9 @@ export default function Page() {
     row.titular_rel?.name ??
     row.titular_user?.name ??
     row.titularModel?.name ??
-    (typeof row.titular === "string"
+    (typeof row.titular == "string"
       ? row.titular
-      : row.titular && typeof row.titular === "object" && "name" in row.titular
+      : row.titular && typeof row.titular == "object" && "name" in row.titular
         ? (row.titular.name ?? "—")
         : "—");
 
@@ -322,7 +322,7 @@ export default function Page() {
       fetchList();
     } catch (err: unknown) {
       const msg =
-        err && typeof err === "object" && "response" in err
+        err && typeof err == "object" && "response" in err
           ? (err as { response?: { data?: { errors?: Record<string, string[]> } } }).response?.data?.errors
             ? Object.values(
                 (err as { response: { data: { errors: Record<string, string[]> } } }).response.data.errors,
@@ -357,10 +357,10 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    const endpoint = row.estado === 1 ? "desativar" : "ativar";
+    const endpoint = row.estado == 1 ? "desativar" : "ativar";
     try {
       await http.post(`${API_PREFIX}/${organizacaoId}/${row.id}/${endpoint}`);
-      showToast(row.estado === 1 ? t("toast.deactivated") : t("toast.activated"));
+      showToast(row.estado == 1 ? t("toast.deactivated") : t("toast.activated"));
       fetchList();
     } catch {
       showToast(t("toast.statusError"), true);
@@ -378,7 +378,7 @@ export default function Page() {
   };
 
   const toggleRowSelection = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]));
   };
 
   const handleBulkAction = async (action: "ativar" | "desativar" | "eliminar") => {
@@ -386,11 +386,11 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (selectedIds.length === 0) {
+    if (selectedIds.length == 0) {
       showToast(t("toast.selectAtLeastOne"), true);
       return;
     }
-    if (action === "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
+    if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
     const endpointByAction = {
       ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
@@ -418,8 +418,8 @@ export default function Page() {
 
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const cardsStats = useMemo(() => {
-    const ativos = list.filter((c) => c.estado === 1).length;
-    const inativos = list.filter((c) => c.estado === 0).length;
+    const ativos = list.filter((c) => c.estado == 1).length;
+    const inativos = list.filter((c) => c.estado == 0).length;
     const vencidos = list.filter((c) => isExpired(c.validade)).length;
     return { total: list.length, ativos, inativos, vencidos };
   }, [list]);
@@ -555,18 +555,18 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
-                  {bulkActionLoading === "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
+                  {bulkActionLoading == "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
                 </button>
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
-                  {bulkActionLoading === "desativar" ? (
+                  {bulkActionLoading == "desativar" ? (
                     <Loader2 size={14} className="animate-spin" />
                   ) : (
                     t("bulk.deactivate")
@@ -575,10 +575,10 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
-                  {bulkActionLoading === "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
+                  {bulkActionLoading == "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
                 </button>
               </div>
             </div>
@@ -628,10 +628,10 @@ export default function Page() {
                         <button
                           type="button"
                           className="ca-icon-btn"
-                          title={row.estado === 1 ? t("actions.deactivate") : t("actions.activate")}
+                          title={row.estado == 1 ? t("actions.deactivate") : t("actions.activate")}
                           onClick={() => handleToggleEstado(row)}
                         >
-                          {row.estado === 1 ? <CircleOff size={16} /> : <CheckCircle2 size={16} />}
+                          {row.estado == 1 ? <CircleOff size={16} /> : <CheckCircle2 size={16} />}
                         </button>
                         <button
                           type="button"
@@ -648,7 +648,7 @@ export default function Page() {
               </tbody>
             </table>
 
-            {list.length === 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
+            {list.length == 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t ca-border">
                 <span className="text-sm ca-muted">
@@ -751,7 +751,7 @@ export default function Page() {
                   value={form.validade}
                   onChange={(e) => setForm((f) => ({ ...f, validade: e.target.value }))}
                 />
-                {editingId !== null && (
+                {editingId != null && (
                   <select
                     className="ca-input"
                     value={form.estado}

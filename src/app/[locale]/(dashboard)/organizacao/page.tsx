@@ -28,7 +28,7 @@ function EstadoBadge({
   estado: number;
   labels: { ativo: string; desativado: string };
 }) {
-  const isActive = estado === 1;
+  const isActive = estado == 1;
   return (
     <span
       className={
@@ -87,7 +87,7 @@ export default function OrganizacaoPage() {
     setLoading(true);
     try {
       const params =
-        filtroEstado === "all"
+        filtroEstado == "all"
           ? {}
           : { estado: String(filtroEstado) };
       const res = await http.get<{ data: Organizacao[]; total: number }>(
@@ -112,14 +112,14 @@ export default function OrganizacaoPage() {
       const q = filtroSearch.toLowerCase();
       if (!org.designacao?.toLowerCase().includes(q)) return false;
     }
-    if (filtroTipo !== "" && org.tipo !== filtroTipo) return false;
+    if (filtroTipo != "" && org.tipo != filtroTipo) return false;
     return true;
   });
 
   const stats = {
     total: list.length,
-    ativas: list.filter((o) => o.estado === 1).length,
-    desativadas: list.filter((o) => o.estado === 0).length,
+    ativas: list.filter((o) => o.estado == 1).length,
+    desativadas: list.filter((o) => o.estado == 0).length,
   };
 
   const openNew = () => {
@@ -178,7 +178,7 @@ export default function OrganizacaoPage() {
       const formData = new FormData();
       formData.append("designacao", form.designacao.trim());
       formData.append("descricao", form.descricao.trim());
-      formData.append("tipo", form.tipo === "" ? "" : String(form.tipo));
+      formData.append("tipo", form.tipo == "" ? "" : String(form.tipo));
       formData.append("estado", String(form.estado));
       if (form.imagem) formData.append("imagem", form.imagem);
 
@@ -196,7 +196,7 @@ export default function OrganizacaoPage() {
       fetchList();
     } catch (err: unknown) {
       const msg =
-        err && typeof err === "object" && "response" in err
+        err && typeof err == "object" && "response" in err
           ? (err as { response?: { data?: { errors?: Record<string, string[]> } } })
               .response?.data?.errors
             ? Object.values(
@@ -259,7 +259,7 @@ export default function OrganizacaoPage() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === filteredList.length) {
+    if (selectedIds.size == filteredList.length) {
       setSelectedIds(new Set());
     } else {
       setSelectedIds(new Set(filteredList.map((o) => o.id)));
@@ -267,7 +267,7 @@ export default function OrganizacaoPage() {
   };
 
   const bulkActivate = async () => {
-    if (selectedIds.size === 0) return;
+    if (selectedIds.size == 0) return;
     try {
       await http.post("/organizacoes/ativar-bulk", { ids: Array.from(selectedIds) });
       showToast(t("toast.bulkActivated"));
@@ -279,7 +279,7 @@ export default function OrganizacaoPage() {
   };
 
   const bulkDeactivate = async () => {
-    if (selectedIds.size === 0) return;
+    if (selectedIds.size == 0) return;
     try {
       await http.post("/organizacoes/desativar-bulk", { ids: Array.from(selectedIds) });
       showToast(t("toast.bulkDeactivated"));
@@ -291,7 +291,7 @@ export default function OrganizacaoPage() {
   };
 
   const bulkDelete = async () => {
-    if (selectedIds.size === 0) return;
+    if (selectedIds.size == 0) return;
     if (!confirm(t("bulk.eliminar") + "?")) return;
     try {
       await http.post("/organizacoes/eliminar-bulk", { ids: Array.from(selectedIds) });
@@ -375,7 +375,7 @@ export default function OrganizacaoPage() {
           <select
             className="ca-input"
             value={filtroTipo}
-            onChange={(e) => setFiltroTipo(e.target.value === "" ? "" : Number(e.target.value))}
+            onChange={(e) => setFiltroTipo(e.target.value == "" ? "" : Number(e.target.value))}
           >
             <option value="">{t("filters.tipo")}</option>
             <option value={1}>{t("filters.empresa")}</option>
@@ -387,7 +387,7 @@ export default function OrganizacaoPage() {
             value={filtroEstado}
             onChange={(e) =>
               setFiltroEstado(
-                e.target.value === "all" ? "all" : Number(e.target.value) as 0 | 1
+                e.target.value == "all" ? "all" : Number(e.target.value) as 0 | 1
               )
             }
           >
@@ -429,7 +429,7 @@ export default function OrganizacaoPage() {
       <div className="ca-card overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-slate-500">{t("loading")}</div>
-        ) : filteredList.length === 0 ? (
+        ) : filteredList.length == 0 ? (
           <div className="p-8 text-center text-slate-500">{t("empty")}</div>
         ) : (
           <table className="w-full text-sm">
@@ -440,7 +440,7 @@ export default function OrganizacaoPage() {
                     type="checkbox"
                     checked={
                       filteredList.length > 0 &&
-                      selectedIds.size === filteredList.length
+                      selectedIds.size == filteredList.length
                     }
                     onChange={toggleSelectAll}
                     className="rounded border-slate-300"
@@ -515,7 +515,7 @@ export default function OrganizacaoPage() {
                         >
                           <Pencil size={16} />
                         </button>
-                        {row.estado === 1 ? (
+                        {row.estado == 1 ? (
                           <button
                             type="button"
                             className="ca-icon-btn text-amber-600"
@@ -612,7 +612,7 @@ export default function OrganizacaoPage() {
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        tipo: e.target.value === "" ? "" : Number(e.target.value),
+                        tipo: e.target.value == "" ? "" : Number(e.target.value),
                       }))
                     }
                   >
@@ -644,7 +644,7 @@ export default function OrganizacaoPage() {
                   {/* Preview: nova imagem selecionada ou imagem actual ao editar */}
                   {(() => {
                     const editingOrg = editingId
-                      ? list.find((o) => o.id === editingId)
+                      ? list.find((o) => o.id == editingId)
                       : null;
                     const previewUrl =
                       form.imagemPreviewUrl ??

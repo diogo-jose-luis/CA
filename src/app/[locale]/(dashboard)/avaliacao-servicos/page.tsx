@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-/* =======================
+/* ================
    Stats
-======================= */
+================ */
 
 const stats = [
   {
@@ -47,9 +47,9 @@ const stats = [
   },
 ];
 
-/* =======================
+/* ================
    Mock Data
-======================= */
+================ */
 
 const mockData = [
   {
@@ -76,9 +76,9 @@ const mockData = [
   },
 ];
 
-/* =======================
+/* ================
    Rating Stars
-======================= */
+================ */
 
 function Stars({ value }: { value: number }) {
   return (
@@ -95,9 +95,9 @@ function Stars({ value }: { value: number }) {
   );
 }
 
-/* =======================
+/* ================
    Page
-======================= */
+================ */
 
 export default function Page() {
   const t = useTranslations("serviceEvaluation");

@@ -36,19 +36,19 @@ function formatLocalDateTimeForApi(d: Date): string {
 }
 
 function formatSignedPercent(value: number | null): string {
-  if (value === null || Number.isNaN(value)) return "—";
+  if (value == null || Number.isNaN(value)) return "—";
   const sign = value > 0 ? "+" : "";
   return `${sign}${value}%`;
 }
 
 function parseAxiosError(err: unknown, fallback: string): string {
-  if (!err || typeof err !== "object" || !("response" in err)) return fallback;
+  if (!err || typeof err != "object" || !("response" in err)) return fallback;
   const r = (err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } })
     .response;
   const msg = r?.data?.message;
-  if (typeof msg === "string" && msg.trim()) return msg;
+  if (typeof msg == "string" && msg.trim()) return msg;
   const errors = r?.data?.errors;
-  if (errors && typeof errors === "object") {
+  if (errors && typeof errors == "object") {
     const flat = Object.values(errors).flat().filter(Boolean);
     if (flat.length) return flat.join(" ");
   }
@@ -56,7 +56,7 @@ function parseAxiosError(err: unknown, fallback: string): string {
 }
 
 function riskLevelKey(expired: number): "riskLevelLow" | "riskLevelMedium" | "riskLevelHigh" {
-  if (expired === 0) return "riskLevelLow";
+  if (expired == 0) return "riskLevelLow";
   if (expired < 30) return "riskLevelMedium";
   return "riskLevelHigh";
 }
@@ -194,7 +194,7 @@ export default function DashboardCards({
   if (!data) return null;
 
   const trendIcon = (v: number | null) => {
-    if (v === null) return null;
+    if (v == null) return null;
     if (v > 0) return <ArrowUpRight size={16} style={{ color: "var(--warning)" }} />;
     if (v < 0) return <ArrowDownRight size={16} style={{ color: "var(--success)" }} />;
     return null;
@@ -247,10 +247,10 @@ export default function DashboardCards({
           <Clock3 size={18} style={{ color: "var(--brand)" }} />
         </div>
         <div className="text-3xl font-semibold tablet-app:text-4xl mt-2">
-          {data.avgRelease.time === "—" ? "—" : `${data.avgRelease.time} min`}
+          {data.avgRelease.time == "—" ? "—" : `${data.avgRelease.time} min`}
         </div>
         <div className="text-sm ca-muted mt-1">
-          {data.avgRelease.trend === null
+          {data.avgRelease.trend == null
             ? "—"
             : `${formatSignedPercent(data.avgRelease.trend)} ${t("vsPreviousPeriod")}`}
         </div>

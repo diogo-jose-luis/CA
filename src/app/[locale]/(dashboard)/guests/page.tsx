@@ -265,7 +265,7 @@ export default function Page() {
   };
 
   const toggleRowSelection = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]));
   };
 
   const handleBulkAction = async (action: "ativar" | "desativar" | "eliminar") => {
@@ -311,8 +311,8 @@ export default function Page() {
         porDocumento[row.documento] = (porDocumento[row.documento] ?? 0) + 1;
       }
     }
-    const ativos = list.filter((u) => u.estado === 1).length;
-    const inativos = list.filter((u) => u.estado === 0).length;
+    const ativos = list.filter((u) => u.estado == 1).length;
+    const inativos = list.filter((u) => u.estado == 0).length;
     return {
       total: list.length,
       bilhete: porDocumento[1] ?? 0,
@@ -453,11 +453,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "ativar" ? (
+                    {bulkActionLoading == "ativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CheckCircle2 size={14} />
@@ -468,11 +468,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "desativar" ? (
+                    {bulkActionLoading == "desativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CircleOff size={14} />
@@ -483,11 +483,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "eliminar" ? (
+                    {bulkActionLoading == "eliminar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <Trash2 size={14} />
@@ -552,7 +552,7 @@ export default function Page() {
                       <td className="px-4 py-3">{documentLabel(row.documento)}</td>
                       <td className="px-4 py-3 ca-muted">{row.documento_ref ?? "—"}</td>
                       <td className="px-4 py-3">
-                        {row.estado === 1 ? (
+                        {row.estado == 1 ? (
                           <span className="text-green-600 dark:text-green-400 text-xs font-medium">
                             {t("status.active")}
                           </span>
@@ -587,7 +587,7 @@ export default function Page() {
                 })}
               </tbody>
             </table>
-            {list.length === 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
+            {list.length == 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t ca-border">
                 <span className="text-sm ca-muted">

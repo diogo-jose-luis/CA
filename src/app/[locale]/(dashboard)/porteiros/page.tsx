@@ -292,7 +292,7 @@ export default function Page() {
 
   const toggleRowSelection = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]
     );
   };
 
@@ -301,11 +301,11 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (selectedIds.length === 0) {
+    if (selectedIds.length == 0) {
       showToast(t("toast.selectAtLeastOne"), true);
       return;
     }
-    if (action === "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
+    if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
     const endpointByAction = {
       ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
@@ -467,11 +467,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "ativar" ? (
+                    {bulkActionLoading == "ativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CheckCircle2 size={14} />
@@ -482,11 +482,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "desativar" ? (
+                    {bulkActionLoading == "desativar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <CircleOff size={14} />
@@ -497,11 +497,11 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {bulkActionLoading === "eliminar" ? (
+                    {bulkActionLoading == "eliminar" ? (
                       <Loader2 size={14} className="animate-spin" />
                     ) : (
                       <Trash2 size={14} />
@@ -581,7 +581,7 @@ export default function Page() {
                         {row.documento_ref ?? "—"}
                       </td>
                       <td className="px-4 py-3">
-                        {row.estado === 1 ? (
+                        {row.estado == 1 ? (
                           <span className="text-green-600 dark:text-green-400 text-xs font-medium">
                             {t("status.active")}
                           </span>

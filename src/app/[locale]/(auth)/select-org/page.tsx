@@ -112,9 +112,9 @@ export default function SelectOrganizationPage() {
             onClick={() => setLangOpen((v) => !v)}
             className="flex items-center gap-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl px-3 py-2 text-sm backdrop-blur-md transition-all"
           >
-            {locale === "pt" && "🇵🇹"}
-            {locale === "en" && "🇬🇧"}
-            {locale === "fr" && "🇫🇷"}
+            {locale == "pt" && "🇵🇹"}
+            {locale == "en" && "🇬🇧"}
+            {locale == "fr" && "🇫🇷"}
             <ChevronDown size={14} />
           </button>
           {langOpen && (
@@ -180,14 +180,14 @@ export default function SelectOrganizationPage() {
         <div className="text-center text-white/70 py-12">
           {t("loading")}
         </div>
-      ) : organizations.length === 0 ? (
+      ) : organizations.length == 0 ? (
         <div className="text-center text-white/70 py-12">
           {t("empty")}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {organizations.map((org) => {
-            const isLoading = loadingId === org.id;
+            const isLoading = loadingId == org.id;
             const tipoLabel =
               org.tipo != null ? TIPO_MAP[org.tipo] ?? "Outro" : "Outro";
             const logotipoUrl = buildImageUrl(org);
@@ -233,7 +233,7 @@ export default function SelectOrganizationPage() {
                     )}
                   </div>
                   <div className="h-11 w-11 rounded-xl flex items-center justify-center bg-white/15">
-                    {tipoLabel === "Empresa" ? (
+                    {tipoLabel == "Empresa" ? (
                       <Building2 size={18} className="text-white/80" />
                     ) : (
                       <Home size={18} className="text-white/80" />

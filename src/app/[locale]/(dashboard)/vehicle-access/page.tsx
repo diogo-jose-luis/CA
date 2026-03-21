@@ -47,11 +47,11 @@ function visitanteTipoFormValue(tipo: number | null | undefined): string {
 function inferDocumentUi(row: AcessoVeiculo): DocumentUiKey {
   const d = row.documento ?? row.condutor?.documento ?? null;
   const tipo = (row.documento_tipo ?? "").trim().toLowerCase();
-  if (d === 1) return "bi";
-  if (d === 2) return "passport";
-  if (d === 3) {
-    if (tipo === DOC_TIPO_CARTA.toLowerCase() || /carta|condu|driving|permis|drive/.test(tipo)) return "carta";
-    if (tipo === DOC_TIPO_OUTRO.toLowerCase()) return "outro";
+  if (d == 1) return "bi";
+  if (d == 2) return "passport";
+  if (d == 3) {
+    if (tipo == DOC_TIPO_CARTA.toLowerCase() || /carta|condu|driving|permis|drive/.test(tipo)) return "carta";
+    if (tipo == DOC_TIPO_OUTRO.toLowerCase()) return "outro";
     return "outro";
   }
   if (/pass|passeport/i.test(tipo)) return "passport";
@@ -120,7 +120,7 @@ function localDateTimeToApi(value: string): string {
 }
 
 function parseApiErrors(err: unknown, fallback: string): string {
-  if (err && typeof err === "object" && "response" in err) {
+  if (err && typeof err == "object" && "response" in err) {
     const data = (err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } })
       .response?.data;
     if (data?.errors) {
@@ -128,7 +128,7 @@ function parseApiErrors(err: unknown, fallback: string): string {
         .flat()
         .join(" ");
     }
-    if (typeof data?.message === "string") return data.message;
+    if (typeof data?.message == "string") return data.message;
   }
   return fallback;
 }
@@ -148,19 +148,19 @@ function parseLookupItems(payload: unknown): LookupItem[] {
         designacao?: string;
         descricao?: string;
       };
-      const id = typeof raw.id === "number" ? raw.id : Number(raw.id);
+      const id = typeof raw.id == "number" ? raw.id : Number(raw.id);
       const nome =
-        typeof raw.designacao === "string"
+        typeof raw.designacao == "string"
           ? raw.designacao.trim()
-          : typeof raw.nome === "string"
+          : typeof raw.nome == "string"
             ? raw.nome.trim()
-            : typeof raw.descricao === "string"
+            : typeof raw.descricao == "string"
               ? raw.descricao.trim()
               : "";
       if (!Number.isFinite(id) || id <= 0 || !nome) return null;
       return { id, nome };
     })
-    .filter((v): v is LookupItem => v !== null);
+    .filter((v): v is LookupItem => v != null);
 }
 
 async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Promise<Utilizador[]> {
@@ -172,7 +172,7 @@ async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Pro
           params: { per_page: 100, page: 1 },
         });
         for (const u of res.data?.data ?? []) {
-          if (u?.id && typeof u.id === "number") map.set(u.id, u);
+          if (u?.id && typeof u.id == "number") map.set(u.id, u);
         }
       } catch {
         /* ignore */
@@ -215,19 +215,19 @@ function aprovadoRowStyle(
   aprovado: number | null | undefined,
   t: (k: string) => string,
 ): { label: string; className: string } {
-  if (aprovado === 0) {
+  if (aprovado == 0) {
     return {
       label: t("aprovado.0"),
       className: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
     };
   }
-  if (aprovado === 1) {
+  if (aprovado == 1) {
     return {
       label: t("aprovado.1"),
       className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
     };
   }
-  if (aprovado === 2) {
+  if (aprovado == 2) {
     return {
       label: t("aprovado.2"),
       className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
@@ -312,7 +312,7 @@ export default function Page() {
   /** Skip refetching host/user lists when reopening the panel for the same organization. */
   const panelSelectsPrimedRef = useRef<{ orgId: number } | null>(null);
 
-  const isCondominio = orgTipoNum === 2;
+  const isCondominio = orgTipoNum == 2;
   const destinoApi = isCondominio ? 2 : 1;
 
   const canEdit = authUser && [1, 2, 3].includes(Number(authUser.nivel));
@@ -323,10 +323,10 @@ export default function Page() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as StoredOrg;
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
       const tn = parsed?.tipoNum;
-      setOrgTipoNum(typeof tn === "number" && Number.isFinite(tn) ? tn : null);
+      setOrgTipoNum(typeof tn == "number" && Number.isFinite(tn) ? tn : null);
     } catch {
       // noop
     }
@@ -366,7 +366,7 @@ export default function Page() {
           params: { estado: 1, per_page: 200 },
         });
         const rows = Array.isArray(res.data?.data) ? res.data.data : [];
-        setResidencias(rows.filter((r) => typeof r?.id === "number"));
+        setResidencias(rows.filter((r) => typeof r?.id == "number"));
         setDepartamentos([]);
       } else {
         const res = await http.get(`/departamentos/${organizacaoId}/ativados`);
@@ -424,7 +424,7 @@ export default function Page() {
       const includeDestinations = opts?.includeDestinations ?? false;
       if (!organizacaoId) return;
       const primed = panelSelectsPrimedRef.current;
-      if (!force && primed?.orgId === organizacaoId) return;
+      if (!force && primed?.orgId == organizacaoId) return;
 
       const tasks: Promise<unknown>[] = [fetchAnfitrioes(), fetchAllUsersForSelect()];
       if (includeDestinations) tasks.unshift(fetchDestinations());
@@ -448,11 +448,11 @@ export default function Page() {
         page: currentPage,
       };
       if (filtroMatricula.trim()) params.matricula = filtroMatricula.trim();
-      if (filtroTipoVeiculo === "1" || filtroTipoVeiculo === "2" || filtroTipoVeiculo === "3") {
+      if (filtroTipoVeiculo == "1" || filtroTipoVeiculo == "2" || filtroTipoVeiculo == "3") {
         params.tipo_veiculo = Number(filtroTipoVeiculo);
       }
-      if (filtroTemCarga === "1") params.tem_carga = true;
-      if (filtroTemCarga === "0") params.tem_carga = false;
+      if (filtroTemCarga == "1") params.tem_carga = true;
+      if (filtroTemCarga == "0") params.tem_carga = false;
       if (filtroDestinoId.trim()) {
         params.destino = destinoApi;
         params.destino_id = Number(filtroDestinoId);
@@ -560,7 +560,7 @@ export default function Page() {
     (u?: Utilizador | null) => {
       const raw = u?.tipo;
       if (raw == null) return "—";
-      const tipo = typeof raw === "number" ? raw : Number(raw);
+      const tipo = typeof raw == "number" ? raw : Number(raw);
       if (!Number.isFinite(tipo)) return "—";
       if (tipo >= 1 && tipo <= 7) {
         return t(`visitorsTipoSelect.${tipo}` as "visitorsTipoSelect.1");
@@ -572,9 +572,9 @@ export default function Page() {
 
   const tipoVeiculoLabel = useCallback(
     (n: number | null | undefined) => {
-      if (n === 1) return t("types.light");
-      if (n === 2) return t("types.heavy");
-      if (n === 3) return t("types.bus");
+      if (n == 1) return t("types.light");
+      if (n == 2) return t("types.heavy");
+      if (n == 3) return t("types.bus");
       return "—";
     },
     [t],
@@ -631,12 +631,12 @@ export default function Page() {
 
   const destinoLabel = useCallback(
     (row: AcessoVeiculo) => {
-      if (row.destino === 1 && row.destino_id) {
-        const d = departamentos.find((x) => x.id === row.destino_id);
+      if (row.destino == 1 && row.destino_id) {
+        const d = departamentos.find((x) => x.id == row.destino_id);
         return d?.nome ?? "—";
       }
-      if (row.destino === 2 && row.destino_id) {
-        const r = residencias.find((x) => x.id === row.destino_id);
+      if (row.destino == 2 && row.destino_id) {
+        const r = residencias.find((x) => x.id == row.destino_id);
         if (!r) return "—";
         const bloco = r.bloco?.designacao ?? r.bloco?.nome ?? "";
         return bloco ? `${r.designacao} (${bloco})` : r.designacao;
@@ -724,7 +724,7 @@ export default function Page() {
       }
     } else setFormSaida("");
     const ap = row.aprovado;
-    setFormAprovado(ap === 0 || ap === 1 || ap === 2 ? String(ap) : "1");
+    setFormAprovado(ap == 0 || ap == 1 || ap == 2 ? String(ap) : "1");
     setFormMotivo(row.motivo?.trim() ?? "");
     setFormObservacoes(row.observacoes?.trim() ?? "");
     setShowPanel(true);
@@ -764,7 +764,7 @@ export default function Page() {
       return;
     }
 
-    if (condutorMode === "existing") {
+    if (condutorMode == "existing") {
       if (!formCondutorId.trim()) {
         showToast(t("toast.condutorRequired"), true);
         return;
@@ -798,12 +798,12 @@ export default function Page() {
       matricula: formMatricula.trim() || null,
       tipo_veiculo: Number(formTipoVeiculo) || 1,
       tem_carga: formTemCarga,
-      aprovado: Number(formAprovado) === 0 || Number(formAprovado) === 1 || Number(formAprovado) === 2 ? Number(formAprovado) : 1,
+      aprovado: Number(formAprovado) == 0 || Number(formAprovado) == 1 || Number(formAprovado) == 2 ? Number(formAprovado) : 1,
       motivo: formMotivo.trim() || null,
       observacoes: formObservacoes.trim() || null,
     };
 
-    if (condutorMode === "existing") {
+    if (condutorMode == "existing") {
       payload.condutor_id = Number(formCondutorId);
       payload.documento = documento;
       if (docTipoApi) payload.documento_tipo = docTipoApi;
@@ -830,11 +830,11 @@ export default function Page() {
 
       if (editingId) {
         const res = await http.put<SaveRes>(`${API_PREFIX}/${organizacaoId}/${editingId}`, payload);
-        const novo = res.data?.visitante_novo_registado === true;
+        const novo = res.data?.visitante_novo_registado == true;
         showToast(novo ? t("toast.updatedVisitanteNovo") : t("toast.updated"));
       } else {
         const res = await http.post<SaveRes>(`${API_PREFIX}/${organizacaoId}`, payload);
-        const novo = res.data?.visitante_novo_registado === true;
+        const novo = res.data?.visitante_novo_registado == true;
         showToast(novo ? t("toast.createdVisitanteNovo") : t("toast.created"));
       }
       void fetchAllUsersForSelect();
@@ -887,8 +887,8 @@ export default function Page() {
       showToast(t("toast.deleted"));
       fetchList();
       fetchStats();
-      if (detailRow?.id === id) setDetailRow(null);
-      if (attachmentsAcessoId === id) closeAttachmentsPanel();
+      if (detailRow?.id == id) setDetailRow(null);
+      if (attachmentsAcessoId == id) closeAttachmentsPanel();
     } catch {
       showToast(t("toast.deleteError"), true);
     }
@@ -1129,7 +1129,7 @@ export default function Page() {
                   </tr>
                 </thead>
                 <tbody className="divide-y ca-border">
-                  {list.length === 0 ? (
+                  {list.length == 0 ? (
                     <tr>
                       <td colSpan={14} className="px-4 py-8 text-center ca-muted">
                         {t("table.empty")}
@@ -1231,7 +1231,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
-              {list.length === 0 ? (
+              {list.length == 0 ? (
                 <div className="py-12 text-center text-sm ca-muted">{t("table.empty")}</div>
               ) : (
                 list.map((row) => {
@@ -1613,20 +1613,20 @@ export default function Page() {
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      className={`flex-1 py-2 rounded-xl text-sm border ${condutorMode === "existing" ? "ca-btn" : "border ca-border"}`}
+                      className={`flex-1 py-2 rounded-xl text-sm border ${condutorMode == "existing" ? "ca-btn" : "border ca-border"}`}
                       onClick={() => setCondutorMode("existing")}
                     >
                       {t("form.condutorExisting")}
                     </button>
                     <button
                       type="button"
-                      className={`flex-1 py-2 rounded-xl text-sm border ${condutorMode === "visitante" ? "ca-btn" : "border ca-border"}`}
+                      className={`flex-1 py-2 rounded-xl text-sm border ${condutorMode == "visitante" ? "ca-btn" : "border ca-border"}`}
                       onClick={() => setCondutorMode("visitante")}
                     >
                       {t("form.condutorVisitante")}
                     </button>
                   </div>
-                  {condutorMode === "existing" ? (
+                  {condutorMode == "existing" ? (
                     <select
                       className="ca-input w-full"
                       value={formCondutorId}
@@ -1698,7 +1698,7 @@ export default function Page() {
                     value={formDocumentoRef}
                     onChange={(e) => setFormDocumentoRef(e.target.value)}
                     placeholder={t("form.documentRefPlaceholder")}
-                    required={condutorMode === "visitante"}
+                    required={condutorMode == "visitante"}
                   />
                 </div>
 
@@ -1786,7 +1786,7 @@ export default function Page() {
                 <div className="flex justify-center py-8">
                   <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
                 </div>
-              ) : attachmentsImagens.length === 0 ? (
+              ) : attachmentsImagens.length == 0 ? (
                 <p className="text-sm ca-muted py-4">{t("attachments.empty")}</p>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
@@ -1803,10 +1803,10 @@ export default function Page() {
                             type="button"
                             className="absolute top-2 right-2 ca-icon-btn bg-white/90 dark:bg-slate-900/90 opacity-0 group-hover:opacity-100 transition-opacity"
                             title={t("attachments.remove")}
-                            disabled={attachmentsDeletingId === img.id}
+                            disabled={attachmentsDeletingId == img.id}
                             onClick={() => void handleDeleteAttachmentImage(img.id)}
                           >
-                            {attachmentsDeletingId === img.id ? (
+                            {attachmentsDeletingId == img.id ? (
                               <Loader2 size={16} className="animate-spin" />
                             ) : (
                               <Trash2 size={16} />

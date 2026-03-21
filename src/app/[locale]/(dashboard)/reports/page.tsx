@@ -16,9 +16,9 @@ import { useTranslations } from "next-intl";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-/* =======================
+/* ================
    Mock data
-======================= */
+================ */
 
 const stats = [
   {
@@ -124,9 +124,9 @@ const noticesData = [
   ["Recolha de lixo", "Informação", "Normal", "01/02/2026"],
 ];
 
-/* =======================
+/* ================
    Page
-======================= */
+================ */
 
 export default function Page() {
   const t = useTranslations("reports");
@@ -312,15 +312,15 @@ export default function Page() {
                     className="ca-icon-btn"
                     title={t("actions.generatePDF")}
                     onClick={() => {
-                      if (rep.nome === "Relatório de Acesso de Pessoas") {
+                      if (rep.nome == "Relatório de Acesso de Pessoas") {
                         exportPeopleAccess();
                       }
 
-                      if (rep.nome === "Relatório de Acesso de Veículos") {
+                      if (rep.nome == "Relatório de Acesso de Veículos") {
                         exportVehicleAccess();
                       }
 
-                      if (rep.nome === "Relatório de Avisos Publicados") {
+                      if (rep.nome == "Relatório de Avisos Publicados") {
                         exportNotices();
                       }
                     }}

@@ -34,7 +34,7 @@ const NIVEIS_ELIMINAR = [1, 2];
 type LookupItem = { id: number; nome: string };
 
 function parseApiErrors(err: unknown, fallback: string): string {
-  if (err && typeof err === "object" && "response" in err) {
+  if (err && typeof err == "object" && "response" in err) {
     const data = (err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } })
       .response?.data;
     if (data?.errors) {
@@ -42,7 +42,7 @@ function parseApiErrors(err: unknown, fallback: string): string {
         .flat()
         .join(" ");
     }
-    if (typeof data?.message === "string") return data.message;
+    if (typeof data?.message == "string") return data.message;
   }
   return fallback;
 }
@@ -62,19 +62,19 @@ function parseLookupItems(payload: unknown): LookupItem[] {
         designacao?: string;
         descricao?: string;
       };
-      const id = typeof raw.id === "number" ? raw.id : Number(raw.id);
+      const id = typeof raw.id == "number" ? raw.id : Number(raw.id);
       const nome =
-        typeof raw.designacao === "string"
+        typeof raw.designacao == "string"
           ? raw.designacao.trim()
-          : typeof raw.nome === "string"
+          : typeof raw.nome == "string"
             ? raw.nome.trim()
-            : typeof raw.descricao === "string"
+            : typeof raw.descricao == "string"
               ? raw.descricao.trim()
               : "";
       if (!Number.isFinite(id) || id <= 0 || !nome) return null;
       return { id, nome };
     })
-    .filter((v): v is LookupItem => v !== null);
+    .filter((v): v is LookupItem => v != null);
 }
 
 function toDatetimeLocalValue(iso: string): string {
@@ -184,7 +184,7 @@ export default function Page() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
     } catch {
       // noop
@@ -255,13 +255,13 @@ export default function Page() {
         page: currentPage,
       };
       if (filters.q.trim()) params.q = filters.q.trim();
-      if (filters.tipo === "1" || filters.tipo === "2" || filters.tipo === "3") params.tipo = Number(filters.tipo);
-      if (filters.categoria === "1" || filters.categoria === "2" || filters.categoria === "3" || filters.categoria === "4") {
+      if (filters.tipo == "1" || filters.tipo == "2" || filters.tipo == "3") params.tipo = Number(filters.tipo);
+      if (filters.categoria == "1" || filters.categoria == "2" || filters.categoria == "3" || filters.categoria == "4") {
         params.categoria = Number(filters.categoria);
       }
-      if (filters.periodo === "1" || filters.periodo === "2") params.periodo = Number(filters.periodo);
-      if (filters.estado === "1" || filters.estado === "2") params.estado = Number(filters.estado);
-      if (filters.nivel === "1" || filters.nivel === "2" || filters.nivel === "3") params.nivel = Number(filters.nivel);
+      if (filters.periodo == "1" || filters.periodo == "2") params.periodo = Number(filters.periodo);
+      if (filters.estado == "1" || filters.estado == "2") params.estado = Number(filters.estado);
+      if (filters.nivel == "1" || filters.nivel == "2" || filters.nivel == "3") params.nivel = Number(filters.nivel);
       if (filters.local) params.local = Number(filters.local);
       if (filters.data1) params.data1 = filters.data1;
       if (filters.data2) params.data2 = filters.data2;
@@ -288,45 +288,45 @@ export default function Page() {
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / perPage) || 1), [total, perPage]);
 
   const riskClass = (nivel: number) => {
-    if (nivel === 1) return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
-    if (nivel === 2) return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    if (nivel == 1) return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    if (nivel == 2) return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
     return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
   };
 
   const riskLabel = (nivel: number) => {
-    if (nivel === 1) return t("riskLevels.high");
-    if (nivel === 2) return t("riskLevels.medium");
+    if (nivel == 1) return t("riskLevels.high");
+    if (nivel == 2) return t("riskLevels.medium");
     return t("riskLevels.low");
   };
 
   const tipoLabel = (tipo: number) => {
-    if (tipo === 1) return t("types.client");
-    if (tipo === 2) return t("types.security");
+    if (tipo == 1) return t("types.client");
+    if (tipo == 2) return t("types.security");
     return t("types.internal");
   };
 
   const categoriaLabel = (categoria: number) => {
-    if (categoria === 1) return t("categories.accident");
-    if (categoria === 2) return t("categories.theft");
-    if (categoria === 3) return t("categories.robbery");
+    if (categoria == 1) return t("categories.accident");
+    if (categoria == 2) return t("categories.theft");
+    if (categoria == 3) return t("categories.robbery");
     return t("categories.other");
   };
 
-  const periodoLabel = (periodo: number) => (periodo === 2 ? t("period.night") : t("period.day"));
+  const periodoLabel = (periodo: number) => (periodo == 2 ? t("period.night") : t("period.day"));
 
-  const estadoLabel = (estado: number) => (estado === 2 ? t("states.closed") : t("states.open"));
+  const estadoLabel = (estado: number) => (estado == 2 ? t("states.closed") : t("states.open"));
 
   const estadoBadgeClass = (estado: number) =>
-    estado === 2
+    estado == 2
       ? "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
       : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
 
   const localLabel = (row: Ocorrencia) => {
     const d = row.departamento;
     const name = d?.designacao ?? d?.nome;
-    if (typeof name === "string" && name.trim()) return name.trim();
+    if (typeof name == "string" && name.trim()) return name.trim();
     if (row.local != null) {
-      const dep = departamentos.find((x) => x.id === row.local);
+      const dep = departamentos.find((x) => x.id == row.local);
       if (dep) return dep.nome;
       return `#${row.local}`;
     }
@@ -398,7 +398,7 @@ export default function Page() {
       showToast(t("imagesPanel.uploadSuccess"));
       await fetchComprovantos(imagesPanelRow.id);
       fetchList();
-      if (viewing?.id === imagesPanelRow.id) {
+      if (viewing?.id == imagesPanelRow.id) {
         const res = await http.get<OcorrenciaShowResponse>(`${API_PREFIX}/${organizacaoId}/${imagesPanelRow.id}`);
         if (res.data?.data) setViewing(res.data.data);
       }
@@ -415,9 +415,9 @@ export default function Page() {
     try {
       await http.delete(`${API_PREFIX}/${organizacaoId}/${imagesPanelRow.id}/imagens/${imagemId}`);
       showToast(t("imagesPanel.deleteSuccess"));
-      setComprovantoList((prev) => prev.filter((i) => i.id !== imagemId));
+      setComprovantoList((prev) => prev.filter((i) => i.id != imagemId));
       fetchList();
-      if (viewing?.id === imagesPanelRow.id) {
+      if (viewing?.id == imagesPanelRow.id) {
         const res = await http.get<OcorrenciaShowResponse>(`${API_PREFIX}/${organizacaoId}/${imagesPanelRow.id}`);
         if (res.data?.data) setViewing(res.data.data);
       }
@@ -559,8 +559,8 @@ export default function Page() {
     try {
       await http.delete(`${API_PREFIX}/${organizacaoId}/${id}`);
       showToast(t("toast.deleted"));
-      if (viewing?.id === id) setViewing(null);
-      if (imagesPanelRow?.id === id) closeImagesPanel();
+      if (viewing?.id == id) setViewing(null);
+      if (imagesPanelRow?.id == id) closeImagesPanel();
       fetchList();
       fetchStats();
     } catch (err: unknown) {
@@ -868,7 +868,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
-              {list.length === 0 ? (
+              {list.length == 0 ? (
                 <div className="py-12 text-center text-sm ca-muted">{t("empty")}</div>
               ) : (
                 list.map((row) => {
@@ -984,7 +984,7 @@ export default function Page() {
               )}
             </div>
 
-            {list.length === 0 && (
+            {list.length == 0 && (
               <div className="hidden border-t ca-border py-8 text-center text-sm ca-muted desktop-auth:block">
                 {t("empty")}
               </div>
@@ -1188,7 +1188,7 @@ export default function Page() {
                   <div className="flex justify-center py-10">
                     <Loader2 className="h-8 w-8 animate-spin ca-muted" />
                   </div>
-                ) : comprovantoList.length === 0 ? (
+                ) : comprovantoList.length == 0 ? (
                   <p className="text-sm ca-muted py-4">{t("imagesPanel.empty")}</p>
                 ) : (
                   <ul className="space-y-3">
@@ -1219,10 +1219,10 @@ export default function Page() {
                               type="button"
                               className="ca-icon-btn text-red-600 shrink-0"
                               title={t("actions.delete")}
-                              disabled={deletingComprovantoId !== null}
+                              disabled={deletingComprovantoId != null}
                               onClick={() => void handleDeleteComprovanto(img.id)}
                             >
-                              {deletingComprovantoId === img.id ? (
+                              {deletingComprovantoId == img.id ? (
                                 <Loader2 size={16} className="animate-spin" />
                               ) : (
                                 <Trash2 size={16} />
@@ -1370,7 +1370,7 @@ export default function Page() {
                 />
                 <p className="text-xs ca-muted">{t("form.imageHint")}</p>
 
-                {editingId === null && (
+                {editingId == null && (
                   <>
                     <label className="block text-xs ca-muted">{t("form.comprovantos")}</label>
                     <input

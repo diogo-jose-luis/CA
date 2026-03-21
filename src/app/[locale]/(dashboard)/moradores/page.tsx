@@ -89,7 +89,7 @@ export default function Page() {
       const raw = localStorage.getItem(ORG_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as { id?: number | string };
-      const id = typeof parsed?.id === "number" ? parsed.id : Number(parsed?.id);
+      const id = typeof parsed?.id == "number" ? parsed.id : Number(parsed?.id);
       if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
     } catch {
       // noop
@@ -132,7 +132,7 @@ export default function Page() {
         params: { estado: 1, per_page: 100 },
       });
       const rows = Array.isArray(res.data?.data) ? res.data.data : [];
-      setResidenciasAtivas(rows.filter((r) => typeof r?.id === "number"));
+      setResidenciasAtivas(rows.filter((r) => typeof r?.id == "number"));
     } catch {
       setResidenciasAtivas([]);
     } finally {
@@ -158,7 +158,7 @@ export default function Page() {
       if (filtroNome.trim()) params.nome = filtroNome.trim();
       if (filtroEmail.trim()) params.email = filtroEmail.trim();
       if (filtroResidenciaId.trim()) params.residencia_id = Number(filtroResidenciaId);
-      if (filtroEstado === "0" || filtroEstado === "1") params.estado = Number(filtroEstado);
+      if (filtroEstado == "0" || filtroEstado == "1") params.estado = Number(filtroEstado);
 
       const res = await http.get<UtilizadorListResponse>(`${API_PREFIX}/${organizacaoId}`, { params });
       setList((res.data?.data ?? []) as MoradorUser[]);
@@ -279,7 +279,7 @@ export default function Page() {
       fetchList();
     } catch (err: unknown) {
       const msg =
-        err && typeof err === "object" && "response" in err
+        err && typeof err == "object" && "response" in err
           ? (err as { response?: { data?: { errors?: Record<string, string[]> } } }).response?.data
               ?.errors
             ? Object.values(
@@ -322,7 +322,7 @@ export default function Page() {
   };
 
   const toggleRowSelection = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x != id) : [...prev, id]));
   };
 
   const handleBulkAction = async (action: "ativar" | "desativar" | "eliminar") => {
@@ -330,11 +330,11 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (selectedIds.length === 0) {
+    if (selectedIds.length == 0) {
       showToast(t("toast.selectAtLeastOne"), true);
       return;
     }
-    if (action === "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
+    if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
     const endpointByAction = {
       ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
@@ -362,8 +362,8 @@ export default function Page() {
 
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const cardsStats = useMemo(() => {
-    const ativos = list.filter((u) => u.estado === 1).length;
-    const inativos = list.filter((u) => u.estado === 0).length;
+    const ativos = list.filter((u) => u.estado == 1).length;
+    const inativos = list.filter((u) => u.estado == 0).length;
     const comResidencia = list.filter((u) => u.morador?.residencia_id).length;
     return {
       total: list.length,
@@ -496,26 +496,26 @@ export default function Page() {
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("ativar")}
                 >
-                  {bulkActionLoading === "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
+                  {bulkActionLoading == "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
                 </button>
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("desativar")}
                 >
-                  {bulkActionLoading === "desativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.deactivate")}
+                  {bulkActionLoading == "desativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.deactivate")}
                 </button>
                 <button
                   type="button"
                   className="ca-btn text-sm"
-                  disabled={selectedIds.length === 0 || bulkActionLoading !== null}
+                  disabled={selectedIds.length == 0 || bulkActionLoading != null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
-                  {bulkActionLoading === "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
+                  {bulkActionLoading == "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
                 </button>
               </div>
             </div>
@@ -579,7 +579,7 @@ export default function Page() {
                       <td className="px-4 py-3">{getResidenciaLabel(row)}</td>
                       <td className="px-4 py-3">{getBlocoLabel(residencia)}</td>
                       <td className="px-4 py-3">
-                        {row.estado === 1 ? (
+                        {row.estado == 1 ? (
                           <span className="text-green-600 dark:text-green-400 text-xs font-medium">
                             {t("status.active")}
                           </span>
@@ -614,7 +614,7 @@ export default function Page() {
                 })}
               </tbody>
             </table>
-            {list.length === 0 && !loading && (
+            {list.length == 0 && !loading && (
               <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>
             )}
             {totalPages > 1 && (
@@ -689,11 +689,11 @@ export default function Page() {
                   <option value="">{t("form.residencePlaceholder")}</option>
                   {residenciasAtivas.map((r) => (
                     <option key={r.id} value={r.id}>
-                      {(r.designacao ?? `#${r.id}`) + (getBlocoLabel(r) !== "—" ? ` - ${getBlocoLabel(r)}` : "")}
+                      {(r.designacao ?? `#${r.id}`) + (getBlocoLabel(r) != "—" ? ` - ${getBlocoLabel(r)}` : "")}
                     </option>
                   ))}
                 </select>
-                {editingId !== null && (
+                {editingId != null && (
                   <select
                     className="ca-input"
                     value={form.estado}

@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setData(null);
       setStatus("unauthenticated");
       const url = options?.callbackUrl ?? "/pt/login";
-      if (typeof window !== "undefined") window.location.href = url;
+      if (typeof window != "undefined") window.location.href = url;
     },
     []
   );
