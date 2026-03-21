@@ -16,6 +16,10 @@ function getLocale(pathname: string): string {
   return m ? m[1] : "pt";
 }
 
+/** Ficheiros em `public/` — não aplicar auth nem next-intl (senão /banners/*.png redireciona para login). */
+const PUBLIC_ASSET_EXT =
+  /\.(?:png|jpe?g|gif|webp|svg|ico|woff2?|ttf|eot|mp4|webm|pdf)$/i;
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -26,6 +30,10 @@ export function middleware(req: NextRequest) {
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/api")
   ) {
+    return NextResponse.next();
+  }
+
+  if (PUBLIC_ASSET_EXT.test(pathname)) {
     return NextResponse.next();
   }
 
