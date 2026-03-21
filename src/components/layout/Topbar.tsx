@@ -51,11 +51,11 @@ export default function Topbar({
     router.push(newPath);
   }
   return (
-    <header className="h-14 border-b ca-border ca-panel flex items-center justify-between px-3 md:px-4">
+    <header className="flex h-14 items-center justify-between border-b ca-border ca-panel px-3 md:px-4 tablet-app:h-[3.75rem] tablet-app:px-5">
       {/* Left */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 tablet-app:gap-3">
         <button
-          className="ca-icon-btn"
+          className="ca-icon-btn tablet-app:hidden"
           onClick={onToggleSidebar}
           type="button"
           title="Menu"

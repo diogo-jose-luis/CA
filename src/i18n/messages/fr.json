@@ -36,7 +36,6 @@
     "organization": "Organisation",
     "expandMenu": "Développer menu",
     "collapseMenu": "Réduire menu",
-
     "dashboard": "Tableau de bord",
     "peopleAccess": "Accès des personnes",
     "vehicleAccess": "Accès des véhicules",
@@ -46,10 +45,10 @@
     "orders": "Commandes",
     "serviceReview": "Évaluation des services",
     "keyDelivery": "Livraison de clés",
-
     "organizationMenu": "Organisation",
     "residences": "Résidences",
     "areas": "Zones",
+    "cargos": "Postes",
     "cards": "Cartes",
     "cameras": "Caméras",
     "residents": "Résidents",
@@ -60,12 +59,18 @@
     "guards": "Gardiens",
     "users": "Utilisateurs",
     "settings": "Paramètres",
-
     "sections": {
       "operator": "Opérateur",
       "manager": "Gestionnaire",
       "admin": "Admin"
     }
+  },
+  "tabletNav": {
+    "ariaLabel": "Navigation principale opérateur",
+    "home": "Accueil",
+    "people": "Personnes",
+    "vehicles": "Véhicules",
+    "incidents": "Incidents"
   },
   "selectOrg": {
     "title": "Sélectionner une organisation",
@@ -102,127 +107,384 @@
     "criticalIncidents": "incidents critiques",
     "updatedAt": "Mis à jour le",
     "total": "Total",
-    "risk": "Risque"
+    "risk": "Risque",
+    "periodFrom": "Début",
+    "periodTo": "Fin",
+    "applyPeriod": "Appliquer la période",
+    "vsPreviousPeriod": "vs période précédente",
+    "periodIndicator": "Indicateur sur la période",
+    "loading": "Chargement des indicateurs…",
+    "loadError": "Impossible de charger le tableau de bord.",
+    "noOrganization": "Sélectionnez une organisation pour afficher le tableau de bord.",
+    "labelVisitors": "Visiteurs",
+    "labelEmployees": "Employés",
+    "vehicleCatVisitorsProviders": "Visiteurs et prestataires",
+    "vehicleCatSuppliers": "Fournisseurs",
+    "vehicleCatFleet": "Flotte",
+    "riskLevelLow": "Risque faible",
+    "riskLevelMedium": "Risque moyen",
+    "riskLevelHigh": "Risque élevé",
+    "criticalDeniedRatio": "Refus avec motif / total des refus",
+    "deniedGauge": "Refus"
   },
   "peopleAccess": {
     "title": "Accès des personnes",
     "subtitle": "Enregistrement et contrôle des entrées et sorties, y compris la destination dans le site.",
     "newAccess": "Enregistrer un nouvel accès",
-
-    "filters": {
-      "nameOrDocument": "Nom ou document",
-      "destination": "Destination",
-      "type": "Type",
-      "status": "Statut",
-      "apply": "Appliquer les filtres"
+    "stats": {
+      "inside": "Personnes à l'intérieur (échantillon récent)",
+      "insideHint": "Basé sur les 250 derniers enregistrements sans heure de sortie.",
+      "entriesToday": "Entrées aujourd'hui",
+      "exitsRegistered": "Sorties aujourd'hui",
+      "pending": "En attente d'approbation"
     },
-
+    "filters": {
+      "documentType": "Type de document",
+      "documentRef": "Référence du document",
+      "department": "Département",
+      "residence": "Logement",
+      "apply": "Appliquer les filtres",
+      "approvalAll": "Statut d'approbation (tous)",
+      "approvalPending": "En attente",
+      "approvalApproved": "Approuvé",
+      "approvalRejected": "Rejeté"
+    },
     "types": {
       "visitor": "Visiteur",
       "employee": "Employé",
       "contractor": "Prestataire"
     },
-
+    "userTypes": {
+      "t1": "Utilisateur système",
+      "t2": "Collaborateur",
+      "t3": "Client",
+      "t4": "Visiteur",
+      "t5": "Portier / garde",
+      "t6": "Fournisseur",
+      "t7": "Résident"
+    },
     "status": {
       "inside": "À l'intérieur",
       "left": "Sorti",
-      "late": "En retard"
+      "late": "En retard / longue présence",
+      "pending": "En attente"
     },
-
     "table": {
       "person": "Personne",
       "name": "Nom",
       "type": "Type",
       "document": "Document",
+      "contact": "Contact",
+      "documentType": "Type de document",
+      "documentRef": "Réf. document",
       "destination": "Destination",
+      "reason": "Motif",
+      "host": "Hôte",
       "entry": "Entrée",
       "exit": "Sortie",
       "status": "Statut",
-      "actions": "Actions"
+      "actions": "Actions",
+      "empty": "Aucun enregistrement."
     },
-
+    "pagination": {
+      "page": "Page {current} sur {total}",
+      "records": "enregistrements"
+    },
+    "actions": {
+      "view": "Voir",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "attachments": {
+      "open": "Voir les pièces jointes",
+      "title": "Photos de l'accès",
+      "empty": "Aucune image pour cet enregistrement.",
+      "add": "Ajouter des images",
+      "remove": "Supprimer l'image",
+      "loadError": "Impossible de charger les images.",
+      "uploaded": "Images envoyées avec succès.",
+      "uploadError": "Impossible d'envoyer les images.",
+      "deleteConfirm": "Supprimer cette image ?",
+      "deleted": "Image supprimée.",
+      "deleteError": "Impossible de supprimer l'image."
+    },
+    "detail": {
+      "title": "Détail de l'accès",
+      "reason": "Motif de la demande d'accès"
+    },
+    "motivo": {
+      "morador": "Résident",
+      "colaborador": "Collaborateur / employé",
+      "reuniao": "Réunion",
+      "visita": "Visite",
+      "outros": "Autre"
+    },
+    "visitorsTipoSelect": {
+      "1": "Utilisateur système",
+      "2": "Employés",
+      "3": "Clients",
+      "4": "Fournisseurs",
+      "5": "Gardes",
+      "6": "Visiteurs",
+      "7": "Résident"
+    },
+    "docTypeUi": {
+      "bi": "Carte d'identité (BI)",
+      "passport": "Passeport",
+      "carta": "Permis de conduire",
+      "outro": "Autre"
+    },
     "form": {
       "title": "Enregistrer un nouvel accès",
+      "editTitle": "Modifier l'accès",
+      "refreshUsers": "Actualiser les listes d'utilisateurs",
+      "solicitante": "Demandeur d'accès",
+      "solicitanteExisting": "Utilisateur existant",
+      "solicitanteVisitante": "Visiteur (l'API crée ou associe)",
+      "visitanteApiHint": "Sans utilisateur : l'API crée ou relie un visiteur à partir de ces données.",
+      "visitanteNome": "Nom du visiteur",
+      "selectUser": "Sélectionner un utilisateur",
+      "loadingUsers": "Chargement des utilisateurs…",
+      "host": "Hôte",
+      "selectHost": "Sélectionner l'hôte",
+      "loadingHosts": "Chargement des hôtes…",
+      "destinationDepartment": "Département de destination",
+      "destinationResidence": "Logement de destination",
+      "selectDestination": "Sélectionner la destination",
       "fullName": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "documentType": "Type de document",
+      "documentRef": "Référence du document",
+      "documentRefPlaceholder": "Numéro ou référence du document",
+      "entry": "Date et heure d'entrée",
+      "exit": "Date et heure de sortie (optionnel)",
+      "approval": "Approbation",
+      "approvalUnspecified": "Ne pas modifier / omettre",
+      "notes": "Observations",
+      "register": "Enregistrer l'accès",
+      "update": "Enregistrer les modifications",
       "personType": "Type de personne",
       "document": "Document / Identification",
       "destination": "Destination",
-      "notes": "Observations",
-      "register": "Enregistrer l'accès"
+      "requestReason": "Motif de la demande d'accès",
+      "selectRequestReason": "Sélectionner un motif (optionnel)",
+      "visitanteUserType": "Type d'utilisateur (l'API crée ou associe)"
     },
-
+    "toast": {
+      "loadError": "Impossible de charger les accès.",
+      "loadUsersError": "Impossible de charger la liste d'utilisateurs.",
+      "loadHostsError": "Impossible de charger les hôtes.",
+      "orgRequired": "Sélectionnez une organisation.",
+      "noPermission": "Permission insuffisante pour cette action.",
+      "entryRequired": "Indiquez la date et l'heure d'entrée.",
+      "solicitanteRequired": "Sélectionnez le demandeur.",
+      "visitanteNomeRequired": "Indiquez le nom du visiteur.",
+      "documentoKindRequired": "Sélectionnez le type de document (1–3).",
+      "documentoRefRequired": "Indiquez la référence du document.",
+      "destinationRequired": "Sélectionnez une destination (département ou logement).",
+      "created": "Accès enregistré.",
+      "createdVisitanteNovo": "Accès enregistré. Nouveau visiteur créé pour l'organisation.",
+      "updated": "Accès mis à jour.",
+      "updatedVisitanteNovo": "Accès mis à jour. Un nouveau visiteur a été créé.",
+      "deleted": "Accès supprimé.",
+      "saveError": "Impossible d'enregistrer.",
+      "deleteError": "Impossible de supprimer."
+    },
+    "confirm": {
+      "delete": "Supprimer cet accès ?"
+    },
     "cancel": "Annuler"
   },
   "vehicleAccess": {
     "title": "Accès des véhicules",
     "subtitle": "Contrôle des entrées et sorties des véhicules dans le périmètre du site.",
     "newAccess": "Enregistrer un nouvel accès",
-
     "stats": {
-      "inside": "Véhicules à l'intérieur",
+      "inside": "Véhicules à l'intérieur (échantillon récent)",
+      "insideHint": "Basé sur les 250 derniers enregistrements sans heure de sortie.",
       "entriesToday": "Entrées aujourd'hui",
-      "exitsRegistered": "Sorties enregistrées",
-      "pendingIrregular": "En attente / irréguliers"
+      "exitsRegistered": "Sorties aujourd'hui",
+      "pendingIrregular": "Séjour prolongé",
+      "pendingIrregularHint": "Toujours à l'intérieur depuis plus de 8 heures (même échantillon)."
     },
-
     "details": {
       "title": "Enregistrement photographique du véhicule",
       "caption": "Photos prises lors de l'entrée et de l'inspection du véhicule."
     },
-
+    "detail": {
+      "title": "Détails de l'accès véhicule"
+    },
+    "filters": {
+      "plate": "Rechercher par plaque",
+      "vehicleTypeAll": "Type de véhicule (tous)",
+      "cargoAll": "Chargement (tous)",
+      "cargoYes": "Avec chargement",
+      "cargoNo": "Sans chargement",
+      "department": "Département",
+      "residence": "Résidence",
+      "apply": "Appliquer les filtres"
+    },
+    "pagination": {
+      "page": "Page {current} sur {total}",
+      "records": "enregistrements"
+    },
     "table": {
       "vehicle": "Véhicule",
       "plate": "Plaque",
       "type": "Type",
       "driver": "Conducteur / Entreprise",
+      "driverContact": "Contact conducteur",
       "entity": "Entité",
       "destination": "Destination",
+      "host": "Hôte",
+      "hostContact": "Contact hôte",
       "entry": "Entrée",
       "exit": "Sortie",
       "status": "Statut",
-      "actions": "Actions"
+      "approval": "Approbation",
+      "actions": "Actions",
+      "empty": "Aucun enregistrement."
     },
-
     "actions": {
-      "view": "Voir détails",
+      "view": "Voir",
       "edit": "Modifier",
-      "remove": "Supprimer"
+      "delete": "Supprimer"
     },
-
+    "attachments": {
+      "open": "Voir les pièces jointes",
+      "title": "Photos du véhicule",
+      "empty": "Aucune image pour cet enregistrement.",
+      "add": "Ajouter des images",
+      "remove": "Supprimer l'image",
+      "loadError": "Impossible de charger les images.",
+      "uploaded": "Images téléversées avec succès.",
+      "uploadError": "Impossible de téléverser les images.",
+      "deleteConfirm": "Supprimer cette image ?",
+      "deleted": "Image supprimée.",
+      "deleteError": "Impossible de supprimer l'image."
+    },
     "status": {
       "inside": "À l'intérieur",
       "left": "Sorti",
-      "late": "En retard"
+      "late": "Retard / long séjour"
     },
-
+    "aprovado": {
+      "unknown": "—",
+      "0": "En attente",
+      "1": "Approuvé",
+      "2": "Refusé"
+    },
+    "motivo": {
+      "morador": "Résident",
+      "colaborador": "Collaborateur / employé",
+      "reuniao": "Réunion",
+      "visita": "Visite",
+      "outros": "Autre"
+    },
+    "visitorsTipoSelect": {
+      "1": "Utilisateur système",
+      "2": "Employés",
+      "3": "Clients",
+      "4": "Fournisseurs",
+      "5": "Gardes",
+      "6": "Visiteurs",
+      "7": "Résident"
+    },
     "types": {
       "light": "Léger",
       "heavy": "Lourd",
       "bus": "Bus"
     },
-
-    "form": {
-      "title": "Enregistrer l'accès du véhicule",
-      "plate": "Plaque du véhicule",
-      "vehicleType": "Type de véhicule",
-      "driver": "Conducteur / Entreprise",
-      "notes": "Observations (optionnel)",
-      "register": "Enregistrer l'accès"
+    "userTypes": {
+      "t1": "Utilisateur système",
+      "t2": "Employé",
+      "t3": "Client",
+      "t4": "Visiteur",
+      "t5": "Portier / garde",
+      "t6": "Fournisseur",
+      "t7": "Résident"
     },
-
+    "docTypeUi": {
+      "bi": "Carte d'identité",
+      "passport": "Passeport",
+      "carta": "Permis de conduire",
+      "outro": "Autre"
+    },
+    "form": {
+      "title": "Enregistrer l'accès véhicule",
+      "editTitle": "Modifier l'accès véhicule",
+      "refreshUsers": "Actualiser les listes d'utilisateurs",
+      "plate": "Plaque du véhicule",
+      "platePlaceholder": "ex. : AB-12-CD",
+      "vehicleType": "Type de véhicule",
+      "temCarga": "Transporte un chargement",
+      "cargoYes": "Oui",
+      "cargoNo": "Non",
+      "condutor": "Conducteur",
+      "condutorExisting": "Personne existante",
+      "condutorVisitante": "Nouveau visiteur (l'API crée ou associe)",
+      "visitanteApiHint": "Si le conducteur n'est pas dans la liste, enregistrez un visiteur ; l'API lie ou crée l'utilisateur.",
+      "visitanteNome": "Nom du conducteur / visiteur",
+      "selectDriver": "Sélectionner le conducteur",
+      "loadingUsers": "Chargement des utilisateurs…",
+      "host": "Hôte",
+      "selectHost": "Sélectionner l'hôte",
+      "loadingHosts": "Chargement des hôtes…",
+      "destination": "Destination",
+      "selectDestination": "Sélectionner la destination",
+      "loadingDestinations": "Chargement des destinations…",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "documentType": "Type de document",
+      "documentRef": "Référence du document",
+      "documentRefPlaceholder": "Numéro ou référence du document",
+      "entry": "Date et heure d'entrée",
+      "exit": "Date et heure de sortie (optionnel)",
+      "aprovado": "Statut d'approbation",
+      "motivo": "Motif",
+      "motivoPlaceholder": "Motif du refus ou notes sur l'approbation",
+      "requestReason": "Motif de la demande d'accès",
+      "selectRequestReason": "Sélectionner un motif (optionnel)",
+      "visitanteUserType": "Type d'utilisateur (l'API crée ou associe)",
+      "observacoes": "Observations",
+      "observacoesPlaceholder": "Observations complémentaires",
+      "register": "Enregistrer l'accès",
+      "update": "Enregistrer les modifications"
+    },
+    "toast": {
+      "loadError": "Impossible de charger les accès véhicules.",
+      "loadUsersError": "Impossible de charger la liste d'utilisateurs.",
+      "loadHostsError": "Impossible de charger les hôtes.",
+      "orgRequired": "Sélectionnez une organisation.",
+      "noPermission": "Vous n'avez pas la permission pour cette action.",
+      "entryRequired": "Indiquez la date et l'heure d'entrée.",
+      "condutorRequired": "Sélectionnez le conducteur.",
+      "visitanteNomeRequired": "Indiquez le nom du visiteur.",
+      "documentoRefRequired": "Indiquez la référence du document.",
+      "destinationRequired": "Sélectionnez une destination (département ou résidence).",
+      "created": "Accès véhicule enregistré.",
+      "createdVisitanteNovo": "Accès enregistré. Un nouveau visiteur a été créé pour l'organisation.",
+      "updated": "Accès véhicule mis à jour.",
+      "updatedVisitanteNovo": "Accès mis à jour. Un nouveau visiteur a été créé.",
+      "deleted": "Accès véhicule supprimé.",
+      "saveError": "Impossible d'enregistrer.",
+      "deleteError": "Impossible de supprimer."
+    },
+    "confirm": {
+      "delete": "Supprimer cet accès véhicule ?"
+    },
     "cancel": "Annuler"
   },
   "notices": {
     "title": "Avis",
     "subtitle": "Avis du syndic ou de la gestion de la résidence pour les résidents.",
     "newNotice": "Nouvel avis",
-
     "stats": {
       "active": "Avis actifs",
       "highPriority": "Haute priorité",
       "informative": "Informatis"
     },
-
     "filters": {
       "search": "Rechercher par titre",
       "category": "Catégorie",
@@ -230,23 +492,19 @@
       "status": "Statut",
       "apply": "Appliquer les filtres"
     },
-
     "categories": {
       "maintenance": "Maintenance",
       "meeting": "Réunion",
       "information": "Information"
     },
-
     "priority": {
       "high": "Haute",
       "normal": "Normale"
     },
-
     "status": {
       "active": "Actif",
       "closed": "Fermé"
     },
-
     "table": {
       "title": "Titre",
       "category": "Catégorie",
@@ -255,38 +513,32 @@
       "status": "Statut",
       "actions": "Actions"
     },
-
     "actions": {
       "view": "Voir l'avis",
       "edit": "Modifier",
       "remove": "Supprimer"
     },
-
     "form": {
       "title": "Nouvel avis",
       "titlePlaceholder": "Titre de l'avis",
       "message": "Message de l'avis",
       "publish": "Publier l'avis"
     },
-
     "cancel": "Annuler"
   },
   "reports": {
     "title": "Rapports",
     "subtitle": "Génération et exportation de rapports opérationnels et administratifs.",
-
     "stats": {
       "generatedMonth": "Rapports générés (mois)",
       "accessReports": "Rapports d'accès",
       "vehicleReports": "Rapports de véhicules",
       "adminReports": "Rapports administratifs"
     },
-
     "filters": {
       "reportType": "Type de rapport",
       "apply": "Appliquer les filtres"
     },
-
     "modules": {
       "access": "Accès",
       "vehicles": "Véhicules",
@@ -294,10 +546,8 @@
       "residences": "Résidences",
       "notices": "Avis"
     },
-
     "available": "Rapports disponibles",
     "module": "Module",
-
     "history": {
       "title": "Historique des rapports générés",
       "report": "Rapport",
@@ -306,7 +556,6 @@
       "generated": "Généré le",
       "actions": "Actions"
     },
-
     "actions": {
       "generatePDF": "Générer PDF",
       "generateExcel": "Générer Excel",
@@ -317,83 +566,145 @@
     "title": "Incidents",
     "subtitle": "Enregistrement et suivi des incidents",
     "new": "Nouvel incident",
-
+    "noOrg": "Sélectionnez une organisation pour voir les incidents.",
+    "empty": "Aucun incident trouvé.",
+    "confirmDelete": "Supprimer cet incident ?",
     "stats": {
       "total": "Total incidents",
       "highRisk": "Risque élevé",
       "security": "Signalé par la sécurité"
     },
-
     "filters": {
       "search": "Rechercher...",
       "type": "Type",
       "category": "Catégorie",
       "period": "Période",
-      "apply": "Appliquer les filtres"
+      "apply": "Appliquer les filtres",
+      "allTypes": "Tous les types",
+      "allCategories": "Toutes les catégories",
+      "allPeriods": "Toutes les périodes",
+      "allStates": "Tous les états",
+      "allRiskLevels": "Tous les niveaux",
+      "allLocals": "Tous les lieux",
+      "dateFrom": "Date de début",
+      "dateTo": "Date de fin"
     },
-
     "types": {
       "client": "Client",
-      "security": "Sécurité"
+      "security": "Sécurité",
+      "internal": "Interne"
     },
-
     "categories": {
       "accident": "Accident",
       "theft": "Vol",
-      "robbery": "Braquage"
+      "robbery": "Braquage",
+      "other": "Autre"
     },
-
+    "states": {
+      "open": "Ouvert",
+      "closed": "Clôturé"
+    },
+    "riskLevels": {
+      "high": "Élevé",
+      "medium": "Moyen",
+      "low": "Faible"
+    },
     "period": {
       "day": "Jour",
       "night": "Nuit"
     },
-
     "table": {
       "order": "Ordre",
+      "mainPhoto": "Photo",
       "date": "Date",
       "time": "Heure",
       "type": "Type",
       "category": "Catégorie",
       "description": "Description",
+      "location": "Lieu",
+      "status": "État",
       "risk": "Niveau de risque",
       "period": "Période",
       "actions": "Actions"
     },
-
     "form": {
       "title": "Nouvel incident",
+      "titleNew": "Nouvel incident",
+      "titleEdit": "Modifier l'incident",
       "order": "Numéro de l'incident",
       "description": "Description de l'incident",
       "risk": "Niveau de risque",
+      "datetime": "Date et heure",
+      "state": "État",
+      "local": "Département / lieu",
+      "localNone": "Aucun",
+      "observations": "Observations",
+      "image": "Photo",
+      "imageHint": "JPEG, PNG, GIF ou WebP · max. 5 Mo",
+      "comprovantos": "Photos de preuve supplémentaires",
+      "comprovantosHint": "Facultatif. Vous pourrez ajouter d'autres fichiers plus tard depuis le panneau des pièces jointes.",
       "actionTaken": "Mesure prise",
       "recommendations": "Recommandations",
       "save": "Enregistrer"
     },
-
+    "view": {
+      "title": "Détail de l'incident",
+      "mainImage": "Photo principale",
+      "noMainImage": "Aucune photo principale.",
+      "comprovantosSection": "Pièces justificatives",
+      "noComprovantos": "Aucune pièce justificative."
+    },
+    "imagesPanel": {
+      "title": "Pièces justificatives",
+      "subtitle": "Incident OC-{id}",
+      "addFiles": "Ajouter des images",
+      "listTitle": "Fichiers téléversés",
+      "empty": "Aucune image de preuve pour le moment.",
+      "uploading": "Téléversement…",
+      "uploadSuccess": "Images ajoutées avec succès.",
+      "deleteSuccess": "Image supprimée.",
+      "deleteConfirm": "Supprimer cette pièce jointe ?"
+    },
+    "actions": {
+      "view": "Voir",
+      "images": "Pièces jointes",
+      "manageImages": "Gérer les pièces jointes",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "toast": {
+      "loadError": "Impossible de charger les données.",
+      "created": "Incident créé avec succès.",
+      "updated": "Incident mis à jour avec succès.",
+      "deleted": "Incident supprimé.",
+      "error": "Une erreur s'est produite."
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "results": "résultat(s)",
+      "page": "Page"
+    },
     "cancel": "Annuler"
   },
   "packages": {
     "title": "Colis",
     "subtitle": "Enregistrement des colis à la porterie",
     "new": "Nouveau colis",
-
     "stats": {
       "total": "Total colis",
       "pending": "En attente",
       "delivered": "Livrés"
     },
-
     "filters": {
       "search": "Rechercher...",
       "status": "Statut",
       "apply": "Appliquer les filtres"
     },
-
     "status": {
       "pending": "En attente",
       "delivered": "Livré"
     },
-
     "table": {
       "order": "Ordre",
       "date": "Date",
@@ -405,7 +716,6 @@
       "deliveredTo": "Remis à",
       "actions": "Actions"
     },
-
     "form": {
       "title": "Nouveau colis",
       "order": "Numéro du colis",
@@ -416,27 +726,23 @@
       "notes": "Observations",
       "save": "Enregistrer"
     },
-
     "cancel": "Annuler"
   },
   "keys": {
     "title": "Remise des Clés",
     "subtitle": "Contrôle des clés remises aux collaborateurs",
     "new": "Nouvel Enregistrement",
-
     "stats": {
       "total": "Total Enregistrements",
       "returned": "Clés retournées",
       "sectors": "Total Secteurs",
       "employees": "Collaborateurs"
     },
-
     "filters": {
       "search": "Rechercher...",
       "sector": "Secteur",
       "apply": "Appliquer les filtres"
     },
-
     "table": {
       "id": "ID",
       "date": "Date",
@@ -448,7 +754,6 @@
       "returnTime": "Heure de retour",
       "actions": "Actions"
     },
-
     "form": {
       "title": "Nouvel Enregistrement",
       "employee": "Collaborateur",
@@ -456,7 +761,6 @@
       "notes": "Observations",
       "save": "Enregistrer"
     },
-
     "cancel": "Annuler"
   },
   "organizacao": {
@@ -526,18 +830,967 @@
       "error": "Une erreur s'est produite."
     }
   },
+  "usersPage": {
+    "title": "Utilisateurs",
+    "subtitle": "Gestion des utilisateurs du système et des niveaux d'accès (type 1).",
+    "new": "Nouvel utilisateur",
+    "stats": {
+      "total": "Total des utilisateurs",
+      "admins": "Administrateurs",
+      "active": "Actifs",
+      "inactive": "Inactifs"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "level": "Niveau d'accès",
+      "email": "E-mail",
+      "status": "État",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "photo": "Photo",
+      "name": "Nom",
+      "level": "Niveau",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "newPassword": "Générer un mot de passe",
+      "edit": "Modifier",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun utilisateur trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouvel utilisateur",
+      "edit": "Modifier l'utilisateur",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "level": "Niveau d'accès",
+      "photo": "Photo (optionnel)",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "password": {
+      "title": "Mot de passe généré",
+      "subtitle": "Conservez ou envoyez à l'utilisateur. E-mail :",
+      "close": "Fermer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des utilisateurs.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Utilisateur mis à jour avec succès.",
+      "created": "Utilisateur créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Utilisateur supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "activated": "Utilisateur activé.",
+      "activateError": "Erreur lors de l'activation.",
+      "deactivated": "Utilisateur désactivé.",
+      "deactivateError": "Erreur lors de la désactivation.",
+      "passwordError": "Erreur lors de la génération du mot de passe.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Utilisateurs activés avec succès.",
+      "bulkDeactivated": "Utilisateurs désactivés avec succès.",
+      "bulkDeleted": "Utilisateurs supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer cet utilisateur ?",
+      "deleteBulk": "Supprimer les utilisateurs sélectionnés ?"
+    }
+  },
+  "guardsPage": {
+    "title": "Gardiens",
+    "subtitle": "Gestion des gardiens et opérateurs de porterie (type 5).",
+    "new": "Nouveau gardien",
+    "stats": {
+      "total": "Total des gardiens",
+      "idCard": "Carte d'identité",
+      "passport": "Passeport"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "documentType": "Type de document",
+      "documentRef": "Réf. document",
+      "apply": "Appliquer les filtres"
+    },
+    "document": {
+      "idCard": "Carte d'identité",
+      "passport": "Passeport",
+      "other": "Autre"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "photo": "Photo",
+      "name": "Nom",
+      "document": "Document",
+      "documentRef": "Réf. document",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun gardien trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau gardien",
+      "edit": "Modifier le gardien",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "documentRef": "Réf. document",
+      "photo": "Photo (optionnel)",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des gardiens.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Gardien mis à jour avec succès.",
+      "created": "Gardien créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Gardien supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Gardiens activés avec succès.",
+      "bulkDeactivated": "Gardiens désactivés avec succès.",
+      "bulkDeleted": "Gardiens supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce gardien ?",
+      "deleteBulk": "Supprimer les gardiens sélectionnés ?"
+    }
+  },
+  "clientsPage": {
+    "title": "Clients",
+    "subtitle": "Gestion des clients liés à l'organisation (type 3).",
+    "new": "Nouveau client",
+    "stats": {
+      "total": "Total des clients",
+      "corporate": "Clients entreprise",
+      "individual": "Clients particuliers"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "area": "Zone / Segment",
+      "email": "E-mail",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "logo": "Logo",
+      "name": "Nom",
+      "area": "Zone",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "site": "Site",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun client trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau client",
+      "edit": "Modifier le client",
+      "name": "Nom de l'entreprise",
+      "area": "Zone / Segment",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "site": "Site web",
+      "logo": "Logo (optionnel)",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des clients.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Client mis à jour avec succès.",
+      "created": "Client créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Client supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Clients activés avec succès.",
+      "bulkDeactivated": "Clients désactivés avec succès.",
+      "bulkDeleted": "Clients supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce client ?",
+      "deleteBulk": "Supprimer les clients sélectionnés ?"
+    }
+  },
+  "employeesPage": {
+    "title": "Collaborateurs",
+    "subtitle": "Gestion des collaborateurs de la copropriete ou de l'organisation.",
+    "new": "Nouveau collaborateur",
+    "stats": {
+      "total": "Total des collaborateurs",
+      "active": "Actifs",
+      "withDepartment": "Avec departement",
+      "inactive": "Inactifs"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "position": "Rechercher par poste",
+      "department": "Rechercher par departement",
+      "status": "Etat",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "selectionne(s)",
+      "activate": "Activer la selection",
+      "deactivate": "Desactiver la selection",
+      "delete": "Supprimer la selection"
+    },
+    "table": {
+      "photo": "Photo",
+      "name": "Nom",
+      "email": "E-mail",
+      "position": "Poste",
+      "department": "Departement",
+      "status": "Etat",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun collaborateur trouve.",
+    "pagination": {
+      "prev": "Precedent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau collaborateur",
+      "edit": "Modifier le collaborateur",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "position": "Poste / Fonction",
+      "department": "Departement",
+      "photo": "Photo (optionnel)",
+      "update": "Mettre a jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des collaborateurs.",
+      "orgRequired": "Organisation non selectionnee.",
+      "updated": "Collaborateur mis a jour avec succes.",
+      "created": "Collaborateur cree avec succes.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Collaborateur supprime avec succes.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Selectionnez au moins un enregistrement.",
+      "bulkActivated": "Collaborateurs actives avec succes.",
+      "bulkDeactivated": "Collaborateurs desactives avec succes.",
+      "bulkDeleted": "Collaborateurs supprimes avec succes.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce collaborateur ?",
+      "deleteBulk": "Supprimer les collaborateurs selectionnes ?"
+    }
+  },
+  "suppliersPage": {
+    "title": "Fournisseurs",
+    "subtitle": "Gestion des fournisseurs et prestataires de services.",
+    "new": "Nouveau fournisseur",
+    "stats": {
+      "total": "Total des fournisseurs",
+      "active": "Actifs",
+      "inactive": "Inactifs"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "area": "Domaine d'activité",
+      "email": "E-mail",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "logo": "Logo",
+      "name": "Nom",
+      "area": "Zone",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "site": "Site",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun fournisseur trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau fournisseur",
+      "edit": "Modifier le fournisseur",
+      "name": "Nom de l'entreprise",
+      "area": "Domaine d'activité",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "site": "Site web",
+      "logo": "Logo (optionnel)",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des fournisseurs.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Fournisseur mis à jour avec succès.",
+      "created": "Fournisseur créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Fournisseur supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Fournisseurs activés avec succès.",
+      "bulkDeactivated": "Fournisseurs désactivés avec succès.",
+      "bulkDeleted": "Fournisseurs supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce fournisseur ?",
+      "deleteBulk": "Supprimer les fournisseurs sélectionnés ?"
+    }
+  },
+  "guestsPage": {
+    "title": "Invités",
+    "subtitle": "Gestion des visiteurs externes enregistrés dans le système.",
+    "new": "Nouvel invité",
+    "stats": {
+      "total": "Total des invités",
+      "idCard": "Carte d'identité",
+      "passport": "Passeport",
+      "active": "Actifs",
+      "inactive": "Inactifs"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "documentType": "Type de document",
+      "documentRef": "Réf. document",
+      "apply": "Appliquer les filtres"
+    },
+    "document": {
+      "idCard": "Carte d'identité",
+      "passport": "Passeport",
+      "other": "Autre"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "photo": "Photo",
+      "name": "Nom",
+      "document": "Document",
+      "documentRef": "Réf. document",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun invité trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouvel invité",
+      "edit": "Modifier l'invité",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "documentRef": "Réf. document",
+      "photo": "Photo (optionnel)",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des invités.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Invité mis à jour avec succès.",
+      "created": "Invité créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Invité supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Invités activés avec succès.",
+      "bulkDeactivated": "Invités désactivés avec succès.",
+      "bulkDeleted": "Invités supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer cet invité ?",
+      "deleteBulk": "Supprimer les invités sélectionnés ?"
+    }
+  },
+  "residentsPage": {
+    "title": "Résidents",
+    "subtitle": "Gestion des résidents enregistrés dans la copropriété.",
+    "new": "Nouveau résident",
+    "stats": {
+      "total": "Total des résidents",
+      "active": "Actifs",
+      "withResidence": "Avec résidence"
+    },
+    "filters": {
+      "name": "Rechercher par nom",
+      "email": "Rechercher par e-mail",
+      "residence": "Résidence",
+      "status": "État",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "photo": "Photo",
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "residence": "Résidence",
+      "block": "Bloc",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun résident trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau résident",
+      "edit": "Modifier le résident",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "residencePlaceholder": "Sélectionner une résidence active (optionnel)",
+      "photo": "Photo (optionnel)",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des résidents.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "emailRequired": "L'e-mail est obligatoire.",
+      "updated": "Résident mis à jour avec succès.",
+      "created": "Résident créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Résident supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Résidents activés avec succès.",
+      "bulkDeactivated": "Résidents désactivés avec succès.",
+      "bulkDeleted": "Résidents supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce résident ?",
+      "deleteBulk": "Supprimer les résidents sélectionnés ?"
+    }
+  },
+  "departmentsPage": {
+    "title": "Départements / Zones",
+    "subtitle": "Gestion des départements et zones de l'organisation.",
+    "new": "Nouveau département",
+    "stats": {
+      "total": "Total des départements",
+      "active": "Actifs",
+      "inactive": "Inactifs"
+    },
+    "filters": {
+      "designation": "Rechercher par désignation",
+      "status": "État",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "designation": "Désignation",
+      "description": "Description",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun département trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau département",
+      "edit": "Modifier le département",
+      "designation": "Désignation",
+      "description": "Description",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des départements.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Département mis à jour avec succès.",
+      "created": "Département créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Département supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Départements activés avec succès.",
+      "bulkDeactivated": "Départements désactivés avec succès.",
+      "bulkDeleted": "Départements supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce département ?",
+      "deleteBulk": "Supprimer les départements sélectionnés ?"
+    }
+  },
+  "cargosPage": {
+    "title": "Postes",
+    "subtitle": "Gestion des postes et fonctions de l'organisation.",
+    "new": "Nouveau poste",
+    "stats": {
+      "total": "Total des postes",
+      "active": "Actifs",
+      "inactive": "Inactifs"
+    },
+    "filters": {
+      "designation": "Rechercher par désignation",
+      "status": "État",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer la sélection",
+      "deactivate": "Désactiver la sélection",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "designation": "Désignation",
+      "description": "Description",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucun poste trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Nouveau poste",
+      "edit": "Modifier le poste",
+      "designation": "Désignation",
+      "description": "Description",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des postes.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Poste mis à jour avec succès.",
+      "created": "Poste créé avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Poste supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkActivated": "Postes activés avec succès.",
+      "bulkDeactivated": "Postes désactivés avec succès.",
+      "bulkDeleted": "Postes supprimés avec succès.",
+      "bulkError": "Erreur lors de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce poste ?",
+      "deleteBulk": "Supprimer les postes sélectionnés ?"
+    }
+  },
+  "cardsPage": {
+    "title": "Cartes",
+    "subtitle": "Gestion des cartes d'accès pour visiteurs, collaborateurs et prestataires.",
+    "new": "Enregistrer une nouvelle carte",
+    "stats": {
+      "total": "Total sur la page",
+      "active": "Cartes actives",
+      "expired": "Cartes expirées",
+      "inactive": "Cartes inactives"
+    },
+    "filters": {
+      "code": "Code",
+      "holder": "Titulaire",
+      "description": "Description",
+      "type": "Type de carte",
+      "status": "État",
+      "apply": "Appliquer les filtres"
+    },
+    "types": {
+      "other": "Autre"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "delete": "Supprimer"
+    },
+    "table": {
+      "code": "Code",
+      "description": "Description",
+      "holder": "Titulaire",
+      "type": "Type",
+      "issueDate": "Émission",
+      "expiryDate": "Validité",
+      "status": "État",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "remove": "Supprimer"
+    },
+    "empty": "Aucune carte.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Enregistrer une nouvelle carte",
+      "edit": "Modifier la carte",
+      "code": "Code de la carte",
+      "codeAuto": "Généré automatiquement",
+      "description": "Description (optionnelle)",
+      "holder": "Sélectionner le titulaire",
+      "loadingHolders": "Chargement des titulaires...",
+      "update": "Mettre à jour la carte",
+      "register": "Enregistrer la carte"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Impossible de charger les cartes.",
+      "orgRequired": "Sélectionnez une organisation.",
+      "holderRequired": "Sélectionnez un titulaire.",
+      "updated": "Carte mise à jour avec succès.",
+      "created": "Carte enregistrée avec succès.",
+      "saveError": "Impossible d'enregistrer la carte.",
+      "deleted": "Carte supprimée avec succès.",
+      "deleteError": "Impossible de supprimer la carte.",
+      "activated": "Carte activée.",
+      "deactivated": "Carte désactivée.",
+      "statusError": "Impossible de changer l'état.",
+      "selectAtLeastOne": "Sélectionnez au moins une carte.",
+      "bulkActivated": "Cartes activées avec succès.",
+      "bulkDeactivated": "Cartes désactivées avec succès.",
+      "bulkDeleted": "Cartes supprimées avec succès.",
+      "bulkError": "Impossible d'exécuter l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Voulez-vous supprimer cette carte ?",
+      "deleteBulk": "Voulez-vous supprimer les cartes sélectionnées ?"
+    }
+  },
+  "camerasPage": {
+    "title": "Caméras",
+    "subtitle": "Surveillance et gestion du système de vidéoprotection (CCTV).",
+    "new": "Nouvelle caméra",
+    "stats": {
+      "total": "Total sur la page",
+      "active": "Caméras actives",
+      "inactive": "Caméras inactives"
+    },
+    "filters": {
+      "designation": "Rechercher par désignation",
+      "block": "Bloc / Zone",
+      "status": "État",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionnée(s)",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "delete": "Supprimer"
+    },
+    "table": {
+      "noBlock": "Sans bloc"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "remove": "Supprimer",
+      "refreshBlocks": "Recharger les blocs"
+    },
+    "empty": "Aucune caméra trouvée.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "results": "{total} résultat(s) · page {currentPage} sur {totalPages}"
+    },
+    "cameraPreview": {
+      "title": "Démo de la caméra de l'appareil",
+      "notSupported": "Cet appareil/navigateur ne prend pas en charge l'accès à la caméra.",
+      "permissionError": "Impossible d'accéder à la caméra. Vérifiez les autorisations du navigateur."
+    },
+    "form": {
+      "new": "Enregistrer une nouvelle caméra",
+      "edit": "Modifier la caméra",
+      "designation": "Désignation de la caméra",
+      "noBlock": "Sans bloc",
+      "loadingBlocks": "Chargement des blocs...",
+      "imagePreviewAlt": "Aperçu de la caméra",
+      "update": "Mettre à jour la caméra",
+      "register": "Enregistrer la caméra"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Impossible de charger les caméras.",
+      "loadBlocksError": "Impossible de charger les blocs.",
+      "orgRequired": "Sélectionnez une organisation.",
+      "updated": "Caméra mise à jour avec succès.",
+      "created": "Caméra créée avec succès.",
+      "saveError": "Impossible d'enregistrer la caméra.",
+      "deleted": "Caméra supprimée avec succès.",
+      "deleteError": "Impossible de supprimer la caméra.",
+      "activated": "Caméra activée.",
+      "deactivated": "Caméra désactivée.",
+      "statusError": "Impossible de changer l'état.",
+      "selectAtLeastOne": "Sélectionnez au moins une caméra.",
+      "bulkActivated": "Caméras activées avec succès.",
+      "bulkDeactivated": "Caméras désactivées avec succès.",
+      "bulkDeleted": "Caméras supprimées avec succès.",
+      "bulkError": "Impossible d'exécuter l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Voulez-vous supprimer cette caméra ?",
+      "deleteBulk": "Voulez-vous supprimer les caméras sélectionnées ?"
+    }
+  },
+  "residencesPage": {
+    "title": "Résidences",
+    "subtitle": "Gestion des résidences de l'organisation.",
+    "new": "Nouvelle résidence",
+    "stats": {
+      "total": "Total des résidences",
+      "active": "Résidences actives",
+      "inactive": "Résidences inactives",
+      "occupied": "Résidences occupées",
+      "free": "Résidences libres"
+    },
+    "filters": {
+      "designation": "Rechercher par désignation",
+      "block": "Bloc / Zone",
+      "status": "État",
+      "occupation": "Occupation",
+      "apply": "Appliquer les filtres"
+    },
+    "bulk": {
+      "selected": "sélectionnée(s)",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "occupy": "Occuper",
+      "free": "Libérer",
+      "delete": "Supprimer"
+    },
+    "table": {
+      "image": "Image",
+      "designation": "Désignation",
+      "block": "Bloc / Zone",
+      "status": "État",
+      "occupation": "Occupation",
+      "actions": "Actions",
+      "noBlock": "Sans bloc"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "occupation": {
+      "occupied": "Occupée",
+      "free": "Libre"
+    },
+    "actions": {
+      "view": "Voir détails",
+      "edit": "Modifier",
+      "remove": "Supprimer",
+      "refreshDepartments": "Actualiser les départements"
+    },
+    "details": {
+      "title": "Résidence",
+      "id": "ID",
+      "block": "Bloc",
+      "status": "État",
+      "occupation": "Occupation",
+      "residents": "Résidents",
+      "description": "Description"
+    },
+    "empty": "Aucune résidence trouvée.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "form": {
+      "new": "Enregistrer une nouvelle résidence",
+      "edit": "Modifier la résidence",
+      "designation": "Désignation de la résidence",
+      "noBlock": "Sans bloc",
+      "description": "Description (optionnel)",
+      "imagePath": "Image (URL ou chemin)",
+      "imagePreviewAlt": "Aperçu",
+      "noImagePreview": "Aucun aperçu d'image",
+      "update": "Mettre à jour la résidence",
+      "register": "Enregistrer la résidence"
+    },
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des résidences.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "updated": "Résidence mise à jour avec succès.",
+      "created": "Résidence créée avec succès.",
+      "saveError": "Impossible d'enregistrer la résidence.",
+      "deleted": "Résidence supprimée avec succès.",
+      "deleteError": "Erreur lors de la suppression de la résidence.",
+      "selectAtLeastOne": "Sélectionnez au moins une résidence.",
+      "bulkActivated": "Résidences activées avec succès.",
+      "bulkDeactivated": "Résidences désactivées avec succès.",
+      "bulkOccupied": "Résidences marquées comme occupées avec succès.",
+      "bulkFreed": "Résidences marquées comme libres avec succès.",
+      "bulkDeleted": "Résidences supprimées avec succès.",
+      "bulkError": "Échec de l'action en lot."
+    },
+    "confirm": {
+      "deleteOne": "Voulez-vous vraiment supprimer cette résidence ?",
+      "deleteBulk": "Voulez-vous vraiment supprimer les résidences sélectionnées ?"
+    }
+  },
   "serviceEvaluation": {
     "title": "Évaluation des Services",
     "subtitle": "Évaluation mensuelle du service de sécurité et de porterie",
     "newEvaluation": "Nouvelle Évaluation",
-
     "stats": {
       "total": "Total des évaluations",
       "average": "Note moyenne",
       "year": "Évaluations cette année",
       "last": "Dernière évaluation"
     },
-
     "table": {
       "month": "Mois",
       "year": "Année",
@@ -550,7 +1803,6 @@
       "date": "Date de soumission",
       "actions": "Actions"
     },
-
     "form": {
       "title": "Nouvelle Évaluation",
       "month": "Mois",
@@ -562,7 +1814,6 @@
       "comments": "Commentaires",
       "submit": "Soumettre l'évaluation"
     },
-
     "cancel": "Annuler"
   }
 }

@@ -3,85 +3,61 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  Users,
-  Home,
+  Briefcase,
   CheckCircle2,
   CircleOff,
   Plus,
   X,
   Pencil,
   Trash2,
-  User,
   Loader2,
-  Image as ImageIcon,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
 
-type Bloco = {
+type Cargo = {
   id: number;
-  designacao?: string | null;
-  nome?: string | null;
+  designacao: string;
   descricao?: string | null;
-};
-
-type Residencia = {
-  id: number;
-  designacao?: string | null;
   estado?: number;
-  bloco?: Bloco | null;
+  organizacao_id?: number;
 };
 
-type ResidenciaListResponse = {
-  data: Residencia[];
+type CargoListResponse = {
+  data: Cargo[];
+  total: number;
+  per_page: number;
+  current_page: number;
 };
 
-type MoradorUser = Utilizador & {
-  morador?: {
-    residencia_id?: number | null;
-    residencia?: Residencia | null;
-  } | null;
-};
-
-const API_PREFIX = "/moradores";
-const RESIDENCIAS_PREFIX = "/residencias";
+const API_PREFIX = "/cargos";
 const ORG_KEY = "ca.selected.organization";
 
 export default function Page() {
-  const t = useTranslations("residentsPage");
-  const { http, api_base_url } = useAuth();
+  const t = useTranslations("cargosPage");
+  const { http } = useAuth();
   const [organizacaoId, setOrganizacaoId] = useState<number | null>(null);
 
-  const [list, setList] = useState<MoradorUser[]>([]);
+  const [list, setList] = useState<Cargo[]>([]);
   const [total, setTotal] = useState(0);
   const [perPage, setPerPage] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; isError?: boolean } | null>(null);
 
-  const [filtroNome, setFiltroNome] = useState("");
-  const [filtroEmail, setFiltroEmail] = useState("");
-  const [filtroResidenciaId, setFiltroResidenciaId] = useState("");
-  const [filtroEstado, setFiltroEstado] = useState("all");
+  const [filtroDesignacao, setFiltroDesignacao] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [bulkActionLoading, setBulkActionLoading] = useState<
     "ativar" | "desativar" | "eliminar" | null
   >(null);
 
-  const [residenciasAtivas, setResidenciasAtivas] = useState<Residencia[]>([]);
-  const [residenciasLoading, setResidenciasLoading] = useState(false);
-
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    telefone: "",
-    residencia_id: "",
+    designacao: "",
+    descricao: "",
     estado: 1,
-    imagem: null as File | null,
-    imagemPreviewUrl: null as string | null,
   });
 
   useEffect(() => {
@@ -101,45 +77,6 @@ export default function Page() {
     setTimeout(() => setToast(null), 4000);
   }, []);
 
-  const buildImageUrl = useCallback(
-    (user: MoradorUser) => {
-      const path = user.imagem;
-      if (!path) return null;
-      const base = api_base_url.replace(/\/$/, "");
-      const p = path.startsWith("/") ? path : `/storage/${path}`;
-      return `${base}${p}`;
-    },
-    [api_base_url],
-  );
-
-  const getBlocoLabel = useCallback(
-    (r?: Residencia | null) => r?.bloco?.designacao ?? r?.bloco?.nome ?? r?.bloco?.descricao ?? "—",
-    [],
-  );
-
-  const getResidenciaLabel = useCallback((u: MoradorUser) => {
-    return u.morador?.residencia?.designacao ?? "—";
-  }, []);
-
-  const fetchResidenciasAtivas = useCallback(async () => {
-    if (!organizacaoId) {
-      setResidenciasAtivas([]);
-      return;
-    }
-    setResidenciasLoading(true);
-    try {
-      const res = await http.get<ResidenciaListResponse>(`${RESIDENCIAS_PREFIX}/${organizacaoId}`, {
-        params: { estado: 1, per_page: 100 },
-      });
-      const rows = Array.isArray(res.data?.data) ? res.data.data : [];
-      setResidenciasAtivas(rows.filter((r) => typeof r?.id === "number"));
-    } catch {
-      setResidenciasAtivas([]);
-    } finally {
-      setResidenciasLoading(false);
-    }
-  }, [http, organizacaoId]);
-
   const fetchList = useCallback(async () => {
     let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
     if (!organizacaoId) {
@@ -155,13 +92,11 @@ export default function Page() {
         per_page: perPage,
         page: currentPage,
       };
-      if (filtroNome.trim()) params.nome = filtroNome.trim();
-      if (filtroEmail.trim()) params.email = filtroEmail.trim();
-      if (filtroResidenciaId.trim()) params.residencia_id = Number(filtroResidenciaId);
+      if (filtroDesignacao.trim()) params.designacao = filtroDesignacao.trim();
       if (filtroEstado === "0" || filtroEstado === "1") params.estado = Number(filtroEstado);
 
-      const res = await http.get<UtilizadorListResponse>(`${API_PREFIX}/${organizacaoId}`, { params });
-      setList((res.data?.data ?? []) as MoradorUser[]);
+      const res = await http.get<CargoListResponse>(`${API_PREFIX}/${organizacaoId}`, { params });
+      setList(res.data?.data ?? []);
       setTotal(res.data?.total ?? 0);
       setPerPage(res.data?.per_page ?? 15);
       setCurrentPage(res.data?.current_page ?? 1);
@@ -173,26 +108,11 @@ export default function Page() {
       if (loadingTimeout) clearTimeout(loadingTimeout);
       setLoading(false);
     }
-  }, [
-    http,
-    organizacaoId,
-    perPage,
-    currentPage,
-    filtroNome,
-    filtroEmail,
-    filtroResidenciaId,
-    filtroEstado,
-    showToast,
-    t,
-  ]);
+  }, [http, organizacaoId, perPage, currentPage, filtroDesignacao, filtroEstado, showToast, t]);
 
   useEffect(() => {
     fetchList();
   }, [fetchList]);
-
-  useEffect(() => {
-    fetchResidenciasAtivas();
-  }, [fetchResidenciasAtivas]);
 
   useEffect(() => {
     setSelectedIds([]);
@@ -201,47 +121,26 @@ export default function Page() {
   const openNew = () => {
     setEditingId(null);
     setForm({
-      name: "",
-      email: "",
-      telefone: "",
-      residencia_id: "",
+      designacao: "",
+      descricao: "",
       estado: 1,
-      imagem: null,
-      imagemPreviewUrl: null,
     });
     setShowModal(true);
   };
 
-  const openEdit = (u: MoradorUser) => {
-    setEditingId(u.id);
+  const openEdit = (c: Cargo) => {
+    setEditingId(c.id);
     setForm({
-      name: u.name ?? "",
-      email: u.email ?? "",
-      telefone: u.telefone ?? "",
-      residencia_id: u.morador?.residencia_id ? String(u.morador.residencia_id) : "",
-      estado: u.estado ?? 1,
-      imagem: null,
-      imagemPreviewUrl: null,
+      designacao: c.designacao ?? "",
+      descricao: c.descricao ?? "",
+      estado: c.estado ?? 1,
     });
     setShowModal(true);
   };
 
   const closeModal = () => {
-    if (form.imagemPreviewUrl) URL.revokeObjectURL(form.imagemPreviewUrl);
     setShowModal(false);
     setEditingId(null);
-  };
-
-  const onFileChange = (file: File | null) => {
-    setForm((prev) => {
-      if (prev.imagemPreviewUrl) URL.revokeObjectURL(prev.imagemPreviewUrl);
-      if (!file) return { ...prev, imagem: null, imagemPreviewUrl: null };
-      return {
-        ...prev,
-        imagem: file,
-        imagemPreviewUrl: URL.createObjectURL(file),
-      };
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -250,29 +149,21 @@ export default function Page() {
       showToast(t("toast.orgRequired"), true);
       return;
     }
-    if (!form.name.trim()) return;
-    if (!form.email.trim()) {
-      showToast(t("toast.emailRequired"), true);
-      return;
-    }
+    if (!form.designacao.trim()) return;
 
     setFormSubmitting(true);
     try {
-      const formData = new FormData();
-      formData.append("name", form.name.trim());
-      formData.append("email", form.email.trim());
-      formData.append("telefone", form.telefone.trim());
-      formData.append("estado", String(form.estado));
-      formData.append("residencia_id", form.residencia_id ? String(Number(form.residencia_id)) : "");
-      if (form.imagem) formData.append("imagem", form.imagem);
+      const payload = {
+        designacao: form.designacao.trim(),
+        descricao: form.descricao.trim() || null,
+        estado: form.estado,
+      };
 
-      const config = { headers: { "Content-Type": undefined } };
       if (editingId) {
-        formData.append("_method", "PUT");
-        await http.post(`${API_PREFIX}/${organizacaoId}/${editingId}`, formData, config as never);
+        await http.put(`${API_PREFIX}/${organizacaoId}/${editingId}`, payload);
         showToast(t("toast.updated"));
       } else {
-        await http.post(`${API_PREFIX}/${organizacaoId}`, formData, config as never);
+        await http.post(`${API_PREFIX}/${organizacaoId}`, payload);
         showToast(t("toast.created"));
       }
       closeModal();
@@ -362,14 +253,12 @@ export default function Page() {
 
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const cardsStats = useMemo(() => {
-    const ativos = list.filter((u) => u.estado === 1).length;
-    const inativos = list.filter((u) => u.estado === 0).length;
-    const comResidencia = list.filter((u) => u.morador?.residencia_id).length;
+    const ativos = list.filter((c) => c.estado === 1).length;
+    const inativos = list.filter((c) => c.estado === 0).length;
     return {
       total: list.length,
       ativos,
       inativos,
-      comResidencia,
     };
   }, [list]);
 
@@ -377,7 +266,7 @@ export default function Page() {
     {
       label: t("stats.total"),
       value: cardsStats.total,
-      icon: Users,
+      icon: Briefcase,
       color: "text-blue-600",
       bg: "bg-blue-100/60 dark:bg-blue-900/20",
     },
@@ -389,9 +278,9 @@ export default function Page() {
       bg: "bg-green-100/60 dark:bg-green-900/20",
     },
     {
-      label: t("stats.withResidence"),
-      value: cardsStats.comResidencia,
-      icon: Home,
+      label: t("stats.inactive"),
+      value: cardsStats.inativos,
+      icon: CircleOff,
       color: "text-slate-600",
       bg: "bg-slate-100/60 dark:bg-slate-800/40",
     },
@@ -445,39 +334,24 @@ export default function Page() {
             setCurrentPage(1);
             fetchList();
           }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-3"
+          className="grid grid-cols-1 md:grid-cols-3 gap-3"
         >
           <input
             className="ca-input"
-            placeholder={t("filters.name")}
-            value={filtroNome}
-            onChange={(e) => setFiltroNome(e.target.value)}
-          />
-          <input
-            className="ca-input"
-            placeholder={t("filters.email")}
-            value={filtroEmail}
-            onChange={(e) => setFiltroEmail(e.target.value)}
+            placeholder={t("filters.designation")}
+            value={filtroDesignacao}
+            onChange={(e) => setFiltroDesignacao(e.target.value)}
           />
           <select
             className="ca-input"
-            value={filtroResidenciaId}
-            onChange={(e) => setFiltroResidenciaId(e.target.value)}
-            disabled={residenciasLoading}
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
           >
-            <option value="">{t("filters.residence")}</option>
-            {residenciasAtivas.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.designacao ?? `#${r.id}`}
-              </option>
-            ))}
-          </select>
-          <select className="ca-input" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
             <option value="all">{t("filters.status")}</option>
             <option value="1">{t("status.active")}</option>
             <option value="0">{t("status.inactive")}</option>
           </select>
-          <button type="submit" className="ca-btn md:col-span-4">
+          <button type="submit" className="ca-btn md:col-span-3">
             {t("filters.apply")}
           </button>
         </form>
@@ -491,7 +365,9 @@ export default function Page() {
         ) : (
           <>
             <div className="px-4 py-3 border-b ca-border flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm ca-muted">{selectedIds.length} {t("bulk.selected")}</span>
+              <span className="text-sm ca-muted">
+                {selectedIds.length} {t("bulk.selected")}
+              </span>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -499,7 +375,14 @@ export default function Page() {
                   disabled={selectedIds.length === 0 || bulkActionLoading !== null}
                   onClick={() => handleBulkAction("ativar")}
                 >
-                  {bulkActionLoading === "ativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.activate")}
+                  <span className="inline-flex items-center gap-2">
+                    {bulkActionLoading === "ativar" ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <CheckCircle2 size={14} />
+                    )}
+                    {t("bulk.activate")}
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -507,7 +390,14 @@ export default function Page() {
                   disabled={selectedIds.length === 0 || bulkActionLoading !== null}
                   onClick={() => handleBulkAction("desativar")}
                 >
-                  {bulkActionLoading === "desativar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.deactivate")}
+                  <span className="inline-flex items-center gap-2">
+                    {bulkActionLoading === "desativar" ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <CircleOff size={14} />
+                    )}
+                    {t("bulk.deactivate")}
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -515,10 +405,18 @@ export default function Page() {
                   disabled={selectedIds.length === 0 || bulkActionLoading !== null}
                   onClick={() => handleBulkAction("eliminar")}
                 >
-                  {bulkActionLoading === "eliminar" ? <Loader2 size={14} className="animate-spin" /> : t("bulk.delete")}
+                  <span className="inline-flex items-center gap-2">
+                    {bulkActionLoading === "eliminar" ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Trash2 size={14} />
+                    )}
+                    {t("bulk.delete")}
+                  </span>
                 </button>
               </div>
             </div>
+
             <table className="w-full text-sm">
               <thead className="bg-slate-50 dark:bg-slate-800/40">
                 <tr>
@@ -526,97 +424,62 @@ export default function Page() {
                     <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} />
                   </th>
                   <th className="px-4 py-3 text-left font-medium">#</th>
-                  <th className="px-4 py-3 text-left font-medium">{t("table.photo")}</th>
-                  <th className="px-4 py-3 text-left font-medium">{t("table.name")}</th>
-                  <th className="px-4 py-3 text-left font-medium">{t("table.email")}</th>
-                  <th className="px-4 py-3 text-left font-medium">{t("table.phone")}</th>
-                  <th className="px-4 py-3 text-left font-medium">{t("table.residence")}</th>
-                  <th className="px-4 py-3 text-left font-medium">{t("table.block")}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t("table.designation")}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t("table.description")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.status")}</th>
                   <th className="px-4 py-3 text-right font-medium">{t("table.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y ca-border">
-                {list.map((row, index) => {
-                  const imgUrl = buildImageUrl(row);
-                  const residencia = row.morador?.residencia;
-                  return (
-                    <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                      <td className="px-4 py-3">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.includes(row.id)}
-                          onChange={() => toggleRowSelection(row.id)}
-                        />
-                      </td>
-                      <td className="px-4 py-3 font-medium">{(currentPage - 1) * perPage + index + 1}</td>
-                      <td className="px-4 py-3">
-                        <div className="h-12 w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
-                          {imgUrl ? (
-                            <img
-                              src={imgUrl}
-                              alt={row.name}
-                              className="h-full w-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "";
-                                (e.target as HTMLImageElement).style.display = "none";
-                                const parent = (e.target as HTMLImageElement).nextElementSibling;
-                                if (parent) (parent as HTMLElement).style.display = "flex";
-                              }}
-                            />
-                          ) : null}
-                          <span
-                            className="h-full w-full items-center justify-center text-slate-500"
-                            style={{ display: imgUrl ? "none" : "flex" }}
-                          >
-                            <User size={18} />
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 font-medium">{row.name}</td>
-                      <td className="px-4 py-3 ca-muted">{row.email ?? "—"}</td>
-                      <td className="px-4 py-3">{row.telefone ?? "—"}</td>
-                      <td className="px-4 py-3">{getResidenciaLabel(row)}</td>
-                      <td className="px-4 py-3">{getBlocoLabel(residencia)}</td>
-                      <td className="px-4 py-3">
-                        {row.estado === 1 ? (
-                          <span className="text-green-600 dark:text-green-400 text-xs font-medium">
-                            {t("status.active")}
-                          </span>
-                        ) : (
-                          <span className="text-red-600 dark:text-red-400 text-xs font-medium">
-                            {t("status.inactive")}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            type="button"
-                            className="ca-icon-btn"
-                            title={t("actions.edit")}
-                            onClick={() => openEdit(row)}
-                          >
-                            <Pencil size={16} />
-                          </button>
-                          <button
-                            type="button"
-                            className="ca-icon-btn text-red-600"
-                            title={t("actions.remove")}
-                            onClick={() => handleDelete(row.id)}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {list.map((row, index) => (
+                  <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(row.id)}
+                        onChange={() => toggleRowSelection(row.id)}
+                      />
+                    </td>
+                    <td className="px-4 py-3 font-medium">{(currentPage - 1) * perPage + index + 1}</td>
+                    <td className="px-4 py-3 font-medium">{row.designacao}</td>
+                    <td className="px-4 py-3 ca-muted">{row.descricao ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      {row.estado === 1 ? (
+                        <span className="text-green-600 dark:text-green-400 text-xs font-medium">
+                          {t("status.active")}
+                        </span>
+                      ) : (
+                        <span className="text-red-600 dark:text-red-400 text-xs font-medium">
+                          {t("status.inactive")}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          className="ca-icon-btn"
+                          title={t("actions.edit")}
+                          onClick={() => openEdit(row)}
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          className="ca-icon-btn text-red-600"
+                          title={t("actions.remove")}
+                          onClick={() => handleDelete(row.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
-            {list.length === 0 && !loading && (
-              <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>
-            )}
+
+            {list.length === 0 && !loading && <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>}
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t ca-border">
                 <span className="text-sm ca-muted">
@@ -661,38 +524,18 @@ export default function Page() {
               <div className="p-4 space-y-4 flex-1 overflow-y-auto ca-scroll">
                 <input
                   className="ca-input"
-                  placeholder={t("form.name")}
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder={t("form.designation")}
+                  value={form.designacao}
+                  onChange={(e) => setForm((f) => ({ ...f, designacao: e.target.value }))}
                   required
                 />
-                <input
-                  type="email"
+                <textarea
                   className="ca-input"
-                  placeholder={t("form.email")}
-                  value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                  required
+                  placeholder={t("form.description")}
+                  value={form.descricao}
+                  onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))}
+                  rows={4}
                 />
-                <input
-                  className="ca-input"
-                  placeholder={t("form.phone")}
-                  value={form.telefone}
-                  onChange={(e) => setForm((f) => ({ ...f, telefone: e.target.value }))}
-                />
-                <select
-                  className="ca-input"
-                  value={form.residencia_id}
-                  onChange={(e) => setForm((f) => ({ ...f, residencia_id: e.target.value }))}
-                  disabled={residenciasLoading}
-                >
-                  <option value="">{t("form.residencePlaceholder")}</option>
-                  {residenciasAtivas.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {(r.designacao ?? `#${r.id}`) + (getBlocoLabel(r) !== "—" ? ` - ${getBlocoLabel(r)}` : "")}
-                    </option>
-                  ))}
-                </select>
                 {editingId !== null && (
                   <select
                     className="ca-input"
@@ -703,26 +546,6 @@ export default function Page() {
                     <option value={0}>{t("status.inactive")}</option>
                   </select>
                 )}
-                <div>
-                  <label className="block text-sm font-medium mb-1">{t("form.photo")}</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="ca-input"
-                    onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
-                  />
-                  {form.imagemPreviewUrl ? (
-                    <img
-                      src={form.imagemPreviewUrl}
-                      alt="Preview"
-                      className="mt-2 h-20 w-20 rounded-full object-cover bg-slate-100 dark:bg-slate-800"
-                    />
-                  ) : (
-                    <div className="mt-2 h-20 w-20 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400">
-                      <ImageIcon size={20} />
-                    </div>
-                  )}
-                </div>
               </div>
 
               <div className="p-4 border-t ca-border flex justify-end gap-2">

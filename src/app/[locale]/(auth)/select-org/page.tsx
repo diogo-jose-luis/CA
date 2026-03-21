@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Organizacao } from "@/types/organizacao";
 
 const STORAGE_KEY = "ca.selected.organization";
+const ORG_LIST_STORAGE_KEY = "ca.organizations.list";
 
 const TIPO_MAP: Record<number, string> = {
   1: "Empresa",
@@ -36,7 +37,7 @@ export default function SelectOrganizationPage() {
   const pathname = usePathname();
   const { data, signOut } = useSession();
   const user = data?.user;
-  const { http, api_base_url } = useAuth();
+  const { api_base_url } = useAuth();
   const locale = useLocale();
   const t = useTranslations("selectOrg");
 
@@ -54,6 +55,7 @@ export default function SelectOrganizationPage() {
     (org: Organizacao) => {
       const url = org.imagem_url ?? org.imagem;
       if (!url) return null;
+      if (/^https?:\/\//i.test(url)) return url;
       const base = api_base_url.replace(/\/$/, "");
       const path = url.startsWith("/") ? url : `/${url}`;
       return `${base}${path}`;
@@ -62,24 +64,21 @@ export default function SelectOrganizationPage() {
   );
 
   useEffect(() => {
-    let cancelled = false;
-    async function fetchOrgs() {
-      try {
-        const res = await http.get<{ data: Organizacao[] }>("/organizacoes", {
-          params: { estado: 1 },
-        });
-        if (!cancelled) setOrganizations(res.data?.data ?? []);
-      } catch {
-        if (!cancelled) setOrganizations([]);
-      } finally {
-        if (!cancelled) setLoading(false);
+    try {
+      const raw = localStorage.getItem(ORG_LIST_STORAGE_KEY);
+      if (!raw) {
+        setOrganizations([]);
+        setLoading(false);
+        return;
       }
+      const parsed = JSON.parse(raw) as Organizacao[];
+      setOrganizations(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setOrganizations([]);
+    } finally {
+      setLoading(false);
     }
-    fetchOrgs();
-    return () => {
-      cancelled = true;
-    };
-  }, [http]);
+  }, []);
 
   function handleSelect(org: Organizacao) {
     const logotipoUrl = buildImageUrl(org) ?? "";
@@ -95,6 +94,7 @@ export default function SelectOrganizationPage() {
 
   function handleLogout() {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ORG_LIST_STORAGE_KEY);
     signOut({ callbackUrl: `/${locale}/login` });
   }
 

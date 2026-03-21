@@ -50,6 +50,7 @@
     "organizationMenu": "Organization",
     "residences": "Residences",
     "areas": "Areas",
+    "cargos": "Roles",
     "cards": "Cards",
     "cameras": "Cameras",
     "residents": "Residents",
@@ -66,6 +67,13 @@
       "manager": "Manager",
       "admin": "Admin"
     }
+  },
+  "tabletNav": {
+    "ariaLabel": "Main operator navigation",
+    "home": "Home",
+    "people": "People",
+    "vehicles": "Vehicles",
+    "incidents": "Incidents"
   },
   "selectOrg": {
     "title": "Select Organization",
@@ -102,19 +110,49 @@
     "criticalIncidents": "critical incidents",
     "updatedAt": "Updated at",
     "total": "Total",
-    "risk": "Risk"
+    "risk": "Risk",
+    "periodFrom": "Start",
+    "periodTo": "End",
+    "applyPeriod": "Apply period",
+    "vsPreviousPeriod": "vs previous period",
+    "periodIndicator": "Period indicator",
+    "loading": "Loading metrics…",
+    "loadError": "Could not load the dashboard.",
+    "noOrganization": "Select an organization to view the dashboard.",
+    "labelVisitors": "Visitors",
+    "labelEmployees": "Employees",
+    "vehicleCatVisitorsProviders": "Visitors and contractors",
+    "vehicleCatSuppliers": "Suppliers",
+    "vehicleCatFleet": "Fleet",
+    "riskLevelLow": "Low risk",
+    "riskLevelMedium": "Medium risk",
+    "riskLevelHigh": "High risk",
+    "criticalDeniedRatio": "Denied with reason / total denied",
+    "deniedGauge": "Denied"
   },
   "peopleAccess": {
     "title": "People Access",
     "subtitle": "Registration and control of entries and exits, including the destination inside the facility.",
     "newAccess": "Register new access",
 
+    "stats": {
+      "inside": "People inside (recent sample)",
+      "insideHint": "Based on the latest 250 records with no exit time.",
+      "entriesToday": "Entries today",
+      "exitsRegistered": "Exits today",
+      "pending": "Pending approval"
+    },
+
     "filters": {
-      "nameOrDocument": "Name or document",
-      "destination": "Destination",
-      "type": "Type",
-      "status": "Status",
-      "apply": "Apply filters"
+      "documentType": "Document type",
+      "documentRef": "Document reference",
+      "department": "Department",
+      "residence": "Residence",
+      "apply": "Apply filters",
+      "approvalAll": "Approval status (all)",
+      "approvalPending": "Pending",
+      "approvalApproved": "Approved",
+      "approvalRejected": "Rejected"
     },
 
     "types": {
@@ -123,10 +161,21 @@
       "contractor": "Contractor"
     },
 
+    "userTypes": {
+      "t1": "System user",
+      "t2": "Employee",
+      "t3": "Client",
+      "t4": "Visitor",
+      "t5": "Gate / guard",
+      "t6": "Supplier",
+      "t7": "Resident"
+    },
+
     "status": {
       "inside": "Inside",
       "left": "Left",
-      "late": "Late"
+      "late": "Late / long stay",
+      "pending": "Pending"
     },
 
     "table": {
@@ -134,21 +183,135 @@
       "name": "Name",
       "type": "Type",
       "document": "Document",
+      "contact": "Contact",
+      "documentType": "Document type",
+      "documentRef": "Doc. reference",
       "destination": "Destination",
+      "reason": "Reason",
+      "host": "Host",
       "entry": "Entry",
       "exit": "Exit",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "empty": "No records."
+    },
+
+    "pagination": {
+      "page": "Page {current} of {total}",
+      "records": "records"
+    },
+
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+
+    "attachments": {
+      "open": "View attachments",
+      "title": "Access photos",
+      "empty": "No images for this record.",
+      "add": "Add images",
+      "remove": "Remove image",
+      "loadError": "Could not load images.",
+      "uploaded": "Images uploaded successfully.",
+      "uploadError": "Could not upload images.",
+      "deleteConfirm": "Remove this image?",
+      "deleted": "Image removed.",
+      "deleteError": "Could not remove the image."
+    },
+
+    "detail": {
+      "title": "Access details",
+      "reason": "Reason for access request"
+    },
+
+    "motivo": {
+      "morador": "Resident",
+      "colaborador": "Employee / staff",
+      "reuniao": "Meeting",
+      "visita": "Visit",
+      "outros": "Other"
+    },
+
+    "visitorsTipoSelect": {
+      "1": "System user",
+      "2": "Employees",
+      "3": "Clients",
+      "4": "Suppliers",
+      "5": "Guards",
+      "6": "Visitors",
+      "7": "Resident"
+    },
+
+    "docTypeUi": {
+      "bi": "National ID card",
+      "passport": "Passport",
+      "carta": "Driving licence",
+      "outro": "Other"
     },
 
     "form": {
       "title": "Register new access",
+      "editTitle": "Edit access",
+      "refreshUsers": "Refresh user lists",
+      "solicitante": "Access requester",
+      "solicitanteExisting": "Existing user",
+      "solicitanteVisitante": "Visitor (API creates or matches)",
+      "visitanteApiHint": "No user selected: the API creates or links a visitor from this data.",
+      "visitanteNome": "Visitor name",
+      "selectUser": "Select user",
+      "loadingUsers": "Loading users…",
+      "host": "Host",
+      "selectHost": "Select host",
+      "loadingHosts": "Loading hosts…",
+      "destinationDepartment": "Destination department",
+      "destinationResidence": "Destination residence",
+      "selectDestination": "Select destination",
       "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "documentType": "Document type",
+      "documentRef": "Document reference",
+      "documentRefPlaceholder": "Document number or reference",
+      "entry": "Entry date and time",
+      "exit": "Exit date and time (optional)",
+      "approval": "Approval",
+      "approvalUnspecified": "Do not change / omit",
+      "notes": "Notes",
+      "register": "Register access",
+      "update": "Save changes",
       "personType": "Person type",
       "document": "Document / Identification",
       "destination": "Destination",
-      "notes": "Notes",
-      "register": "Register access"
+      "requestReason": "Reason for access request",
+      "selectRequestReason": "Select reason (optional)",
+      "visitanteUserType": "User type (API creates or matches)"
+    },
+
+    "toast": {
+      "loadError": "Could not load access records.",
+      "loadUsersError": "Could not load the user list.",
+      "loadHostsError": "Could not load hosts.",
+      "orgRequired": "Select an organization.",
+      "noPermission": "You do not have permission for this action.",
+      "entryRequired": "Please set entry date and time.",
+      "solicitanteRequired": "Select the requester.",
+      "visitanteNomeRequired": "Enter the visitor's name.",
+      "documentoKindRequired": "Select a document type (1–3).",
+      "documentoRefRequired": "Enter the document reference.",
+      "destinationRequired": "Select a destination (department or residence).",
+      "created": "Access registered.",
+      "createdVisitanteNovo": "Access registered. A new visitor was created for the organization.",
+      "updated": "Access updated.",
+      "updatedVisitanteNovo": "Access updated. A new visitor was created.",
+      "deleted": "Access deleted.",
+      "saveError": "Could not save.",
+      "deleteError": "Could not delete."
+    },
+
+    "confirm": {
+      "delete": "Delete this access record?"
     },
 
     "cancel": "Cancel"
@@ -159,10 +322,12 @@
     "newAccess": "Register new access",
 
     "stats": {
-      "inside": "Vehicles Inside",
-      "entriesToday": "Entries Today",
-      "exitsRegistered": "Registered Exits",
-      "pendingIrregular": "Pending / Irregular"
+      "inside": "Vehicles inside (recent sample)",
+      "insideHint": "Based on the latest 250 records with no exit time.",
+      "entriesToday": "Entries today",
+      "exitsRegistered": "Exits today",
+      "pendingIrregular": "Long stay inside",
+      "pendingIrregularHint": "Vehicles still inside for more than 8 hours (same sample)."
     },
 
     "details": {
@@ -170,29 +335,93 @@
       "caption": "Photos captured during vehicle entry and inspection."
     },
 
+    "detail": {
+      "title": "Vehicle access details"
+    },
+
+    "filters": {
+      "plate": "Search by plate",
+      "vehicleTypeAll": "Vehicle type (all)",
+      "cargoAll": "Cargo (all)",
+      "cargoYes": "With cargo",
+      "cargoNo": "Without cargo",
+      "department": "Department",
+      "residence": "Residence",
+      "apply": "Apply filters"
+    },
+
+    "pagination": {
+      "page": "Page {current} of {total}",
+      "records": "records"
+    },
+
     "table": {
       "vehicle": "Vehicle",
       "plate": "Plate",
       "type": "Type",
       "driver": "Driver / Company",
+      "driverContact": "Driver contact",
       "entity": "Entity",
       "destination": "Destination",
+      "host": "Host",
+      "hostContact": "Host contact",
       "entry": "Entry",
       "exit": "Exit",
       "status": "Status",
-      "actions": "Actions"
+      "approval": "Approval",
+      "actions": "Actions",
+      "empty": "No records."
     },
 
     "actions": {
-      "view": "View details",
+      "view": "View",
       "edit": "Edit",
-      "remove": "Remove"
+      "delete": "Delete"
+    },
+
+    "attachments": {
+      "open": "View attachments",
+      "title": "Vehicle photos",
+      "empty": "No images for this record.",
+      "add": "Add images",
+      "remove": "Remove image",
+      "loadError": "Could not load images.",
+      "uploaded": "Images uploaded successfully.",
+      "uploadError": "Could not upload images.",
+      "deleteConfirm": "Remove this image?",
+      "deleted": "Image removed.",
+      "deleteError": "Could not remove the image."
     },
 
     "status": {
       "inside": "Inside",
       "left": "Left",
-      "late": "Late"
+      "late": "Late / long stay"
+    },
+
+    "aprovado": {
+      "unknown": "—",
+      "0": "Pending",
+      "1": "Approved",
+      "2": "Rejected"
+    },
+
+    "motivo": {
+      "morador": "Resident",
+      "colaborador": "Employee",
+      "reuniao": "Meeting",
+      "visita": "Visit",
+      "outros": "Other"
+    },
+
+    "visitorsTipoSelect": {
+      "1": "System user",
+      "2": "Employees",
+      "3": "Clients",
+      "4": "Suppliers",
+      "5": "Guards",
+      "6": "Visitors",
+      "7": "Resident"
     },
 
     "types": {
@@ -201,13 +430,87 @@
       "bus": "Bus"
     },
 
+    "userTypes": {
+      "t1": "System user",
+      "t2": "Employee",
+      "t3": "Client",
+      "t4": "Visitor",
+      "t5": "Gate / guard",
+      "t6": "Supplier",
+      "t7": "Resident"
+    },
+
+    "docTypeUi": {
+      "bi": "National ID card",
+      "passport": "Passport",
+      "carta": "Driving licence",
+      "outro": "Other"
+    },
+
     "form": {
       "title": "Register vehicle access",
+      "editTitle": "Edit vehicle access",
+      "refreshUsers": "Refresh user lists",
       "plate": "Vehicle plate",
+      "platePlaceholder": "e.g. AB-12-CD",
       "vehicleType": "Vehicle type",
-      "driver": "Driver / Company",
-      "notes": "Notes (optional)",
-      "register": "Register access"
+      "temCarga": "Carrying cargo",
+      "cargoYes": "Yes",
+      "cargoNo": "No",
+      "condutor": "Driver",
+      "condutorExisting": "Existing person",
+      "condutorVisitante": "New visitor (API creates or matches)",
+      "visitanteApiHint": "If the driver is not in the list, register a visitor; the API links or creates the user.",
+      "visitanteNome": "Driver / visitor name",
+      "selectDriver": "Select driver",
+      "loadingUsers": "Loading users…",
+      "host": "Host",
+      "selectHost": "Select host",
+      "loadingHosts": "Loading hosts…",
+      "destination": "Destination",
+      "selectDestination": "Select destination",
+      "loadingDestinations": "Loading destinations…",
+      "email": "Email",
+      "phone": "Phone",
+      "documentType": "Document type",
+      "documentRef": "Document reference",
+      "documentRefPlaceholder": "Document number or reference",
+      "entry": "Entry date and time",
+      "exit": "Exit date and time (optional)",
+      "aprovado": "Approval status",
+      "motivo": "Reason",
+      "motivoPlaceholder": "Reason for rejection or notes on approval",
+      "requestReason": "Reason for access request",
+      "selectRequestReason": "Select reason (optional)",
+      "visitanteUserType": "User type (API creates or matches)",
+      "observacoes": "Notes",
+      "observacoesPlaceholder": "Additional observations",
+      "register": "Register access",
+      "update": "Save changes"
+    },
+
+    "toast": {
+      "loadError": "Could not load vehicle access records.",
+      "loadUsersError": "Could not load the user list.",
+      "loadHostsError": "Could not load hosts.",
+      "orgRequired": "Select an organization.",
+      "noPermission": "You do not have permission for this action.",
+      "entryRequired": "Please set entry date and time.",
+      "condutorRequired": "Select the driver.",
+      "visitanteNomeRequired": "Enter the visitor's name.",
+      "documentoRefRequired": "Enter the document reference.",
+      "destinationRequired": "Select a destination (department or residence).",
+      "created": "Vehicle access registered.",
+      "createdVisitanteNovo": "Vehicle access registered. A new visitor was created for the organization.",
+      "updated": "Vehicle access updated.",
+      "updatedVisitanteNovo": "Vehicle access updated. A new visitor was created.",
+      "deleted": "Vehicle access deleted.",
+      "saveError": "Could not save.",
+      "deleteError": "Could not delete."
+    },
+
+    "confirm": {
+      "delete": "Delete this vehicle access record?"
     },
 
     "cancel": "Cancel"
@@ -317,6 +620,9 @@
     "title": "Occurrences",
     "subtitle": "Incident registration and monitoring",
     "new": "New occurrence",
+    "noOrg": "Select an organization to view occurrences.",
+    "empty": "No occurrences found.",
+    "confirmDelete": "Delete this occurrence?",
 
     "stats": {
       "total": "Total occurrences",
@@ -329,18 +635,39 @@
       "type": "Type",
       "category": "Category",
       "period": "Period",
-      "apply": "Apply filters"
+      "apply": "Apply filters",
+      "allTypes": "All types",
+      "allCategories": "All categories",
+      "allPeriods": "All periods",
+      "allStates": "All states",
+      "allRiskLevels": "All risk levels",
+      "allLocals": "All locations",
+      "dateFrom": "From date",
+      "dateTo": "To date"
     },
 
     "types": {
       "client": "Client",
-      "security": "Security"
+      "security": "Security",
+      "internal": "Internal"
     },
 
     "categories": {
       "accident": "Accident",
       "theft": "Theft",
-      "robbery": "Robbery"
+      "robbery": "Robbery",
+      "other": "Other"
+    },
+
+    "states": {
+      "open": "Open",
+      "closed": "Closed"
+    },
+
+    "riskLevels": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
     },
 
     "period": {
@@ -350,11 +677,14 @@
 
     "table": {
       "order": "Order",
+      "mainPhoto": "Photo",
       "date": "Date",
       "time": "Time",
       "type": "Type",
       "category": "Category",
       "description": "Description",
+      "location": "Location",
+      "status": "Status",
       "risk": "Risk level",
       "period": "Period",
       "actions": "Actions"
@@ -362,12 +692,66 @@
 
     "form": {
       "title": "New occurrence",
+      "titleNew": "New occurrence",
+      "titleEdit": "Edit occurrence",
       "order": "Occurrence number",
       "description": "Incident description",
       "risk": "Risk level",
+      "datetime": "Date and time",
+      "state": "Status",
+      "local": "Department / location",
+      "localNone": "None",
+      "observations": "Notes",
+      "image": "Photo",
+      "imageHint": "JPEG, PNG, GIF or WebP · max 5 MB",
+      "comprovantos": "Additional proof photos",
+      "comprovantosHint": "Optional. You can add more files later from the attachments panel.",
       "actionTaken": "Action taken",
       "recommendations": "Recommendations",
       "save": "Save"
+    },
+
+    "view": {
+      "title": "Occurrence details",
+      "mainImage": "Main photo",
+      "noMainImage": "No main photo.",
+      "comprovantosSection": "Proof attachments",
+      "noComprovantos": "No proof attachments."
+    },
+
+    "imagesPanel": {
+      "title": "Proof attachments",
+      "subtitle": "Occurrence OC-{id}",
+      "addFiles": "Add images",
+      "listTitle": "Uploaded files",
+      "empty": "No proof images yet.",
+      "uploading": "Uploading…",
+      "uploadSuccess": "Images uploaded successfully.",
+      "deleteSuccess": "Image removed.",
+      "deleteConfirm": "Remove this attachment?"
+    },
+
+    "actions": {
+      "view": "View",
+      "images": "Attachments",
+      "manageImages": "Manage attachments",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+
+    "toast": {
+      "loadError": "Could not load data.",
+      "created": "Occurrence created successfully.",
+      "updated": "Occurrence updated successfully.",
+      "deleted": "Occurrence deleted.",
+      "error": "Something went wrong."
+    },
+
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "results": "result(s)",
+      "page": "Page"
     },
 
     "cancel": "Cancel"
@@ -525,6 +909,450 @@
       "bulkDeleted": "Organizations deleted successfully.",
       "error": "An error occurred. Please try again."
     }
+  },
+  "usersPage": {
+    "title": "Users",
+    "subtitle": "System user management and access levels (type 1).",
+    "new": "New user",
+    "stats": { "total": "Total Users", "admins": "Administrators", "active": "Active", "inactive": "Inactive" },
+    "filters": { "name": "Search by name", "level": "Access level", "email": "Email", "status": "Status", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "photo": "Photo", "name": "Name", "level": "Level", "email": "Email", "phone": "Phone", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "newPassword": "Generate password", "edit": "Edit", "activate": "Activate", "deactivate": "Deactivate", "remove": "Remove" },
+    "empty": "No users found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New user", "edit": "Edit user", "name": "Full name", "email": "Email", "phone": "Phone", "level": "Access level", "photo": "Photo (optional)", "update": "Update", "register": "Register" },
+    "password": { "title": "Generated password", "subtitle": "Save or send to the user. Email:", "close": "Close" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading users.",
+      "orgRequired": "Organization not selected.",
+      "updated": "User updated successfully.",
+      "created": "User created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "User deleted successfully.",
+      "deleteError": "Error deleting.",
+      "activated": "User activated.",
+      "activateError": "Error activating.",
+      "deactivated": "User deactivated.",
+      "deactivateError": "Error deactivating.",
+      "passwordError": "Error generating password.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Users activated successfully.",
+      "bulkDeactivated": "Users deactivated successfully.",
+      "bulkDeleted": "Users deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this user?", "deleteBulk": "Remove selected users?" }
+  },
+  "guardsPage": {
+    "title": "Guards",
+    "subtitle": "Management of guards and gate operators (type 5).",
+    "new": "New guard",
+    "stats": { "total": "Total Guards", "idCard": "ID Card", "passport": "Passport" },
+    "filters": { "name": "Search by name", "documentType": "Document type", "documentRef": "Document ref", "apply": "Apply filters" },
+    "document": { "idCard": "ID Card", "passport": "Passport", "other": "Other" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "photo": "Photo", "name": "Name", "document": "Document", "documentRef": "Document ref", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No guards found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New guard", "edit": "Edit guard", "name": "Full name", "email": "Email", "phone": "Phone", "documentRef": "Document ref", "photo": "Photo (optional)", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading guards.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Guard updated successfully.",
+      "created": "Guard created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Guard deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Guards activated successfully.",
+      "bulkDeactivated": "Guards deactivated successfully.",
+      "bulkDeleted": "Guards deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this guard?", "deleteBulk": "Remove selected guards?" }
+  },
+  "clientsPage": {
+    "title": "Clients",
+    "subtitle": "Management of clients linked to the organization (type 3).",
+    "new": "New client",
+    "stats": { "total": "Total Clients", "corporate": "Corporate Clients", "individual": "Individual Clients" },
+    "filters": { "name": "Search by name", "area": "Area / Segment", "email": "Email", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "logo": "Logo", "name": "Name", "area": "Area", "email": "Email", "phone": "Phone", "site": "Website", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No clients found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New client", "edit": "Edit client", "name": "Company name", "area": "Area / Segment", "email": "Email", "phone": "Phone", "site": "Website", "logo": "Logo (optional)", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading clients.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Client updated successfully.",
+      "created": "Client created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Client deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Clients activated successfully.",
+      "bulkDeactivated": "Clients deactivated successfully.",
+      "bulkDeleted": "Clients deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this client?", "deleteBulk": "Remove selected clients?" }
+  },
+  "employeesPage": {
+    "title": "Employees",
+    "subtitle": "Management of employees in the condominium or organization.",
+    "new": "New employee",
+    "stats": { "total": "Total Employees", "active": "Active", "withDepartment": "With department", "inactive": "Inactive" },
+    "filters": { "name": "Search by name", "position": "Search by role", "department": "Search by department", "status": "Status", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "photo": "Photo", "name": "Name", "email": "Email", "position": "Position", "department": "Department", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No employees found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New employee", "edit": "Edit employee", "name": "Full name", "email": "Email", "position": "Position / Role", "department": "Department", "photo": "Photo (optional)", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading employees.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Employee updated successfully.",
+      "created": "Employee created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Employee deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Employees activated successfully.",
+      "bulkDeactivated": "Employees deactivated successfully.",
+      "bulkDeleted": "Employees deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this employee?", "deleteBulk": "Remove selected employees?" }
+  },
+  "suppliersPage": {
+    "title": "Suppliers",
+    "subtitle": "Management of suppliers and service providers.",
+    "new": "New supplier",
+    "stats": { "total": "Total Suppliers", "active": "Active", "inactive": "Inactive" },
+    "filters": { "name": "Search by name", "area": "Business area", "email": "Email", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "logo": "Logo", "name": "Name", "area": "Area", "email": "Email", "phone": "Phone", "site": "Website", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No suppliers found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New supplier", "edit": "Edit supplier", "name": "Company name", "area": "Business area", "email": "Email", "phone": "Phone", "site": "Website", "logo": "Logo (optional)", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading suppliers.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Supplier updated successfully.",
+      "created": "Supplier created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Supplier deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Suppliers activated successfully.",
+      "bulkDeactivated": "Suppliers deactivated successfully.",
+      "bulkDeleted": "Suppliers deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this supplier?", "deleteBulk": "Remove selected suppliers?" }
+  },
+  "guestsPage": {
+    "title": "Guests",
+    "subtitle": "Management of external visitors registered in the system.",
+    "new": "New guest",
+    "stats": { "total": "Total Guests", "idCard": "ID Card", "passport": "Passport", "active": "Active", "inactive": "Inactive" },
+    "filters": { "name": "Search by name", "documentType": "Document type", "documentRef": "Document ref", "apply": "Apply filters" },
+    "document": { "idCard": "ID Card", "passport": "Passport", "other": "Other" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "photo": "Photo", "name": "Name", "document": "Document", "documentRef": "Document ref", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No guests found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New guest", "edit": "Edit guest", "name": "Full name", "email": "Email", "phone": "Phone", "documentRef": "Document ref", "photo": "Photo (optional)", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading guests.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Guest updated successfully.",
+      "created": "Guest created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Guest deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Guests activated successfully.",
+      "bulkDeactivated": "Guests deactivated successfully.",
+      "bulkDeleted": "Guests deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this guest?", "deleteBulk": "Remove selected guests?" }
+  },
+  "residentsPage": {
+    "title": "Residents",
+    "subtitle": "Management of residents registered in the condominium.",
+    "new": "New resident",
+    "stats": { "total": "Total Residents", "active": "Active", "withResidence": "With residence" },
+    "filters": { "name": "Search by name", "email": "Search by email", "residence": "Residence", "status": "Status", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "photo": "Photo", "name": "Name", "email": "Email", "phone": "Phone", "residence": "Residence", "block": "Block", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No residents found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": {
+      "new": "New resident",
+      "edit": "Edit resident",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "residencePlaceholder": "Select active residence (optional)",
+      "photo": "Photo (optional)",
+      "update": "Update",
+      "register": "Register"
+    },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading residents.",
+      "orgRequired": "Organization not selected.",
+      "emailRequired": "Email is required.",
+      "updated": "Resident updated successfully.",
+      "created": "Resident created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Resident deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Residents activated successfully.",
+      "bulkDeactivated": "Residents deactivated successfully.",
+      "bulkDeleted": "Residents deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this resident?", "deleteBulk": "Remove selected residents?" }
+  },
+  "departmentsPage": {
+    "title": "Departments / Areas",
+    "subtitle": "Management of organization departments and areas.",
+    "new": "New department",
+    "stats": { "total": "Total Departments", "active": "Active", "inactive": "Inactive" },
+    "filters": { "designation": "Search by designation", "status": "Status", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "designation": "Designation", "description": "Description", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No departments found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New department", "edit": "Edit department", "designation": "Designation", "description": "Description", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading departments.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Department updated successfully.",
+      "created": "Department created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Department deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Departments activated successfully.",
+      "bulkDeactivated": "Departments deactivated successfully.",
+      "bulkDeleted": "Departments deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this department?", "deleteBulk": "Remove selected departments?" }
+  },
+  "cargosPage": {
+    "title": "Roles",
+    "subtitle": "Management of organization roles and functions.",
+    "new": "New role",
+    "stats": { "total": "Total Roles", "active": "Active", "inactive": "Inactive" },
+    "filters": { "designation": "Search by designation", "status": "Status", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate selected", "deactivate": "Deactivate selected", "delete": "Delete selected" },
+    "table": { "designation": "Designation", "description": "Description", "status": "Status", "actions": "Actions" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No roles found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": { "new": "New role", "edit": "Edit role", "designation": "Designation", "description": "Description", "update": "Update", "register": "Register" },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading roles.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Role updated successfully.",
+      "created": "Role created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Role deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkActivated": "Roles activated successfully.",
+      "bulkDeactivated": "Roles deactivated successfully.",
+      "bulkDeleted": "Roles deleted successfully.",
+      "bulkError": "Error executing bulk action."
+    },
+    "confirm": { "deleteOne": "Remove this role?", "deleteBulk": "Remove selected roles?" }
+  },
+  "cardsPage": {
+    "title": "Cards",
+    "subtitle": "Access card management for guests, employees, and providers.",
+    "new": "Register new card",
+    "stats": { "total": "Total on page", "active": "Active cards", "expired": "Expired cards", "inactive": "Inactive cards" },
+    "filters": {
+      "code": "Code",
+      "holder": "Holder",
+      "description": "Description",
+      "type": "Card type",
+      "status": "Status",
+      "apply": "Apply filters"
+    },
+    "types": { "other": "Other" },
+    "bulk": { "selected": "selected", "activate": "Activate", "deactivate": "Deactivate", "delete": "Delete" },
+    "table": {
+      "code": "Code",
+      "description": "Description",
+      "holder": "Holder",
+      "type": "Type",
+      "issueDate": "Issue date",
+      "expiryDate": "Expiry date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "activate": "Activate", "deactivate": "Deactivate", "remove": "Delete" },
+    "empty": "No cards.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": {
+      "new": "Register new card",
+      "edit": "Edit card",
+      "code": "Card code",
+      "codeAuto": "Automatically generated",
+      "description": "Description (optional)",
+      "holder": "Select holder",
+      "loadingHolders": "Loading holders...",
+      "update": "Update card",
+      "register": "Register card"
+    },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Could not load cards.",
+      "orgRequired": "Select an organization.",
+      "holderRequired": "Select a card holder.",
+      "updated": "Card updated successfully.",
+      "created": "Card registered successfully.",
+      "saveError": "Could not save card.",
+      "deleted": "Card deleted successfully.",
+      "deleteError": "Could not delete card.",
+      "activated": "Card activated.",
+      "deactivated": "Card deactivated.",
+      "statusError": "Could not change status.",
+      "selectAtLeastOne": "Select at least one card.",
+      "bulkActivated": "Cards activated successfully.",
+      "bulkDeactivated": "Cards deactivated successfully.",
+      "bulkDeleted": "Cards deleted successfully.",
+      "bulkError": "Could not execute bulk action."
+    },
+    "confirm": { "deleteOne": "Do you want to delete this card?", "deleteBulk": "Do you want to delete selected cards?" }
+  },
+  "camerasPage": {
+    "title": "Cameras",
+    "subtitle": "Monitoring and management of the video surveillance system (CCTV).",
+    "new": "New camera",
+    "stats": { "total": "Total on page", "active": "Active cameras", "inactive": "Inactive cameras" },
+    "filters": { "designation": "Search by designation", "block": "Block / Area", "status": "Status", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate", "deactivate": "Deactivate", "delete": "Delete" },
+    "table": { "noBlock": "No block" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "actions": { "edit": "Edit", "activate": "Activate", "deactivate": "Deactivate", "remove": "Delete", "refreshBlocks": "Refresh blocks" },
+    "empty": "No cameras found.",
+    "pagination": { "prev": "Previous", "next": "Next", "results": "{total} result(s) · page {currentPage} of {totalPages}" },
+    "cameraPreview": {
+      "title": "Device camera demo",
+      "notSupported": "This device/browser does not support camera access.",
+      "permissionError": "Could not access the camera. Check browser permissions."
+    },
+    "form": {
+      "new": "Register new camera",
+      "edit": "Edit camera",
+      "designation": "Camera designation",
+      "noBlock": "No block",
+      "loadingBlocks": "Loading blocks...",
+      "imagePreviewAlt": "Camera preview",
+      "update": "Update camera",
+      "register": "Register camera"
+    },
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Could not load cameras.",
+      "loadBlocksError": "Could not load blocks.",
+      "orgRequired": "Select an organization.",
+      "updated": "Camera updated successfully.",
+      "created": "Camera created successfully.",
+      "saveError": "Could not save camera.",
+      "deleted": "Camera deleted successfully.",
+      "deleteError": "Could not delete camera.",
+      "activated": "Camera activated.",
+      "deactivated": "Camera deactivated.",
+      "statusError": "Could not change status.",
+      "selectAtLeastOne": "Select at least one camera.",
+      "bulkActivated": "Cameras activated successfully.",
+      "bulkDeactivated": "Cameras deactivated successfully.",
+      "bulkDeleted": "Cameras deleted successfully.",
+      "bulkError": "Could not execute bulk action."
+    },
+    "confirm": { "deleteOne": "Do you want to delete this camera?", "deleteBulk": "Do you want to delete selected cameras?" }
+  },
+  "residencesPage": {
+    "title": "Residences",
+    "subtitle": "Organization residences management.",
+    "new": "New residence",
+    "stats": { "total": "Total Residences", "active": "Active Residences", "inactive": "Inactive Residences", "occupied": "Occupied Residences", "free": "Free Residences" },
+    "filters": { "designation": "Search by designation", "block": "Block / Area", "status": "Status", "occupation": "Occupation", "apply": "Apply filters" },
+    "bulk": { "selected": "selected", "activate": "Activate", "deactivate": "Deactivate", "occupy": "Occupy", "free": "Free", "delete": "Delete" },
+    "table": { "image": "Image", "designation": "Designation", "block": "Block / Area", "status": "Status", "occupation": "Occupation", "actions": "Actions", "noBlock": "No block" },
+    "status": { "active": "Active", "inactive": "Inactive" },
+    "occupation": { "occupied": "Occupied", "free": "Free" },
+    "actions": { "view": "View details", "edit": "Edit", "remove": "Remove", "refreshDepartments": "Refresh departments" },
+    "details": { "title": "Residence", "id": "ID", "block": "Block", "status": "Status", "occupation": "Occupation", "residents": "Residents", "description": "Description" },
+    "empty": "No residences found.",
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "form": {
+      "new": "Register new residence",
+      "edit": "Edit residence",
+      "designation": "Residence designation",
+      "noBlock": "No block",
+      "description": "Description (optional)",
+      "imagePath": "Image (URL or path)",
+      "imagePreviewAlt": "Preview",
+      "noImagePreview": "No image preview",
+      "update": "Update residence",
+      "register": "Register residence"
+    },
+    "close": "Close",
+    "cancel": "Cancel",
+    "toast": {
+      "loadError": "Error loading residences.",
+      "orgRequired": "Organization not selected.",
+      "updated": "Residence updated successfully.",
+      "created": "Residence created successfully.",
+      "saveError": "Could not save residence.",
+      "deleted": "Residence deleted successfully.",
+      "deleteError": "Error deleting residence.",
+      "selectAtLeastOne": "Select at least one residence.",
+      "bulkActivated": "Residences activated successfully.",
+      "bulkDeactivated": "Residences deactivated successfully.",
+      "bulkOccupied": "Residences marked as occupied successfully.",
+      "bulkFreed": "Residences marked as free successfully.",
+      "bulkDeleted": "Residences deleted successfully.",
+      "bulkError": "Bulk action failed."
+    },
+    "confirm": { "deleteOne": "Are you sure you want to delete this residence?", "deleteBulk": "Are you sure you want to delete selected residences?" }
   },
   "serviceEvaluation": {
     "title": "Service Evaluation",

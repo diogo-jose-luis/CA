@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import type { Organizacao } from "@/types/organizacao";
 
 const ORG_KEY = "ca.selected.organization";
+const ORG_LIST_STORAGE_KEY = "ca.organizations.list";
 const TIPO_MAP: Record<number, string> = {
   1: "Empresa",
   2: "Condomínio",
@@ -43,7 +44,7 @@ export default function PostLogin() {
   const getOrgErrorMessage = () => {
     try {
       const msg = t("orgLoadError");
-      if (typeof msg === "string" && !msg.includes("selectOrg") && msg.length > 5)
+      if (typeof msg == "string" && !msg.includes("selectOrg") && msg.length > 5)
         return msg;
     } catch {
       /* ignore */
@@ -56,17 +57,36 @@ export default function PostLogin() {
   }, [refetch]);
 
   useEffect(() => {
-    if (status !== "authenticated" || !data?.user || doneRef.current) return;
+    if (status != "authenticated" || !data?.user || doneRef.current) return;
 
     const user = data.user;
     const nivel = user.nivel;
 
     // Apenas nível 1 (admin) e 2 (gestor) têm acesso ao select-org.
     // Operador, cliente e outros vão direto ao dashboard com a organização do user.
-    if (nivel === 1 || nivel === 2) {
-      doneRef.current = true;
-      router.replace(`/${locale}/select-org`);
-      return;
+    if (nivel == 1 || nivel == 2) {
+      let cancelled = false;
+      (async () => {
+        try {
+          const res = await http.get<{ data: Organizacao[] }>("/organizacoes", {
+            params: { estado: 1 },
+          });
+          if (cancelled) return;
+          const list = res.data?.data ?? [];
+          localStorage.setItem(ORG_LIST_STORAGE_KEY, JSON.stringify(list));
+          doneRef.current = true;
+          router.replace(`/${locale}/select-org`);
+        } catch {
+          if (!cancelled) {
+            doneRef.current = true;
+            setOrgError(getOrgErrorMessage());
+          }
+        }
+      })();
+
+      return () => {
+        cancelled = true;
+      };
     }
 
     const organizacaoId = user.organizacao_id ?? null;
@@ -124,7 +144,7 @@ export default function PostLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
       <div className="text-slate-500 dark:text-slate-400">
-        {status === "loading" ? "A verificar sessão…" : "A redirecionar…"}
+        {status == "loading" ? "A verificar sessão…" : "A redirecionar…"}
       </div>
     </div>
   );

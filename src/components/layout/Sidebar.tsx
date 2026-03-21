@@ -23,7 +23,17 @@ import {
   UserCheck,
   UserX,
   UserMinus,
+  UserRound,
   Mail,
+  AlertTriangle,
+  Package,
+  Key,
+  Bell,
+  Star,
+  Building2,
+  Layers,
+  Factory,
+  Briefcase,
 } from "lucide-react";
 
 export type SidebarIconKey =
@@ -53,7 +63,17 @@ export type SidebarIconKey =
   | "mail"
   | "message-circle"
   | "building"
-  | "buildings";
+  | "buildings"
+  | "alert-triangle"
+  | "package"
+  | "key"
+  | "bell"
+  | "star"
+  | "building2"
+  | "layers"
+  | "factory"
+  | "briefcase"
+  | "user-round";
 
 export type SidebarItem =
   | { label: string; href: string; icon: SidebarIconKey; divider?: false }
@@ -128,6 +148,16 @@ const iconMap: Record<SidebarIconKey, React.ElementType> = {
       <div className="h-3 w-2 bg-current rounded-sm absolute top-0 right-0" />
     </div>
   ),
+  "alert-triangle": AlertTriangle,
+  package: Package,
+  key: Key,
+  bell: Bell,
+  star: Star,
+  building2: Building2,
+  layers: Layers,
+  factory: Factory,
+  briefcase: Briefcase,
+  "user-round": UserRound,
 };
 
 function isActive(activePath: string, href: string) {
@@ -150,7 +180,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`${width} shrink-0 border-r ca-border ca-panel flex flex-col`}
+      className={`${width} shrink-0 border-r ca-border ca-panel flex flex-col tablet-app:hidden`}
     >
       {/* Top logos area */}
       <div className="p-3">

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Sidebar, { SidebarItem } from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
 import Footer from "@/components/layout/Footer";
+import TabletOperatorBottomNav from "@/components/layout/TabletOperatorBottomNav";
 import { useSession } from "@/contexts/AuthContext";
 import useLocale from "@/hooks/useLocale";
 
@@ -27,6 +28,7 @@ export default function DashboardShell({
   const [organization, setOrganization] = useState<any>(null);
   const [loaded, setLoaded] = useState(false);
   const t = useTranslations("sidebar");
+  const ts = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
 
   const pathname = usePathname();
 
@@ -65,92 +67,93 @@ export default function DashboardShell({
     const isEmpresa = organization.tipo == "Empresa";
 
     const base: SidebarItem[] = [
-      { label: t("dashboard"), href: l("/dashboard"), icon: "dashboard" },
+      { label: ts("dashboard", "Dashboard"), href: l("/dashboard"), icon: "dashboard" },
 
-      { divider: true, label: t("sections.operator") },
+      { divider: true, label: ts("sections.operator", "Operador") },
 
-      { label: t("peopleAccess"), href: l("/people-access"), icon: "people" },
+      { label: ts("peopleAccess", "Acesso de Pessoas"), href: l("/people-access"), icon: "people" },
 
       {
-        label: t("vehicleAccess"),
+        label: ts("vehicleAccess", "Acesso de Veiculos"),
         href: l("/vehicle-access"),
         icon: "vehicles",
       },
 
-      { label: t("incidents"), href: l("/ocorrencias"), icon: "reports" },//nova
-      { label: t("orders"), href: l("/encomendas"), icon: "reports" },//nova
-      { label: t("keyDelivery"), href: l("/chaves"), icon: "reports" },//nova
+      { label: ts("incidents", "Ocorrencias"), href: l("/ocorrencias"), icon: "alert-triangle" },
+      { label: ts("orders", "Encomendas"), href: l("/encomendas"), icon: "package" },
+      { label: ts("keyDelivery", "Entrega de Chaves"), href: l("/chaves"), icon: "key" },
 
-      { label: t("alerts"), href: l("/avisos"), icon: "reports" },
+      { label: ts("alerts", "Avisos"), href: l("/avisos"), icon: "bell" },
     ];
 
-    if (nivel == 4) {
+    if (nivel == 4) { //cliente nivel 4 
       return [
         ...base,
-        { label: t("reports"), href: l("/reports"), icon: "reports" },
+        { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
         {
-          label: t("serviceReview"),
+          label: ts("serviceReview", "Avaliacao de Servicos"),
           href: l("/avaliacao-servicos"),
-          icon: "reports",
-        },//nova
+          icon: "star",
+        },
       ];
     }
 
-    if (nivel == 3) {
+    if (nivel == 3) {//operador nivel 3
       return base;
     }
 
     const gestorItems: SidebarItem[] = [
-      { divider: true, label: t("sections.manager") },
+      { divider: true, label: ts("sections.manager", "Gestor") },
 
-      { label: t("organizationMenu"), href: l("/organizacao"), icon: "homes" },
+      { label: ts("organizationMenu", "Organizacao"), href: l("/organizacao"), icon: "building2" },
 
       !isEmpresa && {
-        label: t("residences"),
+        label: ts("residences", "Moradias"),
         href: l("/residences"),
         icon: "homes",
       },
 
-      { label: t("areas"), href: l("/departamentos"), icon: "tag" },
+      { label: ts("areas", "Areas"), href: l("/departamentos"), icon: "layers" },
+      { label: ts("cargos", "Cargos"), href: l("/cargos"), icon: "briefcase" },
 
-      { label: t("cards"), href: l("/cards"), icon: "cards" },
+      { label: ts("cards", "Cartoes"), href: l("/cards"), icon: "cards" },
 
-      { label: t("cameras"), href: l("/cameras"), icon: "cctv" },
+      { label: ts("cameras", "Cameras"), href: l("/cameras"), icon: "cctv" },
 
       !isEmpresa && {
-        label: t("residents"),
+        label: ts("residents", "Moradores"),
         href: l("/moradores"),
         icon: "people",
       },
 
-      { label: t("employees"), href: l("/colaboradores"), icon: "people" },
+      { label: ts("employees", "Colaboradores"), href: l("/colaboradores"), icon: "people" },
 
-      { label: t("guests"), href: l("/guests"), icon: "user-x" },
+      { label: ts("guests", "Visitantes"), href: l("/guests"), icon: "user-round" },
 
-      { label: t("suppliers"), href: l("/fornecedores"), icon: "buildings" },
+      { label: ts("suppliers", "Fornecedores"), href: l("/fornecedores"), icon: "factory" },
 
-      { label: t("clients"), href: l("/clientes"), icon: "buildings" },
+      { label: ts("clients", "Clientes"), href: l("/clientes"), icon: "briefcase" },
 
-      { label: t("guards"), href: l("/porteiros"), icon: "shield" },
+      { label: ts("guards", "Porteiros"), href: l("/porteiros"), icon: "shield" },
     ].filter(Boolean) as SidebarItem[];
 
     const adminItems: SidebarItem[] =
-      nivel == 1
+      nivel == 1 //admin nivel 1
         ? [
-            { divider: true, label: t("sections.admin") },
+            { divider: true, label: ts("sections.admin", "Admin") },
 
-            { label: t("users"), href: l("/utilizadores"), icon: "user-cog" },
+            { label: ts("users", "Utilizadores"), href: l("/utilizadores"), icon: "user-cog" },
 
-            { label: t("reports"), href: l("/reports"), icon: "reports" },
+            { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
 
-            { label: t("settings"), href: l("/settings"), icon: "settings" },
+            { label: ts("settings", "Configuracoes"), href: l("/settings"), icon: "settings" },
           ]
-        : [
-            { divider: true, label: t("sections.admin") },
+        : [ //gestor nivel 2
+            { divider: true, label: ts("sections.admin", "Admin") },
 
-            { label: t("users"), href: l("/utilizadores"), icon: "user-cog" },
+            { label: ts("users", "Utilizadores"), href: l("/utilizadores"), icon: "user-cog" },
 
-            { label: t("reports"), href: l("/reports"), icon: "reports" },
+            { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
           ];
 
     return [...base, ...gestorItems, ...adminItems];
@@ -169,10 +172,15 @@ export default function DashboardShell({
         organization={organization}
       />
 
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="relative flex min-h-0 min-w-0 flex-1 flex-col tablet-app:bg-[var(--bg)]">
         <Topbar onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 overflow-y-auto ca-scroll">{children}</main>
-        <Footer />
+        <main className="ca-scroll flex-1 overflow-y-auto tablet-app:pb-[calc(4.25rem+env(safe-area-inset-bottom))]">
+          {children}
+        </main>
+        <div className="tablet-app:hidden">
+          <Footer />
+        </div>
+        <TabletOperatorBottomNav />
       </div>
     </div>
   );

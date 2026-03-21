@@ -1,6 +1,6 @@
 // src/app/[locale]/layout.tsx
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
 
@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   title: { default: "CA · Controle de Acesso", template: "%s · CA" },
   description:
     "Painel de gestão de controle de acesso para portarias de condomínios e portarias industriais.",
+};
+
+/** Permite `env(safe-area-inset-*)` em tablets / PWA com entalhes. */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({

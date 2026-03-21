@@ -19,7 +19,7 @@ export default function LoginPage() {
   const redirectTo = useMemo(() => sp.get("redirect") || "/dashboard", [sp]);
 
   const locale =
-    typeof window !== "undefined"
+    typeof window != "undefined"
       ? window.location.pathname.split("/")[1]
       : "pt";
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
       }
     } catch (err: unknown) {
       const status = axios.isAxiosError(err) ? err.response?.status : null;
-      if (status === 401 || status === 422) {
+      if (status == 401 || status == 422) {
         setError(t("errors.invalidCredentials"));
       } else {
         setError(t("errors.authError"));
@@ -86,41 +86,44 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* LEFT SIDE */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white dark:bg-slate-950 px-8 relative">
-
+    <div className="flex min-h-[100dvh] min-h-screen w-full flex-col desktop-auth:flex-row">
+      {/* Painel principal: telefone = ecrã cheio branco; tablet-app = transparente (vê-se o fundo do layout); desktop = metade */}
+      <div className="relative flex w-full flex-1 items-center justify-center bg-white pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] dark:bg-slate-950 tablet-app:bg-transparent desktop-auth:w-1/2 desktop-auth:bg-white">
         {/* Language Switch */}
-        <div className="absolute top-6 right-6">
+        <div className="absolute right-[max(1.5rem,env(safe-area-inset-right))] top-[max(1.5rem,env(safe-area-inset-top))] z-20 tablet-app:right-[max(2rem,env(safe-area-inset-right))] tablet-app:top-[max(2rem,env(safe-area-inset-top))] desktop-auth:right-[max(1.5rem,env(safe-area-inset-right))] desktop-auth:top-[max(1.5rem,env(safe-area-inset-top))]">
           <button
+            type="button"
             onClick={() => setLangOpen((v) => !v)}
-            className="flex items-center gap-1 border rounded-xl px-3 py-2 text-sm"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/90 tablet-app:min-h-12 tablet-app:px-4 tablet-app:text-base"
           >
-            {locale === "pt" && "🇵🇹"}
-            {locale === "en" && "🇬🇧"}
-            {locale === "fr" && "🇫🇷"}
-            <ChevronDown size={14} />
+            {locale == "pt" && "🇵🇹"}
+            {locale == "en" && "🇬🇧"}
+            {locale == "fr" && "🇫🇷"}
+            <ChevronDown className="size-3.5 shrink-0 tablet-app:size-5" aria-hidden />
           </button>
 
           {langOpen && (
-            <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-slate-900 border rounded-xl shadow-xl p-2">
+            <div className="absolute right-0 mt-2 w-32 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-700 dark:bg-slate-900 tablet-app:w-44 tablet-app:p-2.5">
               <button
+                type="button"
                 onClick={() => changeLanguage("pt")}
-                className="w-full text-left px-2 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                className="w-full rounded-xl px-2 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 tablet-app:min-h-12 tablet-app:px-3 tablet-app:text-base"
               >
                 🇵🇹 {t("lang.pt")}
               </button>
 
               <button
+                type="button"
                 onClick={() => changeLanguage("en")}
-                className="w-full text-left px-2 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                className="w-full rounded-xl px-2 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 tablet-app:min-h-12 tablet-app:px-3 tablet-app:text-base"
               >
                 🇬🇧 {t("lang.en")}
               </button>
 
               <button
+                type="button"
                 onClick={() => changeLanguage("fr")}
-                className="w-full text-left px-2 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                className="w-full rounded-xl px-2 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 tablet-app:min-h-12 tablet-app:px-3 tablet-app:text-base"
               >
                 🇫🇷 {t("lang.fr")}
               </button>
@@ -128,50 +131,48 @@ export default function LoginPage() {
           )}
         </div>
 
-        <div className="w-full max-w-md">
-
+        <div className="relative w-full max-w-md tablet-app:max-w-[26.5rem] tablet-app:rounded-[1.75rem] tablet-app:border tablet-app:border-slate-200/90 tablet-app:bg-white/95 tablet-app:p-10 tablet-app:shadow-2xl tablet-app:shadow-black/20 tablet-app:ring-1 tablet-app:ring-black/5 tablet-app:backdrop-blur-md tablet-app:dark:border-slate-700/90 tablet-app:dark:bg-slate-950/95 desktop-auth:max-w-md desktop-auth:rounded-none desktop-auth:border-0 desktop-auth:bg-transparent desktop-auth:p-0 desktop-auth:shadow-none desktop-auth:ring-0 desktop-auth:backdrop-blur-none">
           {/* Logo */}
-          <div className="mb-12">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-12 w-12 rounded-2xl flex items-center justify-center bg-[var(--brand)]/15">
-                <LockKeyhole size={22} className="text-[var(--brand)]" />
+          <div className="mb-10 tablet-app:mb-12">
+            <div className="mb-8 flex items-center gap-3 tablet-app:gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--brand)]/15 tablet-app:h-14 tablet-app:w-14 tablet-app:rounded-[1.125rem]">
+                <LockKeyhole className="size-[22px] text-[var(--brand)] tablet-app:size-7" />
               </div>
               <div>
-                <div className="font-semibold text-lg">CA</div>
-                <div className="text-xs text-slate-500">
+                <div className="text-lg font-semibold tablet-app:text-xl">CA</div>
+                <div className="text-xs text-slate-500 tablet-app:text-sm">
                   {t("system")}
                 </div>
               </div>
             </div>
 
-            <h1 className="text-3xl font-semibold">{t("title")}</h1>
+            <h1 className="text-3xl font-semibold tracking-tight tablet-app:text-4xl">
+              {t("title")}
+            </h1>
 
-            <p className="text-sm text-slate-500 mt-3">
+            <p className="mt-3 text-sm text-slate-500 tablet-app:mt-4 tablet-app:text-base tablet-app:leading-relaxed">
               {t("subtitle")}
             </p>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-6">
+          <form onSubmit={onSubmit} className="space-y-6 tablet-app:space-y-7">
             {error && (
-              <div className="rounded-xl p-3 border border-red-300 bg-red-50 text-sm">
+              <div className="rounded-xl border border-red-300 bg-red-50 p-3 text-sm tablet-app:p-4 tablet-app:text-base dark:border-red-900/50 dark:bg-red-950/40">
                 {error}
               </div>
             )}
 
             {/* Email */}
             <div>
-              <label className="text-xs text-slate-500 mb-2 block">
+              <label className="mb-2 block text-xs text-slate-500 tablet-app:mb-2.5 tablet-app:text-sm">
                 {t("email")}
               </label>
 
               <div className="relative">
-                <Mail
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
+                <Mail className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-slate-400 tablet-app:left-5 tablet-app:size-5" />
 
                 <input
-                  className="w-full h-12 pl-12 pr-4 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] shadow-sm transition"
+                  className="h-12 w-full rounded-2xl border border-slate-300 bg-white pl-12 pr-4 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-[var(--brand)] dark:border-slate-700 dark:bg-slate-900 tablet-app:h-14 tablet-app:rounded-[1.125rem] tablet-app:pl-14 tablet-app:text-lg"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@condominio.com"
@@ -183,18 +184,15 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="text-xs text-slate-500 mb-2 block">
+              <label className="mb-2 block text-xs text-slate-500 tablet-app:mb-2.5 tablet-app:text-sm">
                 {t("password")}
               </label>
 
               <div className="relative">
-                <LockKeyhole
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
+                <LockKeyhole className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-slate-400 tablet-app:left-5 tablet-app:size-5" />
 
                 <input
-                  className="w-full h-12 pl-12 pr-4 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] shadow-sm transition"
+                  className="h-12 w-full rounded-2xl border border-slate-300 bg-white pl-12 pr-4 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-[var(--brand)] dark:border-slate-700 dark:bg-slate-900 tablet-app:h-14 tablet-app:rounded-[1.125rem] tablet-app:pl-14 tablet-app:text-lg"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -207,20 +205,20 @@ export default function LoginPage() {
             <button
               disabled={loading}
               type="submit"
-              className="w-full h-12 rounded-2xl font-medium bg-[var(--brand)] text-white shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.98] transition-all"
+              className="h-12 w-full rounded-2xl bg-[var(--brand)] font-medium text-white shadow-md transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.98] tablet-app:h-14 tablet-app:rounded-[1.125rem] tablet-app:text-lg disabled:opacity-70"
             >
               {loading ? t("loading") : t("loginButton")}
             </button>
           </form>
 
-          <div className="text-xs text-slate-400 mt-12">
+          <div className="mt-10 text-center text-xs text-slate-400 tablet-app:mt-12 tablet-app:text-sm">
             © {new Date().getFullYear()} CA
           </div>
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
-      <div className="hidden lg:block lg:w-1/2 relative">
+      {/* RIGHT SIDE — apenas ecrãs grandes (não tablet operador) */}
+      <div className="relative hidden w-1/2 desktop-auth:block">
         <img
           src="/banners/background3.png"
           alt="Wallpaper"

@@ -8,6 +8,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        /** Tablets / iPad: layout tipo app (cartão centrado), não split desktop */
+        "tablet-app": {
+          raw: "(min-width: 768px) and (max-width: 1366px)",
+        },
+        /** Monitores grandes: split login com banner */
+        "desktop-auth": "1367px",
+      },
       colors: { brand: "#873746", ink: "#101828" },
       borderRadius: {
         DEFAULT: "14px",
