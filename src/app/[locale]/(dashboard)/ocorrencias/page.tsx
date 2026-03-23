@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- fotos servidas pelo storage da API Laravel */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ShieldAlert,
   AlertTriangle,
@@ -13,6 +13,7 @@ import {
   Trash2,
   Loader2,
   Images,
+  Camera,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
@@ -153,6 +154,8 @@ export default function Page() {
   const [comprovantoLoading, setComprovantoLoading] = useState(false);
   const [comprovantoUploading, setComprovantoUploading] = useState(false);
   const [deletingComprovantoId, setDeletingComprovantoId] = useState<number | null>(null);
+  const panelFilesInputRef = useRef<HTMLInputElement>(null);
+  const panelCameraInputRef = useRef<HTMLInputElement>(null);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -171,6 +174,10 @@ export default function Page() {
     imagem: null as File | null,
     comprovantoFiles: [] as File[],
   });
+  const formMainFileInputRef = useRef<HTMLInputElement>(null);
+  const formMainCameraInputRef = useRef<HTMLInputElement>(null);
+  const formComprovFilesInputRef = useRef<HTMLInputElement>(null);
+  const formComprovCameraInputRef = useRef<HTMLInputElement>(null);
 
   const canEdit = user != null && NIVEIS_EDITAR.includes(Number(user.nivel));
   const canDelete = user != null && NIVEIS_ELIMINAR.includes(Number(user.nivel));
@@ -636,15 +643,15 @@ export default function Page() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {statsCards.map((item) => (
           <div key={item.key} className="ca-card p-4">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm ca-muted">{t(`stats.${item.key}`)}</div>
-                <div className="text-2xl font-semibold mt-1">{item.value}</div>
+                <div className="mt-1 text-xl font-semibold tablet-app:text-lg">{item.value}</div>
               </div>
-              <div className={`h-11 w-11 rounded-2xl flex items-center justify-center ${item.bg}`}>
+              <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${item.bg}`}>
                 <item.icon className={item.color} size={20} />
               </div>
             </div>
@@ -1028,7 +1035,7 @@ export default function Page() {
       {viewing && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={() => !viewLoading && setViewing(null)} />
-          <div className="relative ml-auto h-full w-full max-w-md ca-panel shadow-2xl flex flex-col">
+          <div className="relative ml-auto h-full w-full max-w-md tablet-app:max-w-none ca-panel shadow-2xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <h2 className="text-lg font-semibold">{t("view.title")}</h2>
               <button type="button" onClick={() => setViewing(null)} disabled={viewLoading}>
@@ -1157,7 +1164,7 @@ export default function Page() {
       {imagesPanelRow && (
         <div className="fixed inset-0 z-[55] flex">
           <div className="absolute inset-0 bg-black/60" onClick={() => !comprovantoUploading && closeImagesPanel()} />
-          <div className="relative ml-auto h-full w-full max-w-lg ca-panel shadow-2xl flex flex-col">
+          <div className="relative ml-auto h-full w-full max-w-lg tablet-app:max-w-none ca-panel shadow-2xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <div>
                 <h2 className="text-lg font-semibold">{t("imagesPanel.title")}</h2>
@@ -1175,16 +1182,49 @@ export default function Page() {
                 <div className="space-y-2">
                   <label className="block text-xs ca-muted">{t("imagesPanel.addFiles")}</label>
                   <input
+                    ref={panelFilesInputRef}
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp"
                     multiple
-                    className="ca-input text-sm"
+                    className="hidden"
                     disabled={comprovantoUploading}
                     onChange={(e) => {
                       void handleUploadComprovantos(e.target.files);
                       e.target.value = "";
                     }}
                   />
+                  <input
+                    ref={panelCameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    className="hidden"
+                    disabled={comprovantoUploading}
+                    onChange={(e) => {
+                      void handleUploadComprovantos(e.target.files);
+                      e.target.value = "";
+                    }}
+                  />
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      className="ca-btn flex items-center justify-center gap-2"
+                      disabled={comprovantoUploading}
+                      onClick={() => panelFilesInputRef.current?.click()}
+                    >
+                      <Images size={16} />
+                      Dispositivo
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-xl border ca-border flex items-center justify-center gap-2"
+                      disabled={comprovantoUploading}
+                      onClick={() => panelCameraInputRef.current?.click()}
+                    >
+                      <Camera size={16} />
+                      Tirar foto
+                    </button>
+                  </div>
                   <p className="text-xs ca-muted">{t("form.imageHint")}</p>
                   {comprovantoUploading && (
                     <div className="flex items-center gap-2 text-sm ca-muted">
@@ -1268,7 +1308,7 @@ export default function Page() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={() => !formSubmitting && closeForm()} />
-          <div className="relative ml-auto h-full w-full max-w-md ca-panel shadow-2xl flex flex-col">
+          <div className="relative ml-auto h-full w-full max-w-md tablet-app:max-w-none ca-panel shadow-2xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <h2 className="text-lg font-semibold">{editingId ? t("form.titleEdit") : t("form.titleNew")}</h2>
               <button type="button" onClick={closeForm} disabled={formSubmitting}>
@@ -1383,32 +1423,94 @@ export default function Page() {
 
                 <label className="block text-xs ca-muted">{t("form.image")}</label>
                 <input
+                  ref={formMainFileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/gif,image/webp"
-                  className="ca-input text-sm"
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, imagem: e.target.files?.[0] ?? null }))
-                  }
+                  className="hidden"
+                  onChange={(e) => {
+                    setForm((f) => ({ ...f, imagem: e.target.files?.[0] ?? null }));
+                    e.target.value = "";
+                  }}
                 />
+                <input
+                  ref={formMainCameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={(e) => {
+                    setForm((f) => ({ ...f, imagem: e.target.files?.[0] ?? null }));
+                    e.target.value = "";
+                  }}
+                />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded-xl border ca-border text-sm"
+                    onClick={() => formMainFileInputRef.current?.click()}
+                  >
+                    Escolher do dispositivo
+                  </button>
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded-xl border ca-border text-sm"
+                    onClick={() => formMainCameraInputRef.current?.click()}
+                  >
+                    Tirar foto agora
+                  </button>
+                </div>
                 <p className="text-xs ca-muted">{t("form.imageHint")}</p>
 
                 {editingId == null && (
                   <>
                     <label className="block text-xs ca-muted">{t("form.comprovantos")}</label>
                     <input
+                      ref={formComprovFilesInputRef}
                       type="file"
                       accept="image/jpeg,image/png,image/gif,image/webp"
                       multiple
-                      className="ca-input text-sm"
-                      onChange={(e) =>
+                      className="hidden"
+                      onChange={(e) => {
                         setForm((f) => ({
                           ...f,
                           comprovantoFiles: e.target.files?.length
                             ? Array.from(e.target.files)
                             : [],
-                        }))
-                      }
+                        }));
+                        e.target.value = "";
+                      }}
                     />
+                    <input
+                      ref={formComprovCameraInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={(e) => {
+                        const cameraFiles = e.target.files?.length ? Array.from(e.target.files) : [];
+                        setForm((f) => ({
+                          ...f,
+                          comprovantoFiles: [...f.comprovantoFiles, ...cameraFiles],
+                        }));
+                        e.target.value = "";
+                      }}
+                    />
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <button
+                        type="button"
+                        className="px-3 py-2 rounded-xl border ca-border text-sm"
+                        onClick={() => formComprovFilesInputRef.current?.click()}
+                      >
+                        Escolher comprovativos
+                      </button>
+                      <button
+                        type="button"
+                        className="px-3 py-2 rounded-xl border ca-border text-sm"
+                        onClick={() => formComprovCameraInputRef.current?.click()}
+                      >
+                        Tirar foto comprovativo
+                      </button>
+                    </div>
                     <p className="text-xs ca-muted">{t("form.comprovantosHint")}</p>
                   </>
                 )}

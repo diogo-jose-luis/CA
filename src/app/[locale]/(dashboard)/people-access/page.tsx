@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Images,
   Upload,
+  Camera,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
@@ -289,6 +290,7 @@ export default function Page() {
   const [attachmentsUploading, setAttachmentsUploading] = useState(false);
   const [attachmentsDeletingId, setAttachmentsDeletingId] = useState<number | null>(null);
   const attachmentsFileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentsCameraInputRef = useRef<HTMLInputElement>(null);
 
   /** Skip refetching host/user lists when reopening the panel for the same organization. */
   const panelSelectsPrimedRef = useRef<{ orgId: number } | null>(null);
@@ -299,6 +301,7 @@ export default function Page() {
 
   const canEdit = authUser && [1, 2, 3, 5, 6].includes(Number(authUser.nivel));
   const canDelete = authUser && [1, 2].includes(Number(authUser.nivel));
+  const isHostUser = Number(authUser?.nivel) == 6;
 
   useEffect(() => {
     try {
@@ -440,10 +443,18 @@ export default function Page() {
       if (filtroAprovado == "0" || filtroAprovado == "1" || filtroAprovado == "2") {
         params.aprovado = Number(filtroAprovado);
       }
+      if (isHostUser && authUser?.id) {
+        params.anfitriao_id = Number(authUser.id);
+      }
 
       const res = await http.get<AcessoPessoaListResponse>(`${API_PREFIX}/${organizacaoId}`, { params });
-      setList(res.data?.data ?? []);
-      setTotal(res.data?.total ?? 0);
+      const rows = res.data?.data ?? [];
+      const filteredRows =
+        isHostUser && authUser?.id
+          ? rows.filter((row) => Number(row.anfitriao_id) == Number(authUser.id))
+          : rows;
+      setList(filteredRows);
+      setTotal(isHostUser ? filteredRows.length : res.data?.total ?? 0);
       setPerPage(res.data?.per_page ?? 15);
       setCurrentPage(res.data?.current_page ?? 1);
     } catch {
@@ -465,6 +476,8 @@ export default function Page() {
     filtroData2,
     filtroAprovado,
     destinoApi,
+    isHostUser,
+    authUser?.id,
     showToast,
     t,
   ]);
@@ -482,10 +495,20 @@ export default function Page() {
     try {
       const [todayHead, recent] = await Promise.all([
         http.get<AcessoPessoaListResponse>(`${API_PREFIX}/${organizacaoId}`, {
-          params: { data1: today, data2: today, per_page: 1, page: 1 },
+          params: {
+            data1: today,
+            data2: today,
+            per_page: 1,
+            page: 1,
+            ...(isHostUser && authUser?.id ? { anfitriao_id: Number(authUser.id) } : {}),
+          },
         }),
         http.get<AcessoPessoaListResponse>(`${API_PREFIX}/${organizacaoId}`, {
-          params: { per_page: 250, page: 1 },
+          params: {
+            per_page: 250,
+            page: 1,
+            ...(isHostUser && authUser?.id ? { anfitriao_id: Number(authUser.id) } : {}),
+          },
         }),
       ]);
 
@@ -494,7 +517,12 @@ export default function Page() {
       let pendingTotal = 0;
       try {
         const pr = await http.get<AcessoPessoaListResponse>(`${API_PREFIX}/${organizacaoId}`, {
-          params: { aprovado: 0, per_page: 1, page: 1 },
+          params: {
+            aprovado: 0,
+            per_page: 1,
+            page: 1,
+            ...(isHostUser && authUser?.id ? { anfitriao_id: Number(authUser.id) } : {}),
+          },
         });
         pendingTotal = pr.data?.total ?? 0;
       } catch {
@@ -502,15 +530,30 @@ export default function Page() {
       }
       setStatPending(pendingTotal);
 
-      const recentItems = recent.data?.data ?? [];
+      const recentItemsRaw = recent.data?.data ?? [];
+      const recentItems =
+        isHostUser && authUser?.id
+          ? recentItemsRaw.filter((r) => Number(r.anfitriao_id) == Number(authUser.id))
+          : recentItemsRaw;
       setStatInside(recentItems.filter((r) => !r.saida).length);
 
       let exits = 0;
       try {
         const todayFull = await http.get<AcessoPessoaListResponse>(`${API_PREFIX}/${organizacaoId}`, {
-          params: { data1: today, data2: today, per_page: 500, page: 1 },
+          params: {
+            data1: today,
+            data2: today,
+            per_page: 500,
+            page: 1,
+            ...(isHostUser && authUser?.id ? { anfitriao_id: Number(authUser.id) } : {}),
+          },
         });
-        exits = (todayFull.data?.data ?? []).filter((r) => Boolean(r.saida)).length;
+        const rows = todayFull.data?.data ?? [];
+        const scopeRows =
+          isHostUser && authUser?.id
+            ? rows.filter((r) => Number(r.anfitriao_id) == Number(authUser.id))
+            : rows;
+        exits = scopeRows.filter((r) => Boolean(r.saida)).length;
       } catch {
         exits = 0;
       }
@@ -523,7 +566,7 @@ export default function Page() {
     } finally {
       setStatsLoading(false);
     }
-  }, [http, organizacaoId]);
+  }, [http, organizacaoId, isHostUser, authUser?.id]);
 
   useEffect(() => {
     fetchList();
@@ -641,6 +684,9 @@ export default function Page() {
     const pad = (n: number) => String(n).padStart(2, "0");
     const local = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
     setFormEntrada(local);
+    if (isHostUser && authUser?.id) {
+      setFormAnfitriaoId(String(authUser.id));
+    }
     setShowPanel(true);
     void ensurePanelSelectUsers();
   };
@@ -873,6 +919,10 @@ export default function Page() {
   const handleAttachmentsFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     e.target.value = "";
+    await handleAttachmentsFiles(files);
+  };
+
+  const handleAttachmentsFiles = async (files: FileList | null) => {
     if (!files?.length || !organizacaoId || !attachmentsAcessoId || !canEdit) return;
     setAttachmentsUploading(true);
     try {
@@ -1417,7 +1467,7 @@ export default function Page() {
             aria-label="Close"
             onClick={closePanel}
           />
-          <div className="absolute right-0 top-0 h-screen w-full max-w-md ca-panel flex flex-col shadow-xl">
+          <div className="absolute right-0 top-0 h-screen w-full max-w-md tablet-app:max-w-none ca-panel flex flex-col shadow-xl">
             <div className="p-4 border-b ca-border flex justify-between items-center gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <h2 className="font-semibold truncate">{editingId ? t("form.editTitle") : t("form.title")}</h2>
@@ -1542,7 +1592,7 @@ export default function Page() {
                   className="ca-input w-full mt-1"
                   value={formAnfitriaoId}
                   onChange={(e) => setFormAnfitriaoId(e.target.value)}
-                  disabled={anfitrioesLoading}
+                  disabled={anfitrioesLoading || isHostUser}
                 >
                   <option value="">{anfitrioesLoading ? t("form.loadingHosts") : t("form.selectHost")}</option>
                   {anfitrioes.map((u) => (
@@ -1681,7 +1731,7 @@ export default function Page() {
             aria-label="Close"
             onClick={closeAttachmentsPanel}
           />
-          <div className="absolute right-0 top-0 h-screen w-full max-w-lg ca-panel flex flex-col shadow-xl">
+          <div className="absolute right-0 top-0 h-screen w-full max-w-lg tablet-app:max-w-none ca-panel flex flex-col shadow-xl">
             <div className="p-4 border-b ca-border flex justify-between items-start gap-2 shrink-0">
               <div className="min-w-0">
                 <h2 className="font-semibold">{t("attachments.title")}</h2>
@@ -1704,19 +1754,38 @@ export default function Page() {
                   className="hidden"
                   onChange={(e) => void handleAttachmentsFileChange(e)}
                 />
-                <button
-                  type="button"
-                  className="ca-btn w-full flex items-center justify-center gap-2"
-                  disabled={attachmentsUploading}
-                  onClick={() => attachmentsFileInputRef.current?.click()}
-                >
-                  {attachmentsUploading ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : (
-                    <Upload size={18} />
-                  )}
-                  {t("attachments.add")}
-                </button>
+                <input
+                  ref={attachmentsCameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={(e) => void handleAttachmentsFileChange(e)}
+                />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn w-full flex items-center justify-center gap-2"
+                    disabled={attachmentsUploading}
+                    onClick={() => attachmentsFileInputRef.current?.click()}
+                  >
+                    {attachmentsUploading ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <Upload size={18} />
+                    )}
+                    {t("attachments.add")}
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded-xl border ca-border flex items-center justify-center gap-2"
+                    disabled={attachmentsUploading}
+                    onClick={() => attachmentsCameraInputRef.current?.click()}
+                  >
+                    <Camera size={18} />
+                    Tirar foto
+                  </button>
+                </div>
               </div>
             ) : null}
 

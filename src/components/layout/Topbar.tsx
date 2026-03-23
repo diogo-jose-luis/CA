@@ -38,6 +38,7 @@ export default function Topbar({
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [changePinOpen, setChangePinOpen] = useState(false);
   const profileWrapRef = useRef<HTMLDivElement>(null);
+  const [organizationLogo, setOrganizationLogo] = useState<string>("");
 
   const [language, setLanguage] = useState(
     typeof window != "undefined"
@@ -58,6 +59,18 @@ export default function Topbar({
     document.addEventListener("mousedown", onDocMouseDown);
     return () => document.removeEventListener("mousedown", onDocMouseDown);
   }, [profileOpen]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("ca.selected.organization");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { logotipo?: string | null };
+      const logo = typeof parsed?.logotipo === "string" ? parsed.logotipo.trim() : "";
+      if (logo) setOrganizationLogo(logo);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   function goToSelectOrg() {
     router.push(`/${locale}/select-org`);
@@ -96,6 +109,12 @@ export default function Topbar({
           </button>
 
           <div className="hidden md:block text-sm ca-muted">{t("title")}</div>
+          {organizationLogo ? (
+            <div className="hidden tablet-app:flex desktop-auth:hidden h-9 w-9 overflow-hidden rounded-xl border ca-border bg-slate-100 dark:bg-slate-800">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={organizationLogo} alt="Logo organização" className="h-full w-full object-cover" />
+            </div>
+          ) : null}
         </div>
 
         {/* Right */}
