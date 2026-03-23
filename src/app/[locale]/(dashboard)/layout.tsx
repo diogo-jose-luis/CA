@@ -66,7 +66,7 @@ export default function DashboardShell({
 
     const isEmpresa = organization.tipo == "Empresa";
 
-    const base: SidebarItem[] = [
+    const operatorSection: SidebarItem[] = [
       { label: ts("dashboard", "Dashboard"), href: l("/dashboard"), icon: "dashboard" },
 
       { divider: true, label: ts("sections.operator", "Operador") },
@@ -83,10 +83,46 @@ export default function DashboardShell({
       { label: ts("orders", "Encomendas"), href: l("/encomendas"), icon: "package" },
       { label: ts("keyDelivery", "Entrega de Chaves"), href: l("/chaves"), icon: "key" },
 
+      { label: ts("trocasDobras", "Trocas e dobras"), href: l("/trocas-dobras"), icon: "arrow-left-right" },
+
       { label: ts("alerts", "Avisos"), href: l("/avisos"), icon: "bell" },
     ];
 
-    if (nivel == 4) { //cliente nivel 4 
+    const supervisionItem: SidebarItem = {
+      label: ts("supervision", "Supervisões"),
+      href: l("/supervisoes"),
+      icon: "clipboard-list",
+    };
+
+    /** API supervisões: admin, gestor, cliente, supervisor — não operador (3) nem anfitrião (6) */
+    const menuComSupervisao = nivel == 1 || nivel == 2 || nivel == 4 || nivel == 5;
+
+    /** Nível 6 — anfitrião: apenas pessoas, veículos, avisos, chaves, encomendas */
+    const hostMenu: SidebarItem[] = [
+      { label: ts("dashboard", "Dashboard"), href: l("/dashboard"), icon: "dashboard" },
+      { divider: true, label: ts("sections.host", "Anfitrião") },
+      { label: ts("peopleAccess", "Acesso de Pessoas"), href: l("/people-access"), icon: "people" },
+      {
+        label: ts("vehicleAccess", "Acesso de Veiculos"),
+        href: l("/vehicle-access"),
+        icon: "vehicles",
+      },
+      { label: ts("alerts", "Avisos"), href: l("/avisos"), icon: "bell" },
+      { label: ts("orders", "Encomendas"), href: l("/encomendas"), icon: "package" },
+      { label: ts("keyDelivery", "Entrega de Chaves"), href: l("/chaves"), icon: "key" },
+      { label: ts("trocasDobras", "Trocas e dobras"), href: l("/trocas-dobras"), icon: "arrow-left-right" },
+    ];
+
+    if (nivel == 6) {
+      return hostMenu;
+    }
+
+    const base: SidebarItem[] = menuComSupervisao
+      ? [...operatorSection, supervisionItem]
+      : operatorSection;
+
+    if (nivel == 4) {
+      // cliente nivel 4
       return [
         ...base,
         { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
@@ -98,7 +134,8 @@ export default function DashboardShell({
       ];
     }
 
-    if (nivel == 3) {//operador nivel 3
+    if (nivel == 3) {
+      // operador nivel 3
       return base;
     }
 
@@ -115,6 +152,16 @@ export default function DashboardShell({
 
       { label: ts("areas", "Areas"), href: l("/departamentos"), icon: "layers" },
       { label: ts("cargos", "Cargos"), href: l("/cargos"), icon: "briefcase" },
+
+      { label: ts("equipaContrato", "Equipa de contrato"), href: l("/equipa-contrato"), icon: "users" },
+
+      {
+        label: ts("materialContrato", "Material de contrato"),
+        href: l("/material-contrato"),
+        icon: "layers",
+      },
+
+      { label: ts("materials", "Materiais"), href: l("/materiais"), icon: "boxes" },
 
       { label: ts("cards", "Cartoes"), href: l("/cards"), icon: "cards" },
 

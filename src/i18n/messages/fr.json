@@ -9,6 +9,34 @@
       "pt": "Portugais",
       "en": "Anglais",
       "fr": "Français"
+    },
+    "logoutConfirm": {
+      "title": "Se déconnecter ?",
+      "description": "Vous quitterez l'application. Pour revenir au tableau de bord, vous devrez vous reconnecter.",
+      "cancel": "Annuler",
+      "confirm": "Se déconnecter",
+      "confirming": "Déconnexion…"
+    },
+    "changePin": {
+      "menuItem": "Modifier le PIN",
+      "title": "Modifier le PIN",
+      "verificationByPin": "J'ai un PIN",
+      "verificationByPassword": "Utiliser le mot de passe",
+      "oldPin": "PIN actuel",
+      "currentPassword": "Mot de passe actuel",
+      "newPin": "Nouveau PIN",
+      "confirmNewPin": "Confirmer le nouveau PIN",
+      "pinPlaceholder": "••••",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "success": "PIN mis à jour avec succès.",
+      "error": "Impossible de mettre à jour le PIN.",
+      "pinLength": "Le nouveau PIN doit comporter exactement 4 chiffres.",
+      "pinMismatch": "La confirmation du nouveau PIN ne correspond pas.",
+      "oldPinLength": "Saisissez le PIN actuel à 4 chiffres.",
+      "passwordRequired": "Saisissez le mot de passe actuel."
     }
   },
   "login": {
@@ -17,13 +45,17 @@
     "subtitle": "Accédez à votre tableau de gestion.",
     "email": "Email",
     "password": "Mot de passe",
+    "pin": "PIN (4 chiffres)",
+    "modePin": "PIN",
+    "modePassword": "Mot de passe",
     "loginButton": "Connexion",
     "loading": "Connexion...",
     "bannerTitle": "Plateforme intelligente de gestion des accès",
     "bannerDescription": "Sécurité, contrôle et surveillance centralisée pour les condominiums et environnements industriels.",
     "errors": {
       "invalidCredentials": "Identifiants invalides.",
-      "authError": "Erreur d'authentification."
+      "authError": "Erreur d'authentification.",
+      "pinLength": "Le PIN doit comporter exactement 4 chiffres."
     },
     "lang": {
       "pt": "Portugais",
@@ -45,10 +77,15 @@
     "orders": "Commandes",
     "serviceReview": "Évaluation des services",
     "keyDelivery": "Livraison de clés",
+    "trocasDobras": "Échanges et doubles",
+    "supervision": "Supervisions",
     "organizationMenu": "Organisation",
     "residences": "Résidences",
     "areas": "Zones",
     "cargos": "Postes",
+    "equipaContrato": "Équipe contractuelle",
+    "materialContrato": "Matériel contractuel",
+    "materials": "Matériels",
     "cards": "Cartes",
     "cameras": "Caméras",
     "residents": "Résidents",
@@ -61,6 +98,7 @@
     "settings": "Paramètres",
     "sections": {
       "operator": "Opérateur",
+      "host": "Hôte",
       "manager": "Gestionnaire",
       "admin": "Admin"
     }
@@ -172,6 +210,7 @@
     "table": {
       "person": "Personne",
       "name": "Nom",
+      "qtd": "Nb. personnes",
       "type": "Type",
       "document": "Document",
       "contact": "Contact",
@@ -259,6 +298,8 @@
       "documentRefPlaceholder": "Numéro ou référence du document",
       "entry": "Date et heure d'entrée",
       "exit": "Date et heure de sortie (optionnel)",
+      "qtd": "Nombre de personnes",
+      "qtdHint": "Nombre de personnes associées à cet accès (minimum 1).",
       "approval": "Approbation",
       "approvalUnspecified": "Ne pas modifier / omettre",
       "notes": "Observations",
@@ -332,6 +373,7 @@
     "table": {
       "vehicle": "Véhicule",
       "plate": "Plaque",
+      "qtd": "Nb. personnes",
       "type": "Type",
       "driver": "Conducteur / Entreprise",
       "driverContact": "Contact conducteur",
@@ -370,10 +412,10 @@
       "late": "Retard / long séjour"
     },
     "aprovado": {
-      "unknown": "—",
       "0": "En attente",
       "1": "Approuvé",
-      "2": "Refusé"
+      "2": "Refusé",
+      "unknown": "—"
     },
     "motivo": {
       "morador": "Résident",
@@ -419,6 +461,8 @@
       "platePlaceholder": "ex. : AB-12-CD",
       "vehicleType": "Type de véhicule",
       "temCarga": "Transporte un chargement",
+      "qtd": "Nombre de personnes",
+      "qtdHint": "Nombre d'occupants / personnes dans le véhicule pour cet accès (minimum 1).",
       "cargoYes": "Oui",
       "cargoNo": "Non",
       "condutor": "Conducteur",
@@ -480,17 +524,22 @@
     "title": "Avis",
     "subtitle": "Avis du syndic ou de la gestion de la résidence pour les résidents.",
     "newNotice": "Nouvel avis",
+    "noPermission": "Vous n'avez pas l'autorisation de consulter les avis.",
+    "noOrg": "Sélectionnez une organisation pour voir les avis.",
+    "empty": "Aucun avis trouvé.",
     "stats": {
       "active": "Avis actifs",
       "highPriority": "Haute priorité",
-      "informative": "Informatis"
+      "informative": "Informatifs"
     },
     "filters": {
       "search": "Rechercher par titre",
       "category": "Catégorie",
       "priority": "Priorité",
       "status": "Statut",
-      "apply": "Appliquer les filtres"
+      "apply": "Appliquer les filtres",
+      "dateFrom": "Date de publication (du)",
+      "dateTo": "Date de publication (au)"
     },
     "categories": {
       "maintenance": "Maintenance",
@@ -520,9 +569,43 @@
     },
     "form": {
       "title": "Nouvel avis",
+      "editTitle": "Modifier l'avis",
       "titlePlaceholder": "Titre de l'avis",
       "message": "Message de l'avis",
-      "publish": "Publier l'avis"
+      "publish": "Publier l'avis",
+      "save": "Enregistrer les modifications",
+      "publicationDate": "Date et heure de publication",
+      "priorityOptional": "Priorité (facultatif)",
+      "image": "Image (facultatif)",
+      "discardNewImage": "Retirer l'image sélectionnée",
+      "sendToAll": "Envoyer à tous les résidents"
+    },
+    "detail": {
+      "recipients": "Destinataires"
+    },
+    "broadcasts": {
+      "all": "Tous les résidents",
+      "department": "Département",
+      "residence": "Résidence",
+      "resident": "Résident"
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "results": "résultat(s)",
+      "page": "Page"
+    },
+    "toast": {
+      "loadError": "Impossible de charger les avis.",
+      "saveError": "Impossible d'enregistrer l'avis.",
+      "deleteError": "Impossible de supprimer l'avis.",
+      "created": "Avis créé avec succès.",
+      "updated": "Avis mis à jour avec succès.",
+      "deleted": "Avis supprimé avec succès.",
+      "orgRequired": "Organisation requise."
+    },
+    "confirm": {
+      "delete": "Supprimer cet avis ?"
     },
     "cancel": "Annuler"
   },
@@ -638,6 +721,8 @@
       "state": "État",
       "local": "Département / lieu",
       "localNone": "Aucun",
+      "medidas": "Mesures prises",
+      "medidasPlaceholder": "Décrivez les mesures prises suite à l'incident",
       "observations": "Observations",
       "image": "Photo",
       "imageHint": "JPEG, PNG, GIF ou WebP · max. 5 Mo",
@@ -696,15 +781,6 @@
       "pending": "En attente",
       "delivered": "Livrés"
     },
-    "filters": {
-      "search": "Rechercher...",
-      "status": "Statut",
-      "apply": "Appliquer les filtres"
-    },
-    "status": {
-      "pending": "En attente",
-      "delivered": "Livré"
-    },
     "table": {
       "order": "Ordre",
       "date": "Date",
@@ -718,50 +794,170 @@
     },
     "form": {
       "title": "Nouveau colis",
+      "edit": "Modifier le colis",
+      "detail": "Détail du colis",
       "order": "Numéro du colis",
+      "date": "Date",
       "sender": "Expéditeur",
       "receiver": "Destinataire",
       "description": "Description",
       "security": "Reçu par (Sécurité)",
       "notes": "Observations",
-      "save": "Enregistrer"
+      "entregueA": "Remis par (utilisateur)",
+      "state": "Statut",
+      "image": "Image (optionnel)",
+      "selectUser": "Sélectionner un utilisateur",
+      "selectSender": "Sélectionner l'expéditeur",
+      "selectReceiver": "Sélectionner le destinataire",
+      "modeExisting": "Utilisateur existant",
+      "modeNew": "Enregistrer un nouveau",
+      "newPartyHint": "Un utilisateur sera créé dans l'organisation avec les informations ci-dessous.",
+      "partyName": "Nom",
+      "partyEmailOptional": "E-mail (optionnel)",
+      "partyPhone": "Téléphone",
+      "partyTypeVisitor": "Visiteur",
+      "partyTypeClient": "Client",
+      "partyTypeSupplier": "Fournisseur",
+      "save": "Enregistrer",
+      "register": "Enregistrer",
+      "update": "Mettre à jour"
+    },
+    "filters": {
+      "search": "Rechercher...",
+      "status": "Statut",
+      "apply": "Appliquer les filtres",
+      "dateFrom": "Date de début",
+      "dateTo": "Date de fin",
+      "allStatuses": "Tous"
+    },
+    "status": {
+      "pending": "En attente",
+      "delivered": "Livré",
+      "cancelled": "Annulé"
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "empty": "Aucun colis trouvé.",
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer",
+      "view": "Voir"
+    },
+    "toast": {
+      "loadError": "Erreur lors du chargement des colis.",
+      "statsError": "Erreur lors du chargement des totaux.",
+      "orgRequired": "Sélectionnez une organisation.",
+      "saved": "Colis enregistré avec succès.",
+      "updated": "Colis mis à jour avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Colis supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "forbidden": "Permission refusée pour cette action.",
+      "partyNameRequired": "Indiquez le nom lors de l'enregistrement d'un nouvel utilisateur."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer ce colis ?"
     },
     "cancel": "Annuler"
   },
   "keys": {
-    "title": "Remise des Clés",
-    "subtitle": "Contrôle des clés remises aux collaborateurs",
-    "new": "Nouvel Enregistrement",
+    "title": "Remise des clés",
+    "subtitle": "Suivi des remises et des retours de clés par organisation.",
+    "new": "Nouvel enregistrement",
+    "empty": "Aucun enregistrement trouvé.",
+    "cancel": "Annuler",
     "stats": {
-      "total": "Total Enregistrements",
-      "returned": "Clés retournées",
-      "sectors": "Total Secteurs",
-      "employees": "Collaborateurs"
+      "total": "Total d'enregistrements",
+      "inProgress": "En cours",
+      "returned": "Retournées"
     },
     "filters": {
-      "search": "Rechercher...",
-      "sector": "Secteur",
+      "search": "Rechercher par clé ou notes…",
+      "allResidences": "Toutes les résidences",
+      "allStatuses": "Tous les états",
+      "dateFrom": "Date de remise (du)",
+      "dateTo": "Date de remise (au)",
       "apply": "Appliquer les filtres"
+    },
+    "status": {
+      "ongoing": "En cours",
+      "returned": "Retournée"
     },
     "table": {
       "id": "ID",
-      "date": "Date",
-      "sector": "Secteur",
-      "employee": "Collaborateur demandeur",
-      "exitTime": "Heure de sortie",
-      "signature": "Signature du demandeur",
-      "returnedBy": "Rendue par",
-      "returnTime": "Heure de retour",
+      "delivery": "Remise",
+      "key": "Clé",
+      "residence": "Résidence",
+      "handedBy": "Copropriétaire (remet)",
+      "receivedBy": "Opérateur (reçoit à l'accueil)",
+      "status": "État",
+      "return": "Retour au copropriétaire",
       "actions": "Actions"
     },
+    "actions": {
+      "view": "Voir",
+      "edit": "Modifier",
+      "remove": "Supprimer",
+      "registerReturn": "Enregistrer le retour"
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
     "form": {
-      "title": "Nouvel Enregistrement",
-      "employee": "Collaborateur",
-      "sector": "Secteur",
+      "title": "Nouvel enregistrement de clé",
+      "edit": "Modifier l'enregistrement",
+      "detail": "Détail",
+      "deliveryAt": "Date et heure de remise",
+      "keyLabel": "Libellé de la clé",
+      "residenceOptional": "Résidence (facultatif)",
+      "handedByMorador": "Copropriétaire qui remet la clé",
+      "receivedByOperator": "Opérateur d'accueil qui reçoit la clé",
+      "selectMorador": "Choisir un copropriétaire",
+      "selectOperator": "Choisir un opérateur d'accueil",
       "notes": "Observations",
+      "image": "Photo",
+      "modeExisting": "Existant",
+      "modeNew": "Nouveau",
+      "newMoradorHint": "Un nouveau copropriétaire sera créé (comme sur la page Copropriétaires).",
+      "newMoradorResidenceOptional": "Résidence du nouveau copropriétaire (facultatif)",
+      "partyName": "Nom",
+      "moradorEmail": "E-mail",
+      "partyPhone": "Téléphone",
+      "register": "Enregistrer",
+      "update": "Mettre à jour",
       "save": "Enregistrer"
     },
-    "cancel": "Annuler"
+    "returnPanel": {
+      "title": "Enregistrer le retour",
+      "date": "Date et heure du retour",
+      "returnedToMorador": "Copropriétaire qui récupère la clé",
+      "notes": "Notes du retour (facultatif)",
+      "submit": "Confirmer le retour"
+    },
+    "detail": {
+      "returnedToMorador": "Rendue au copropriétaire"
+    },
+    "toast": {
+      "orgRequired": "Sélectionnez une organisation.",
+      "loadError": "Impossible de charger les enregistrements.",
+      "statsError": "Impossible de charger les statistiques.",
+      "saveError": "Vérifiez les données et réessayez.",
+      "saved": "Remise enregistrée.",
+      "updated": "Enregistrement mis à jour.",
+      "deleted": "Enregistrement supprimé.",
+      "deleteError": "Impossible de supprimer.",
+      "forbidden": "Permission refusée.",
+      "partyNameRequired": "Indiquez le nom pour créer un nouveau copropriétaire.",
+      "moradorEmailRequired": "L'e-mail est obligatoire pour enregistrer un nouveau copropriétaire.",
+      "returnError": "Indiquez la date du retour et le copropriétaire qui récupère la clé.",
+      "returnedOk": "Retour enregistré avec succès."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer cet enregistrement de remise de clé ?"
+    }
   },
   "organizacao": {
     "title": "Organisation",
@@ -1516,6 +1712,488 @@
       "deleteBulk": "Supprimer les postes sélectionnés ?"
     }
   },
+  "equipaContratoPage": {
+    "title": "Équipe contractuelle",
+    "subtitle": "Planification des effectifs par poste, nombre de contrats, équipes et régime de travail.",
+    "new": "Nouvelle ligne",
+    "stats": {
+      "rows": "Lignes (page actuelle)",
+      "contracts": "Somme contrats (page)",
+      "shifts": "Somme équipes (page)"
+    },
+    "filters": {
+      "cargoAll": "Tous les postes",
+      "regimeAll": "Tous les régimes",
+      "apply": "Appliquer les filtres"
+    },
+    "regimes": {
+      "1": "8/8",
+      "2": "12/12",
+      "3": "12/24",
+      "4": "24/12",
+      "5": "24/24",
+      "6": "24/48",
+      "7": "48/24",
+      "8": "48/48"
+    },
+    "bulk": { "selected": "sélectionné(s)", "delete": "Supprimer la sélection" },
+    "table": {
+      "cargo": "Poste",
+      "qtdContrato": "Qté contrat",
+      "qtdTurno": "Qté équipe",
+      "regime": "Régime",
+      "actions": "Actions"
+    },
+    "actions": { "edit": "Modifier", "remove": "Supprimer" },
+    "empty": "Aucune ligne d'équipe contractuelle.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "totalResults": "{total} résultat(s)",
+      "pageOf": "Page {current} sur {total}"
+    },
+    "form": {
+      "new": "Nouvelle ligne",
+      "edit": "Modifier la ligne",
+      "cargo": "Poste",
+      "cargoPlaceholder": "Sélectionnez un poste",
+      "loadingCargos": "Chargement des postes…",
+      "reloadCargos": "Recharger la liste des postes actifs",
+      "qtdContrato": "Quantité de contrats",
+      "qtdTurno": "Quantité d'équipes",
+      "regime": "Régime de travail",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "forbidden": "Vous n'avez pas la permission de gérer l'équipe contractuelle.",
+      "loadError": "Erreur lors du chargement de l'équipe contractuelle.",
+      "cargosLoadError": "Erreur lors du chargement des postes actifs.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "cargoRequired": "Sélectionnez un poste.",
+      "updated": "Ligne mise à jour avec succès.",
+      "created": "Ligne enregistrée avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Enregistrement supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkDeleted": "Enregistrements supprimés avec succès.",
+      "bulkError": "Erreur lors de la suppression en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer cet enregistrement ?",
+      "deleteBulk": "Supprimer les enregistrements sélectionnés ?"
+    }
+  },
+  "supervisoesPage": {
+    "title": "Supervisions",
+    "subtitle": "Visites de supervision : détails, photos, effectifs et matériels vérifiés.",
+    "empty": { "forbidden": "Vous n'avez pas accès aux supervisions.", "noOrg": "Sélectionnez une organisation." },
+    "actions": {
+      "refresh": "Actualiser",
+      "new": "Nouvelle supervision",
+      "view": "Voir",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "delete": "Supprimer",
+      "edit": "Modifier"
+    },
+    "filters": {
+      "estado": "État",
+      "estadoAll": "Tous",
+      "supervisor": "Superviseur",
+      "supervisorAll": "Tous",
+      "q": "Observations",
+      "qPlaceholder": "Rechercher dans les observations…",
+      "data1": "Du",
+      "data2": "Au",
+      "apply": "Appliquer les filtres"
+    },
+    "estadoSupervisao": { "normal": "Normal", "anormal": "Anormal / incident" },
+    "estadoEfetivo": { "ok": "Conforme", "bad": "Non conforme" },
+    "estadoMaterial": {
+      "1": "Bon état",
+      "2": "Mauvais état",
+      "3": "Endommagé",
+      "4": "Perdu"
+    },
+    "table": {
+      "when": "Date / heure",
+      "supervisor": "Superviseur",
+      "estado": "État",
+      "observacoes": "Observations",
+      "actions": "Actions",
+      "empty": "Aucune supervision trouvée."
+    },
+    "pagination": { "prev": "Précédent", "next": "Suivant", "summary": "Page {page} sur {pages} · {total} enregistrement(s)" },
+    "toast": {
+      "forbidden": "Permission refusée.",
+      "loadError": "Impossible de charger les supervisions.",
+      "loadDetailError": "Impossible de charger le détail.",
+      "supervisorRequired": "Indiquez le superviseur.",
+      "dateRequired": "Indiquez la date et l'heure.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "createOk": "Supervision créée.",
+      "updateOk": "Supervision mise à jour.",
+      "deleteOk": "Supervision supprimée.",
+      "deleteError": "Erreur lors de la suppression.",
+      "imagesAdded": "Images ajoutées.",
+      "imageDeleted": "Image supprimée.",
+      "imageError": "Erreur avec les images.",
+      "efetivoAdded": "Effectif ajouté.",
+      "efetivoUpdated": "Effectif mis à jour.",
+      "efetivoDeleted": "Effectif retiré.",
+      "efetivoError": "Erreur lors de l'enregistrement de l'effectif.",
+      "efetivoUserRequired": "Sélectionnez le portier (effectif).",
+      "materialRequired": "Sélectionnez le matériel.",
+      "materialAdded": "Matériel associé.",
+      "materialUpdated": "Matériel mis à jour.",
+      "materialDeleted": "Matériel retiré.",
+      "materialError": "Erreur lors de l'enregistrement du matériel."
+    },
+    "confirm": {
+      "deleteSupervisao": "Supprimer cette supervision et toutes les données associées ?",
+      "deleteImagem": "Supprimer cette image de la supervision ?",
+      "deleteEfetivo": "Retirer cet effectif de la supervision ?",
+      "deleteMaterial": "Retirer ce matériel de la supervision ?"
+    },
+    "create": { "title": "Nouvelle supervision" },
+    "form": {
+      "dataHora": "Date et heure",
+      "supervisor": "Superviseur",
+      "pickSupervisor": "Sélectionnez…",
+      "estado": "État de la supervision",
+      "observacoes": "Observations",
+      "images": "Images (optionnel)"
+    },
+    "detail": { "title": "Supervision #{id}" },
+    "tabs": {
+      "detalhes": "Détails",
+      "imagens": "Images",
+      "efetivos": "Effectifs",
+      "materiais": "Matériels"
+    },
+    "images": { "add": "Ajouter des images", "remove": "Supprimer", "empty": "Aucune image." },
+    "efetivos": {
+      "addTitle": "Ajouter un effectif",
+      "editTitle": "Modifier l'effectif",
+      "add": "Ajouter",
+      "efetivoUser": "Portier (effectif)",
+      "pickPorteiro": "Sélectionnez le portier…",
+      "uniforme": "Uniforme adéquat",
+      "equipamento": "Équipement adéquat",
+      "estado": "État",
+      "observacoes": "Observations",
+      "na": "—",
+      "sim": "Oui",
+      "nao": "Non",
+      "colNome": "Nom",
+      "colCargo": "Fonction",
+      "colEstado": "État",
+      "empty": "Aucun effectif enregistré."
+    },
+    "materiais": {
+      "addTitle": "Associer un matériel",
+      "editTitle": "Modifier la ligne matériel",
+      "add": "Associer",
+      "material": "Matériel",
+      "pick": "Sélectionnez…",
+      "unidade": "Unité",
+      "quantidade": "Quantité",
+      "estado": "État",
+      "observacoes": "Observations",
+      "colMaterial": "Matériel",
+      "colQty": "Qté",
+      "colEstado": "État",
+      "empty": "Aucun matériel associé."
+    }
+  },
+  "trocasDobrasPage": {
+    "title": "Échanges et doubles",
+    "subtitle": "Enregistrement des trocas et dobras : utilisateur entrant, sortant, type, date et photos.",
+    "empty": {
+      "forbidden": "Vous n'avez pas accès aux échanges et doubles.",
+      "noOrg": "Sélectionnez une organisation."
+    },
+    "tipo": { "1": "Troca (échange)", "2": "Dobra (double)" },
+    "actions": {
+      "refresh": "Actualiser",
+      "new": "Nouvel enregistrement",
+      "view": "Voir",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "delete": "Supprimer"
+    },
+    "filters": {
+      "tipo": "Type",
+      "tipoAll": "Tous",
+      "entrante": "Entrant",
+      "saiente": "Sortant",
+      "userAll": "Tous",
+      "data1": "Du",
+      "data2": "Au",
+      "apply": "Appliquer les filtros"
+    },
+    "table": {
+      "when": "Date / heure",
+      "tipo": "Type",
+      "entrante": "Entrant",
+      "saiente": "Sortant",
+      "photos": "Photos",
+      "actions": "Actions",
+      "empty": "Aucun enregistrement."
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "summary": "Page {page} sur {pages} · {total} enregistrement(s)"
+    },
+    "toast": {
+      "forbidden": "Permission refusée.",
+      "loadError": "Impossible de charger les enregistrements.",
+      "loadDetailError": "Impossible de charger le détail.",
+      "usersRequired": "Sélectionnez l'utilisateur entrant et sortant.",
+      "dateRequired": "Indiquez la date et l'heure.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "createOk": "Enregistrement créé.",
+      "updateOk": "Enregistrement mis à jour.",
+      "deleteOk": "Enregistrement supprimé.",
+      "deleteError": "Erreur lors de la suppression.",
+      "imagesAdded": "Images ajoutées.",
+      "imageDeleted": "Image supprimée.",
+      "imageError": "Erreur liée aux images."
+    },
+    "confirm": {
+      "deleteRegisto": "Supprimer cet enregistrement et toutes les images ?",
+      "deleteImagem": "Supprimer cette image ?"
+    },
+    "create": { "title": "Nouvel enregistrement" },
+    "form": {
+      "dataHora": "Date et heure",
+      "tipo": "Type",
+      "entrante": "Utilisateur entrant",
+      "saiente": "Utilisateur sortant",
+      "pickUser": "Sélectionnez…",
+      "img1": "Photo entrant (optionnel)",
+      "img2": "Photo sortant (optionnel)",
+      "extras": "Images supplémentaires (optionnel)",
+      "slotImg1": "Photo principale — entrant",
+      "slotImg2": "Photo principale — sortant",
+      "removeImg1": "Supprimer la photo entrant",
+      "removeImg2": "Supprimer la photo sortant"
+    },
+    "detail": { "title": "Troca/dobra #{id}" },
+    "tabs": { "geral": "Général", "imagens": "Images supplémentaires" },
+    "images": {
+      "add": "Ajouter des images",
+      "remove": "Supprimer",
+      "emptySlot": "Pas d'image.",
+      "emptyExtra": "Pas d'images supplémentaires."
+    }
+  },
+  "materialContratoPage": {
+    "title": "Matériel contractuel",
+    "subtitle": "Quantités de matériel prévues au contrat : par article, nombre de contrats, équipes et régime de travail.",
+    "new": "Nouvelle ligne",
+    "stats": {
+      "rows": "Lignes (page actuelle)",
+      "contracts": "Somme contrats (page)",
+      "shifts": "Somme équipes (page)"
+    },
+    "filters": {
+      "materialAll": "Tous les matériels",
+      "regimeAll": "Tous les régimes",
+      "apply": "Appliquer les filtros"
+    },
+    "regimes": {
+      "1": "8/8",
+      "2": "12/12",
+      "3": "12/24",
+      "4": "24/12",
+      "5": "24/24",
+      "6": "24/48",
+      "7": "48/24",
+      "8": "48/48"
+    },
+    "bulk": { "selected": "sélectionné(s)", "delete": "Supprimer la sélection" },
+    "table": {
+      "image": "Image",
+      "material": "Matériel",
+      "qtdContrato": "Qté contrat",
+      "qtdTurno": "Qté équipe",
+      "regime": "Régime",
+      "actions": "Actions"
+    },
+    "actions": { "edit": "Modifier", "remove": "Supprimer" },
+    "empty": "Aucune ligne de matériel contractuel.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "totalResults": "{total} résultat(s)",
+      "pageOf": "Page {current} sur {total}"
+    },
+    "form": {
+      "new": "Nouvelle ligne",
+      "edit": "Modifier la ligne",
+      "material": "Matériel",
+      "materialPlaceholder": "Sélectionnez un matériel",
+      "loadingMateriais": "Chargement des matériels…",
+      "reloadMateriais": "Recharger la liste des matériels",
+      "qtdContrato": "Quantité de contrats",
+      "qtdTurno": "Quantité d'équipes",
+      "regime": "Régime de travail",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "toast": {
+      "forbidden": "Vous n'avez pas la permission de gérer le matériel contractuel.",
+      "loadError": "Erreur lors du chargement du matériel contractuel.",
+      "materiaisLoadError": "Erreur lors du chargement des matériels.",
+      "showError": "Erreur lors du chargement de l'enregistrement.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "materialRequired": "Sélectionnez un matériel.",
+      "updated": "Ligne mise à jour avec succès.",
+      "created": "Ligne enregistrée avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Enregistrement supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkDeleted": "Enregistrements supprimés avec succès.",
+      "bulkError": "Erreur lors de la suppression en lot."
+    },
+    "confirm": {
+      "deleteOne": "Supprimer cet enregistrement ?",
+      "deleteBulk": "Supprimer les enregistrements sélectionnés ?"
+    }
+  },
+  "materiaisPage": {
+    "title": "Matériels",
+    "subtitle": "Gestion du matériel de l'organisation : catégories, état, images et actions groupées.",
+    "new": "Nouveau matériel",
+    "noOrg": "Sélectionnez une organisation pour gérer le matériel.",
+    "stats": { "rows": "Lignes (page actuelle)", "active": "Actifs (page)" },
+    "filters": {
+      "designacao": "Désignation (contient)",
+      "marca": "Marque (contient)",
+      "modelo": "Modèle (contient)",
+      "categoriaAll": "Toutes les catégories",
+      "estadoAll": "Tous les états",
+      "apply": "Appliquer les filtres"
+    },
+    "categories": {
+      "1": "Équipements de protection individuelle (EPI)",
+      "2": "Équipements de surveillance",
+      "3": "Véhicules opérationnels",
+      "4": "Équipements d'éclairage",
+      "5": "Fournitures administratives / opérationnelles",
+      "6": "Équipements de soutien opérationnel",
+      "7": "Infrastructure et postes",
+      "8": "Énergie et secours",
+      "9": "Maintenance et logistique",
+      "10": "Technologie et systèmes",
+      "11": "Sécurité incendie",
+      "12": "Armement"
+    },
+    "estados": {
+      "0": "Inactif",
+      "1": "Actif",
+      "2": "En maintenance",
+      "3": "Hors service"
+    },
+    "bulk": {
+      "selected": "sélectionné(s)",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "maintenance": "Marquer en maintenance",
+      "outOfService": "Marquer hors service",
+      "delete": "Supprimer la sélection"
+    },
+    "table": {
+      "rowNum": "#",
+      "id": "ID",
+      "imagem": "Image",
+      "designacao": "Désignation",
+      "descricao": "Description",
+      "modelo": "Modèle",
+      "marca": "Marque",
+      "unidade": "Unité",
+      "categoria": "Catégorie",
+      "fabricante": "Fabricant",
+      "estado": "État",
+      "organizacao": "Organisation",
+      "createdAt": "Créé",
+      "updatedAt": "Mis à jour",
+      "actions": "Actions",
+      "noImage": "Sans image"
+    },
+    "actions": { "view": "Voir les détails", "edit": "Modifier", "remove": "Supprimer" },
+    "empty": "Aucun matériel trouvé.",
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "totalResults": "{total} résultat(s)",
+      "pageOf": "Page {current} sur {total}"
+    },
+    "form": {
+      "new": "Nouveau matériel",
+      "edit": "Modifier le matériel",
+      "designacao": "Désignation",
+      "descricao": "Description",
+      "modelo": "Modèle",
+      "marca": "Marque",
+      "unidade": "Unité",
+      "unidadePlaceholder": "ex. : u., kg, m",
+      "categoria": "Catégorie",
+      "fabricante": "Fabricant",
+      "estado": "État",
+      "imagem": "Image",
+      "imagemHint": "JPEG, PNG, GIF ou WebP. Max. 5 Mo.",
+      "noPreview": "Aucun aperçu",
+      "clearNewImage": "Retirer le fichier sélectionné",
+      "keepExistingImageHint": "L'image actuelle est conservée tant qu'aucun nouveau fichier n'est choisi.",
+      "update": "Mettre à jour",
+      "register": "Enregistrer"
+    },
+    "cancel": "Annuler",
+    "modal": {
+      "noImage": "Aucune image pour ce matériel.",
+      "id": "ID",
+      "descricao": "Description",
+      "modelo": "Modèle",
+      "marca": "Marque",
+      "unidade": "Unité",
+      "categoria": "Catégorie",
+      "fabricante": "Fabricant",
+      "estado": "État",
+      "organizacao": "Organisation",
+      "imagemFile": "Fichier image",
+      "createdAt": "Créé",
+      "updatedAt": "Mis à jour",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "toast": {
+      "forbidden": "Vous n'avez pas la permission de gérer le matériel.",
+      "loadError": "Erreur lors du chargement du matériel.",
+      "orgRequired": "Organisation non sélectionnée.",
+      "designacaoRequired": "Indiquez la désignation.",
+      "updated": "Matériel mis à jour avec succès.",
+      "created": "Matériel enregistré avec succès.",
+      "saveError": "Erreur lors de l'enregistrement.",
+      "deleted": "Enregistrement supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression.",
+      "selectAtLeastOne": "Sélectionnez au moins un enregistrement.",
+      "bulkError": "Erreur lors de l'action groupée.",
+      "bulkActivateFallback": "Matériels sélectionnés activés.",
+      "bulkDeactivateFallback": "Matériels sélectionnés désactivés.",
+      "bulkMaintenanceFallback": "Matériels sélectionnés marqués en maintenance.",
+      "bulkOutFallback": "Matériels sélectionnés marqués hors service.",
+      "bulkDeleteFallback": "Matériels sélectionnés supprimés."
+    },
+    "confirm": { "deleteOne": "Supprimer ce matériel ?", "deleteBulk": "Supprimer les matériels sélectionnés ?" }
+  },
   "cardsPage": {
     "title": "Cartes",
     "subtitle": "Gestion des cartes d'accès pour visiteurs, collaborateurs et prestataires.",
@@ -1625,7 +2303,8 @@
       "delete": "Supprimer"
     },
     "table": {
-      "noBlock": "Sans bloc"
+      "noBlock": "Sans bloc",
+      "stream": "Lien"
     },
     "status": {
       "active": "Active",
@@ -1646,6 +2325,10 @@
     },
     "cameraPreview": {
       "title": "Démo de la caméra de l'appareil",
+      "titleRemote": "Flux de la caméra",
+      "titleDevice": "Caméra de l'appareil",
+      "mixedContent": "La page est en HTTPS alors que le flux est en HTTP. Le navigateur bloque ce contenu pour des raisons de sécurité. Utilisez un flux HTTPS ou accédez à l'application en HTTP pour les tests.",
+      "streamError": "Impossible de charger le flux. Vérifiez l'URL, le réseau et si le serveur autorise l'intégration dans le navigateur.",
       "notSupported": "Cet appareil/navigateur ne prend pas en charge l'accès à la caméra.",
       "permissionError": "Impossible d'accéder à la caméra. Vérifiez les autorisations du navigateur."
     },
@@ -1653,6 +2336,8 @@
       "new": "Enregistrer une nouvelle caméra",
       "edit": "Modifier la caméra",
       "designation": "Désignation de la caméra",
+      "linkPlaceholder": "URL, IP ou adresse de la caméra (optionnel)",
+      "linkHint": "Adresse du flux, IP ou URL configurée dans votre système vidéo.",
       "noBlock": "Sans bloc",
       "loadingBlocks": "Chargement des blocs...",
       "imagePreviewAlt": "Aperçu de la caméra",

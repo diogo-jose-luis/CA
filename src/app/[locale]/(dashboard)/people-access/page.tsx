@@ -279,6 +279,7 @@ export default function Page() {
   const [formObservacoes, setFormObservacoes] = useState("");
   const [formMotivo, setFormMotivo] = useState("");
   const [formAprovado, setFormAprovado] = useState("");
+  const [formQtd, setFormQtd] = useState("1");
 
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [attachmentsAcessoId, setAttachmentsAcessoId] = useState<number | null>(null);
@@ -296,7 +297,7 @@ export default function Page() {
 
   const destinoApi = isCondominio ? 2 : 1;
 
-  const canEdit = authUser && [1, 2, 3].includes(Number(authUser.nivel));
+  const canEdit = authUser && [1, 2, 3, 5, 6].includes(Number(authUser.nivel));
   const canDelete = authUser && [1, 2].includes(Number(authUser.nivel));
 
   useEffect(() => {
@@ -629,6 +630,7 @@ export default function Page() {
     setFormObservacoes("");
     setFormMotivo("");
     setFormAprovado("");
+    setFormQtd("1");
   };
 
   const openNew = () => {
@@ -684,6 +686,7 @@ export default function Page() {
     setFormObservacoes(row.observacoes ?? "");
     setFormMotivo(row.motivo?.trim() ?? "");
     setFormAprovado(row.aprovado != null ? String(row.aprovado) : "");
+    setFormQtd(row.qtd != null && row.qtd >= 1 ? String(row.qtd) : "1");
     setShowPanel(true);
     void ensurePanelSelectUsers();
   };
@@ -746,12 +749,16 @@ export default function Page() {
     const docRefStr = formDocumentoRef.trim();
     const { documento, documento_tipo: docTipoApi } = mapDocumentUiToApi(formDocumentUi);
 
+    const qtdN = Math.floor(Number(String(formQtd).trim()));
+    const qtdSafe = Number.isFinite(qtdN) && qtdN >= 1 ? Math.min(qtdN, 9999) : 1;
+
     const payload: Record<string, string | number | null | undefined> = {
       destino: destinoApi,
       destino_id: Number(formDestinoId),
       anfitriao_id: formAnfitriaoId.trim() ? Number(formAnfitriaoId) : null,
       entrada: entradaApi,
       saida: saidaApi,
+      qtd: qtdSafe,
       observacoes: formObservacoes.trim() || null,
       motivo: formMotivo.trim() || null,
     };
@@ -1060,7 +1067,7 @@ export default function Page() {
         ) : (
           <>
             <div className="hidden overflow-x-auto desktop-auth:block">
-              <table className="w-full text-sm min-w-[1480px]">
+              <table className="w-full text-sm min-w-[1540px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/40">
                   <tr>
                     <th className="px-4 py-3 text-left">{t("table.entry")}</th>
@@ -1068,6 +1075,7 @@ export default function Page() {
                     <th className="px-4 py-3 text-left">{t("table.status")}</th>
                     <th className="px-4 py-3 text-left">{t("table.person")}</th>
                     <th className="px-4 py-3 text-left">{t("table.name")}</th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap">{t("table.qtd")}</th>
                     <th className="px-4 py-3 text-left">{t("table.type")}</th>
                     <th className="px-4 py-3 text-left">{t("table.contact")}</th>
                     <th className="px-4 py-3 text-left min-w-[18rem] w-[18rem]">{t("table.documentType")}</th>
@@ -1081,7 +1089,7 @@ export default function Page() {
                 <tbody className="divide-y ca-border">
                   {list.length == 0 ? (
                     <tr>
-                      <td colSpan={13} className="px-4 py-8 text-center ca-muted">
+                      <td colSpan={14} className="px-4 py-8 text-center ca-muted">
                         {t("table.empty")}
                       </td>
                     </tr>
@@ -1113,6 +1121,9 @@ export default function Page() {
                             </div>
                           </td>
                           <td className="px-4 py-3 font-medium">{displayName(row)}</td>
+                          <td className="px-4 py-3 whitespace-nowrap tabular-nums">
+                            {row.qtd != null && row.qtd >= 1 ? row.qtd : "—"}
+                          </td>
                           <td className="px-4 py-3">{tipoLabel(row.user ?? undefined)}</td>
                           <td className="px-4 py-3 align-top">{contactCell(row.user)}</td>
                           <td className="px-4 py-3 min-w-[18rem] w-[18rem] align-top">
@@ -1198,6 +1209,11 @@ export default function Page() {
                               {st.label}
                             </span>
                             <span className="text-xs ca-muted">{tipoLabel(row.user ?? undefined)}</span>
+                            {row.qtd != null && row.qtd >= 1 ? (
+                              <span className="text-xs ca-muted">
+                                · {t("table.qtd")}: {row.qtd}
+                              </span>
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -1336,6 +1352,12 @@ export default function Page() {
               <div>
                 <dt className="ca-muted">{t("table.name")}</dt>
                 <dd className="font-medium">{displayName(detailRow)}</dd>
+              </div>
+              <div>
+                <dt className="ca-muted">{t("table.qtd")}</dt>
+                <dd className="tabular-nums">
+                  {detailRow.qtd != null && detailRow.qtd >= 1 ? detailRow.qtd : "—"}
+                </dd>
               </div>
               <div>
                 <dt className="ca-muted">{t("table.contact")}</dt>
@@ -1592,6 +1614,21 @@ export default function Page() {
                   value={formSaida}
                   onChange={(e) => setFormSaida(e.target.value)}
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">{t("form.qtd")}</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={9999}
+                  step={1}
+                  className="ca-input w-full mt-1"
+                  inputMode="numeric"
+                  value={formQtd}
+                  onChange={(e) => setFormQtd(e.target.value)}
+                />
+                <p className="mt-1 text-xs ca-muted">{t("form.qtdHint")}</p>
               </div>
 
               <div>

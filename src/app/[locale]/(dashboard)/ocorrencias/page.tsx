@@ -166,6 +166,7 @@ export default function Page() {
     nivel: 2,
     periodo: 1,
     local: "" as string,
+    medidas: "",
     observacoes: "",
     imagem: null as File | null,
     comprovantoFiles: [] as File[],
@@ -442,6 +443,7 @@ export default function Page() {
       nivel: 2,
       periodo: 1,
       local: "",
+      medidas: "",
       observacoes: "",
       imagem: null,
       comprovantoFiles: [],
@@ -460,6 +462,7 @@ export default function Page() {
       nivel: row.nivel,
       periodo: row.periodo,
       local: row.local != null ? String(row.local) : "",
+      medidas: row.medidas ?? "",
       observacoes: row.observacoes ?? "",
       imagem: null,
       comprovantoFiles: [],
@@ -496,6 +499,7 @@ export default function Page() {
     fd.append("nivel", String(form.nivel));
     fd.append("periodo", String(form.periodo));
     if (form.local) fd.append("local", form.local);
+    fd.append("medidas", form.medidas.trim());
     fd.append("observacoes", form.observacoes.trim());
     if (form.imagem) fd.append("imagem", form.imagem);
   };
@@ -522,6 +526,7 @@ export default function Page() {
             nivel: form.nivel,
             periodo: form.periodo,
             local: form.local ? Number(form.local) : null,
+            medidas: form.medidas.trim() || null,
             observacoes: form.observacoes.trim() || null,
           });
         }
@@ -1066,6 +1071,14 @@ export default function Page() {
                     <span className="ca-muted">{t("table.description")}:</span>
                   </p>
                   <p className="whitespace-pre-wrap">{viewing.descricao}</p>
+                  {viewing.medidas ? (
+                    <>
+                      <p>
+                        <span className="ca-muted">{t("form.medidas")}:</span>
+                      </p>
+                      <p className="whitespace-pre-wrap">{viewing.medidas}</p>
+                    </>
+                  ) : null}
                   {viewing.observacoes ? (
                     <>
                       <p>
@@ -1350,6 +1363,15 @@ export default function Page() {
                     </option>
                   ))}
                 </select>
+
+                <label className="block text-xs ca-muted">{t("form.medidas")}</label>
+                <textarea
+                  className="ca-input"
+                  rows={3}
+                  placeholder={t("form.medidasPlaceholder")}
+                  value={form.medidas}
+                  onChange={(e) => setForm((f) => ({ ...f, medidas: e.target.value }))}
+                />
 
                 <label className="block text-xs ca-muted">{t("form.observations")}</label>
                 <textarea

@@ -34,6 +34,9 @@ import {
   Layers,
   Factory,
   Briefcase,
+  Boxes,
+  ClipboardList,
+  ArrowLeftRight,
 } from "lucide-react";
 
 export type SidebarIconKey =
@@ -73,7 +76,10 @@ export type SidebarIconKey =
   | "layers"
   | "factory"
   | "briefcase"
-  | "user-round";
+  | "user-round"
+  | "boxes"
+  | "clipboard-list"
+  | "arrow-left-right";
 
 export type SidebarItem =
   | { label: string; href: string; icon: SidebarIconKey; divider?: false }
@@ -158,6 +164,9 @@ const iconMap: Record<SidebarIconKey, React.ElementType> = {
   factory: Factory,
   briefcase: Briefcase,
   "user-round": UserRound,
+  boxes: Boxes,
+  "clipboard-list": ClipboardList,
+  "arrow-left-right": ArrowLeftRight,
 };
 
 function isActive(activePath: string, href: string) {

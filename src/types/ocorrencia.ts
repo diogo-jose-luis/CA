@@ -27,6 +27,8 @@ export interface Ocorrencia {
   nivel: number;
   periodo: number;
   local: number | null;
+  /** Medidas tomadas face à ocorrência */
+  medidas?: string | null;
   observacoes?: string | null;
   /** Ficheiro principal (apenas nome no disco `public/ocorrencias`) */
   imagem?: string | null;

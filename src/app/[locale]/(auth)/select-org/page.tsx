@@ -6,6 +6,7 @@ import { Building2, Home, CheckCircle2, LogOut, ChevronDown } from "lucide-react
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "@/contexts/AuthContext";
 import { useTranslations } from "next-intl";
+import LogoutConfirmDialog from "@/components/layout/LogoutConfirmDialog";
 import useLocale from "@/hooks/useLocale";
 import { useAuth } from "@/hooks/useAuth";
 import type { Organizacao } from "@/types/organizacao";
@@ -45,6 +46,8 @@ export default function SelectOrganizationPage() {
   const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const [langOpen, setLangOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   function changeLanguage(lang: string) {
     const newPath = pathname.replace(/^\/(pt|en|fr)/, `/${lang}`);
@@ -92,10 +95,16 @@ export default function SelectOrganizationPage() {
     }, 400);
   }
 
-  function handleLogout() {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(ORG_LIST_STORAGE_KEY);
-    signOut({ callbackUrl: `/${locale}/login` });
+  async function confirmLogout() {
+    setLogoutLoading(true);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(ORG_LIST_STORAGE_KEY);
+      await signOut({ callbackUrl: `/${locale}/login` });
+    } finally {
+      setLogoutLoading(false);
+      setLogoutConfirmOpen(false);
+    }
   }
 
   return (
@@ -154,7 +163,8 @@ export default function SelectOrganizationPage() {
         </div>
 
         <button
-          onClick={handleLogout}
+          type="button"
+          onClick={() => setLogoutConfirmOpen(true)}
           className="
             flex items-center gap-2
             bg-white/10 hover:bg-white/20
@@ -263,6 +273,15 @@ export default function SelectOrganizationPage() {
       <div className="text-center text-xs text-white/50 mt-16">
         © {new Date().getFullYear()} CA · {t("system")}
       </div>
+
+      <LogoutConfirmDialog
+        open={logoutConfirmOpen}
+        onClose={() => {
+          if (!logoutLoading) setLogoutConfirmOpen(false);
+        }}
+        onConfirm={confirmLogout}
+        loading={logoutLoading}
+      />
     </div>
   );
 }

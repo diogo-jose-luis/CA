@@ -43,10 +43,12 @@ export interface UtilizadorStatsResponse {
   };
 }
 
-/** Nível 1=admin, 2=gestor, 3=operador, 4=cliente */
+/** Nível 1=admin, 2=gestor, 3=operador, 4=cliente, 5=supervisor, 6=anfitrião */
 export const NIVEL_LABEL: Record<number, string> = {
   1: "admin",
   2: "gestor",
   3: "operador",
   4: "cliente",
+  5: "supervisor",
+  6: "anfitriao",
 };

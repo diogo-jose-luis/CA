@@ -24,6 +24,8 @@ type Camera = {
   bloco_id?: number | null;
   estado?: number;
   imagem?: string | null;
+  /** URL ou IP / endpoint da câmara (API). */
+  link?: string | null;
   organizacao_id?: number;
   bloco?: { id: number; designacao?: string | null } | null;
 };
@@ -47,6 +49,19 @@ type DepartamentoListResponse = {
 const API_PREFIX = "/cameras";
 const DEPARTAMENTOS_API_PREFIX = "/departamentos";
 const ORG_KEY = "ca.selected.organization";
+
+/** Normaliza o campo `link` para URL absoluta (MJPEG, snapshot, etc.). */
+function normalizeCameraStreamUrl(raw: string | null | undefined): string | null {
+  const s = raw?.trim() ?? "";
+  if (!s) return null;
+  if (/^https?:\/\//i.test(s)) return s;
+  return `http://${s}`;
+}
+
+function isMixedContentBlocked(streamUrl: string): boolean {
+  if (typeof window === "undefined") return false;
+  return window.location.protocol === "https:" && streamUrl.toLowerCase().startsWith("http:");
+}
 
 function EstadoBadge({ estado, t }: { estado?: number; t: ReturnType<typeof useTranslations> }) {
   const active = estado == 1;
@@ -87,11 +102,19 @@ export default function Page() {
   const [showCameraPreview, setShowCameraPreview] = useState(false);
   const [previewCamera, setPreviewCamera] = useState<Camera | null>(null);
   const [cameraPreviewError, setCameraPreviewError] = useState<string | null>(null);
+  const [remoteStreamLoading, setRemoteStreamLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
+
+  const previewStreamUrl = useMemo(
+    () => normalizeCameraStreamUrl(previewCamera?.link),
+    [previewCamera?.link],
+  );
+  const previewMixedContent = previewStreamUrl ? isMixedContentBlocked(previewStreamUrl) : false;
   const [form, setForm] = useState({
     designacao: "",
     bloco_id: "",
+    link: "",
     estado: 1,
     imagem: null as File | null,
     imagemPreviewUrl: "",
@@ -191,6 +214,7 @@ export default function Page() {
     setForm({
       designacao: "",
       bloco_id: "",
+      link: "",
       estado: 1,
       imagem: null,
       imagemPreviewUrl: "",
@@ -203,6 +227,7 @@ export default function Page() {
     setForm({
       designacao: row.designacao ?? "",
       bloco_id: row.bloco_id ? String(row.bloco_id) : "",
+      link: row.link?.trim() ?? "",
       estado: row.estado ?? 1,
       imagem: null,
       imagemPreviewUrl: getImageUrl(row.imagem),
@@ -241,6 +266,7 @@ export default function Page() {
   const openCameraPreview = (cam: Camera) => {
     setPreviewCamera(cam);
     setCameraPreviewError(null);
+    setRemoteStreamLoading(false);
     setShowCameraPreview(true);
   };
 
@@ -248,6 +274,7 @@ export default function Page() {
     setShowCameraPreview(false);
     setPreviewCamera(null);
     setCameraPreviewError(null);
+    setRemoteStreamLoading(false);
     stopPreviewStream();
   }, [stopPreviewStream]);
 
@@ -265,6 +292,7 @@ export default function Page() {
       formData.append("designacao", form.designacao.trim());
       formData.append("estado", String(form.estado));
       if (form.bloco_id) formData.append("bloco_id", String(Number(form.bloco_id)));
+      formData.append("link", form.link.trim());
       if (form.imagem) formData.append("imagem", form.imagem);
 
       const config = { headers: { "Content-Type": undefined } };
@@ -405,9 +433,27 @@ export default function Page() {
 
   useEffect(() => {
     if (!showCameraPreview) return;
+
+    const url = normalizeCameraStreamUrl(previewCamera?.link);
+    if (url && !isMixedContentBlocked(url)) {
+      stopPreviewStream();
+      setRemoteStreamLoading(true);
+      setCameraPreviewError(null);
+      return () => {
+        stopPreviewStream();
+        setRemoteStreamLoading(false);
+      };
+    }
+
+    if (url && isMixedContentBlocked(url)) {
+      stopPreviewStream();
+      setRemoteStreamLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
-    const startPreview = async () => {
+    const startDevicePreview = async () => {
       if (!navigator.mediaDevices?.getUserMedia) {
         setCameraPreviewError(t("cameraPreview.notSupported"));
         return;
@@ -431,12 +477,12 @@ export default function Page() {
       }
     };
 
-    startPreview();
+    void startDevicePreview();
     return () => {
       cancelled = true;
       stopPreviewStream();
     };
-  }, [showCameraPreview, stopPreviewStream, t]);
+  }, [showCameraPreview, previewCamera?.link, stopPreviewStream, t]);
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -594,6 +640,24 @@ export default function Page() {
                       <MapPin size={14} />
                       {cam.bloco?.designacao || t("table.noBlock")}
                     </div>
+                    {cam.link?.trim() ? (
+                      <div className="text-xs ca-muted break-all line-clamp-2" title={cam.link.trim()}>
+                        <span className="font-medium text-[var(--fg)]">{t("table.stream")}: </span>
+                        {/^https?:\/\//i.test(cam.link.trim()) ? (
+                          <a
+                            href={cam.link.trim()}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:opacity-90"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {cam.link.trim()}
+                          </a>
+                        ) : (
+                          <span className="font-mono">{cam.link.trim()}</span>
+                        )}
+                      </div>
+                    ) : null}
 
                     <div className="flex justify-end gap-2 pt-2">
                       <button
@@ -711,6 +775,16 @@ export default function Page() {
                     </option>
                   ))}
                 </select>
+                <input
+                  className="ca-input"
+                  type="text"
+                  inputMode="url"
+                  autoComplete="off"
+                  placeholder={t("form.linkPlaceholder")}
+                  value={form.link}
+                  onChange={(e) => setForm((f) => ({ ...f, link: e.target.value }))}
+                />
+                <p className="text-xs ca-muted">{t("form.linkHint")}</p>
                 <input type="file" className="ca-input" accept="image/*" onChange={onSelectImage} />
                 {form.imagemPreviewUrl && (
                   <img src={form.imagemPreviewUrl} alt={t("form.imagePreviewAlt")} className="w-full h-36 object-cover rounded-xl" />
@@ -752,15 +826,71 @@ export default function Page() {
           <div className="relative w-full max-w-6xl ca-panel shadow-2xl rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <div>
-                <h3 className="text-lg font-semibold">{t("cameraPreview.title")}</h3>
+                <h3 className="text-lg font-semibold">
+                  {previewStreamUrl && !previewMixedContent
+                    ? t("cameraPreview.titleRemote")
+                    : t("cameraPreview.titleDevice")}
+                </h3>
                 <p className="text-xs ca-muted">{previewCamera?.designacao ?? "—"}</p>
+                {previewCamera?.link?.trim() ? (
+                  <p className="mt-1 text-xs break-all">
+                    <span className="ca-muted">{t("table.stream")}: </span>
+                    {/^https?:\/\//i.test(previewCamera.link.trim()) ? (
+                      <a
+                        href={previewCamera.link.trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--brand)] underline"
+                      >
+                        {previewCamera.link.trim()}
+                      </a>
+                    ) : (
+                      <span className="font-mono">{previewCamera.link.trim()}</span>
+                    )}
+                  </p>
+                ) : null}
               </div>
               <button type="button" onClick={closeCameraPreview} className="ca-icon-btn">
                 <X size={18} />
               </button>
             </div>
             <div className="p-4">
-              {cameraPreviewError ? (
+              {previewMixedContent && previewStreamUrl ? (
+                <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+                  {t("cameraPreview.mixedContent")}
+                </div>
+              ) : previewStreamUrl ? (
+                cameraPreviewError ? (
+                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
+                    {cameraPreviewError}
+                  </div>
+                ) : (
+                  <div className="relative flex min-h-[min(70vh,480px)] w-full items-center justify-center overflow-hidden rounded-xl bg-black">
+                    {remoteStreamLoading ? (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
+                        <Loader2 className="h-10 w-10 animate-spin text-white/80" aria-hidden />
+                      </div>
+                    ) : null}
+                    {/* MJPEG e muitos fluxos HTTP de câmaras IP: o browser trata como imagem em atualização contínua. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element -- stream em tempo real de origem externa */}
+                    <img
+                      key={previewStreamUrl}
+                      src={previewStreamUrl}
+                      alt=""
+                      className="max-h-[min(70vh,480px)] w-full object-contain"
+                      referrerPolicy="no-referrer"
+                      onLoad={() => {
+                        setRemoteStreamLoading(false);
+                        setCameraPreviewError(null);
+                      }}
+                      onError={() => {
+                        setRemoteStreamLoading(false);
+                        setCameraPreviewError(t("cameraPreview.streamError"));
+                      }}
+                    />
+                  </div>
+                )
+              ) : cameraPreviewError ? (
                 <div className="text-sm text-red-600 dark:text-red-400">{cameraPreviewError}</div>
               ) : (
                 <video

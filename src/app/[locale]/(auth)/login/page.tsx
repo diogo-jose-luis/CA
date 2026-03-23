@@ -4,12 +4,14 @@
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import axios from "axios";
-import { LockKeyhole, Mail, ChevronDown } from "lucide-react";
+import { LockKeyhole, Mail, ChevronDown, KeyRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "https://api-ca.alv-jamba.com/api";
+//const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "https://api-ca.alv-jamba.com/api";
+const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "http://127.0.0.1:8000/api";
 
 export default function LoginPage() {
+  
   const router = useRouter();
   const sp = useSearchParams();
   const pathname = usePathname();
@@ -25,10 +27,18 @@ export default function LoginPage() {
 
   const [langOpen, setLangOpen] = useState(false);
 
+  type LoginMode = "pin" | "password";
+  const [loginMode, setLoginMode] = useState<LoginMode>("pin");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function digitsPin(value: string) {
+    return value.replace(/\D/g, "").slice(0, 4);
+  }
 
   function changeLanguage(lang: string) {
     const newPath = pathname.replace(/^\/(pt|en|fr)/, `/${lang}`);
@@ -40,11 +50,23 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
+    if (loginMode === "pin") {
+      if (pin.length !== 4) {
+        setError(t("errors.pinLength"));
+        setLoading(false);
+        return;
+      }
+    }
+
+    const payload =
+      loginMode === "pin"
+        ? { email, pin }
+        : { email, password };
+
     try {
-      const loginRes = await axios.post(`${API_LOGIN}/login`, {
-        email,
-        password,
-      }, { headers: { "Content-Type": "application/json" } });
+      const loginRes = await axios.post(`${API_LOGIN}/login`, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
 
       const data = loginRes.data;
       if (data?.user && data?.access_token) {
@@ -75,9 +97,24 @@ export default function LoginPage() {
         return;
       }
     } catch (err: unknown) {
-      const status = axios.isAxiosError(err) ? err.response?.status : null;
-      if (status == 401 || status == 422) {
-        setError(t("errors.invalidCredentials"));
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        const data = err.response?.data as
+          | { message?: string; error?: string }
+          | undefined;
+        const serverMsg =
+          typeof data?.message === "string"
+            ? data.message
+            : typeof data?.error === "string"
+              ? data.error
+              : null;
+        if (serverMsg) {
+          setError(serverMsg);
+        } else if (status == 401 || status == 422) {
+          setError(t("errors.invalidCredentials"));
+        } else {
+          setError(t("errors.authError"));
+        }
       } else {
         setError(t("errors.authError"));
       }
@@ -187,25 +224,80 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="mb-2 block text-xs text-slate-500 tablet-app:mb-2.5 tablet-app:text-sm">
-                {t("password")}
-              </label>
-
-              <div className="relative">
-                <LockKeyhole className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-slate-400 tablet-app:left-5 tablet-app:size-5" />
-
-                <input
-                  className="h-12 w-full rounded-2xl border border-slate-300 bg-white pl-12 pr-4 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-[var(--brand)] dark:border-slate-700 dark:bg-slate-900 tablet-app:h-14 tablet-app:rounded-[1.125rem] tablet-app:pl-14 tablet-app:text-lg"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  type="password"
-                  required
-                />
-              </div>
+            <div className="flex rounded-2xl border border-slate-300 bg-slate-50/80 p-1 dark:border-slate-700 dark:bg-slate-900/50 tablet-app:p-1.5">
+              <button
+                type="button"
+                className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-semibold transition tablet-app:py-3 tablet-app:text-sm ${
+                  loginMode === "pin"
+                    ? "bg-[var(--brand)] text-white shadow-md"
+                    : "text-slate-600 hover:bg-white/80 dark:text-slate-300 dark:hover:bg-slate-800/80"
+                }`}
+                onClick={() => {
+                  setLoginMode("pin");
+                  setError(null);
+                }}
+              >
+                {t("modePin")}
+              </button>
+              <button
+                type="button"
+                className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-semibold transition tablet-app:py-3 tablet-app:text-sm ${
+                  loginMode === "password"
+                    ? "bg-[var(--brand)] text-white shadow-md"
+                    : "text-slate-600 hover:bg-white/80 dark:text-slate-300 dark:hover:bg-slate-800/80"
+                }`}
+                onClick={() => {
+                  setLoginMode("password");
+                  setError(null);
+                }}
+              >
+                {t("modePassword")}
+              </button>
             </div>
+
+            {loginMode === "pin" ? (
+              <div>
+                <label className="mb-2 block text-xs text-slate-500 tablet-app:mb-2.5 tablet-app:text-sm">
+                  {t("pin")}
+                </label>
+
+                <div className="relative">
+                  <KeyRound className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-slate-400 tablet-app:left-5 tablet-app:size-5" />
+
+                  <input
+                    className="h-12 w-full rounded-2xl border border-slate-300 bg-white pl-12 pr-4 text-center font-mono text-xl tracking-[0.4em] shadow-sm transition focus:outline-none focus:ring-2 focus:ring-[var(--brand)] dark:border-slate-700 dark:bg-slate-900 tablet-app:h-14 tablet-app:rounded-[1.125rem] tablet-app:pl-14 tablet-app:text-2xl"
+                    value={pin}
+                    onChange={(e) => setPin(digitsPin(e.target.value))}
+                    placeholder="••••"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={4}
+                    required
+                    aria-invalid={pin.length > 0 && pin.length < 4}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="mb-2 block text-xs text-slate-500 tablet-app:mb-2.5 tablet-app:text-sm">
+                  {t("password")}
+                </label>
+
+                <div className="relative">
+                  <LockKeyhole className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-slate-400 tablet-app:left-5 tablet-app:size-5" />
+
+                  <input
+                    className="h-12 w-full rounded-2xl border border-slate-300 bg-white pl-12 pr-4 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-[var(--brand)] dark:border-slate-700 dark:bg-slate-900 tablet-app:h-14 tablet-app:rounded-[1.125rem] tablet-app:pl-14 tablet-app:text-lg"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
+              </div>
+            )}
 
             <button
               disabled={loading}

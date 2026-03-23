@@ -9,6 +9,34 @@
       "pt": "Português",
       "en": "Inglês",
       "fr": "Francês"
+    },
+    "logoutConfirm": {
+      "title": "Terminar sessão?",
+      "description": "Vai sair da aplicação. Para voltar ao painel terá de iniciar sessão novamente.",
+      "cancel": "Cancelar",
+      "confirm": "Sair",
+      "confirming": "A sair…"
+    },
+    "changePin": {
+      "menuItem": "Alterar PIN",
+      "title": "Alterar PIN",
+      "verificationByPin": "Tenho PIN",
+      "verificationByPassword": "Usar senha da conta",
+      "oldPin": "PIN atual",
+      "currentPassword": "Senha atual",
+      "newPin": "Novo PIN",
+      "confirmNewPin": "Confirmar novo PIN",
+      "pinPlaceholder": "••••",
+      "save": "Guardar",
+      "saving": "A guardar…",
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "success": "PIN atualizado com sucesso.",
+      "error": "Não foi possível atualizar o PIN.",
+      "pinLength": "O novo PIN deve ter exatamente 4 dígitos.",
+      "pinMismatch": "A confirmação do novo PIN não coincide.",
+      "oldPinLength": "Indique o PIN atual com 4 dígitos.",
+      "passwordRequired": "Indique a senha atual."
     }
   },
   "login": {
@@ -17,13 +45,17 @@
     "subtitle": "Aceda ao seu painel de gestão.",
     "email": "E-mail",
     "password": "Senha",
+    "pin": "PIN (4 dígitos)",
+    "modePin": "PIN",
+    "modePassword": "Senha",
     "loginButton": "Entrar",
     "loading": "A entrar...",
     "bannerTitle": "Plataforma inteligente de gestão de acesso",
     "bannerDescription": "Segurança, controlo e monitorização centralizada para condomínios e ambientes industriais.",
     "errors": {
       "invalidCredentials": "Credenciais inválidas.",
-      "authError": "Erro ao autenticar."
+      "authError": "Erro ao autenticar.",
+      "pinLength": "O PIN deve ter exatamente 4 dígitos."
     },
     "lang": {
       "pt": "Português",
@@ -47,11 +79,16 @@
     "orders": "Encomendas",
     "serviceReview": "Avaliação de Serviços",
     "keyDelivery": "Entrega de Chaves",
+    "trocasDobras": "Trocas e dobras",
+    "supervision": "Supervisões",
 
     "organizationMenu": "Organização",
     "residences": "Moradias",
     "areas": "Áreas",
     "cargos": "Cargos",
+    "equipaContrato": "Equipa de contrato",
+    "materialContrato": "Material de contrato",
+    "materials": "Materiais",
     "cards": "Cartões",
     "cameras": "Câmeras",
     "residents": "Moradores",
@@ -59,12 +96,13 @@
     "guests": "Visitantes",
     "suppliers": "Fornecedores",
     "clients": "Clientes",
-    "guards": "Porteiros",
+    "guards": "Efetivos",
     "users": "Utilizadores",
     "settings": "Configurações",
 
     "sections": {
       "operator": "Operador",
+      "host": "Anfitrião",
       "manager": "Gestor",
       "admin": "Admin"
     }
@@ -182,6 +220,7 @@
     "table": {
       "person": "Pessoa",
       "name": "Nome",
+      "qtd": "Qtd. pessoas",
       "type": "Tipo",
       "document": "Documento",
       "contact": "Contacto",
@@ -277,6 +316,8 @@
       "documentRefPlaceholder": "Número ou referência do documento",
       "entry": "Data e hora de entrada",
       "exit": "Data e hora de saída (opcional)",
+      "qtd": "Quantidade de pessoas",
+      "qtdHint": "Número de pessoas associadas a este acesso (mínimo 1).",
       "approval": "Aprovação",
       "approvalUnspecified": "Não alterar / omitir",
       "notes": "Observações",
@@ -359,6 +400,7 @@
     "table": {
       "vehicle": "Veículo",
       "plate": "Matrícula",
+      "qtd": "Qtd. pessoas",
       "type": "Tipo",
       "driver": "Condutor / Empresa",
       "driverContact": "Contacto do condutor",
@@ -456,6 +498,8 @@
       "platePlaceholder": "ex.: AB-12-CD",
       "vehicleType": "Tipo de veículo",
       "temCarga": "Transporta carga",
+      "qtd": "Quantidade de pessoas",
+      "qtdHint": "Número de ocupantes / pessoas no veículo para este acesso (mínimo 1).",
       "cargoYes": "Sim",
       "cargoNo": "Não",
       "condutor": "Condutor",
@@ -520,6 +564,9 @@
     "title": "Avisos",
     "subtitle": "Avisos do síndico ou da gestão do condomínio para os residentes.",
     "newNotice": "Novo aviso",
+    "noPermission": "Não tem permissão para consultar avisos.",
+    "noOrg": "Seleccione uma organização para ver os avisos.",
+    "empty": "Nenhum aviso encontrado.",
 
     "stats": {
       "active": "Avisos Activos",
@@ -532,7 +579,9 @@
       "category": "Categoria",
       "priority": "Prioridade",
       "status": "Estado",
-      "apply": "Aplicar filtros"
+      "apply": "Aplicar filtros",
+      "dateFrom": "Data publicação (de)",
+      "dateTo": "Data publicação (até)"
     },
 
     "categories": {
@@ -568,9 +617,48 @@
 
     "form": {
       "title": "Novo aviso",
+      "editTitle": "Editar aviso",
       "titlePlaceholder": "Título do aviso",
       "message": "Mensagem do aviso",
-      "publish": "Publicar aviso"
+      "publish": "Publicar aviso",
+      "save": "Guardar alterações",
+      "publicationDate": "Data e hora de publicação",
+      "priorityOptional": "Prioridade (opcional)",
+      "image": "Imagem (opcional)",
+      "discardNewImage": "Remover imagem seleccionada",
+      "sendToAll": "Enviar a todos os residentes"
+    },
+
+    "detail": {
+      "recipients": "Destinatários"
+    },
+
+    "broadcasts": {
+      "all": "Todos os residentes",
+      "department": "Departamento",
+      "residence": "Residência",
+      "resident": "Morador"
+    },
+
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Seguinte",
+      "results": "resultado(s)",
+      "page": "Página"
+    },
+
+    "toast": {
+      "loadError": "Não foi possível carregar os avisos.",
+      "saveError": "Não foi possível guardar o aviso.",
+      "deleteError": "Não foi possível eliminar o aviso.",
+      "created": "Aviso criado com sucesso.",
+      "updated": "Aviso actualizado com sucesso.",
+      "deleted": "Aviso eliminado com sucesso.",
+      "orgRequired": "Organização em falta."
+    },
+
+    "confirm": {
+      "delete": "Eliminar este aviso?"
     },
 
     "cancel": "Cancelar"
@@ -702,6 +790,8 @@
       "state": "Estado",
       "local": "Departamento / local",
       "localNone": "Nenhum",
+      "medidas": "Medidas tomadas",
+      "medidasPlaceholder": "Descreva as medidas adotadas face à ocorrência",
       "observations": "Observações",
       "image": "Fotografia",
       "imageHint": "JPEG, PNG, GIF ou WebP · máx. 5 MB",
@@ -768,17 +858,6 @@
       "delivered": "Entregues"
     },
 
-    "filters": {
-      "search": "Pesquisar...",
-      "status": "Estado",
-      "apply": "Aplicar filtros"
-    },
-
-    "status": {
-      "pending": "Pendente",
-      "delivered": "Entregue"
-    },
-
     "table": {
       "order": "Ordem",
       "date": "Data",
@@ -793,56 +872,176 @@
 
     "form": {
       "title": "Nova encomenda",
+      "edit": "Editar encomenda",
+      "detail": "Detalhe da encomenda",
       "order": "Número da encomenda",
+      "date": "Data",
       "sender": "Remetente",
       "receiver": "Destinatário",
       "description": "Descrição",
       "security": "Recebido por (Segurança)",
       "notes": "Observações",
-      "save": "Guardar"
+      "entregueA": "Entregue por (utilizador)",
+      "state": "Estado",
+      "image": "Imagem (opcional)",
+      "selectUser": "Selecionar utilizador",
+      "selectSender": "Selecionar remetente",
+      "selectReceiver": "Selecionar destinatário",
+      "modeExisting": "Utilizador existente",
+      "modeNew": "Registar novo",
+      "newPartyHint": "Será criado um utilizador na organização com os dados abaixo.",
+      "partyName": "Nome",
+      "partyEmailOptional": "E-mail (opcional)",
+      "partyPhone": "Telefone",
+      "partyTypeVisitor": "Visitante",
+      "partyTypeClient": "Cliente",
+      "partyTypeSupplier": "Fornecedor",
+      "save": "Guardar",
+      "register": "Registar",
+      "update": "Atualizar"
     },
+
+    "filters": {
+      "search": "Pesquisar...",
+      "status": "Estado",
+      "apply": "Aplicar filtros",
+      "dateFrom": "Data inicial",
+      "dateTo": "Data final",
+      "allStatuses": "Todos"
+    },
+
+    "status": {
+      "pending": "Pendente",
+      "delivered": "Entregue",
+      "cancelled": "Cancelada"
+    },
+
+    "pagination": { "prev": "Anterior", "next": "Próxima" },
+    "empty": "Nenhuma encomenda encontrada.",
+    "actions": { "edit": "Editar", "remove": "Eliminar", "view": "Ver" },
+    "toast": {
+      "loadError": "Erro ao carregar encomendas.",
+      "statsError": "Erro ao carregar totais.",
+      "orgRequired": "Selecione uma organização.",
+      "saved": "Encomenda guardada com sucesso.",
+      "updated": "Encomenda atualizada com sucesso.",
+      "saveError": "Erro ao guardar.",
+      "deleted": "Encomenda eliminada com sucesso.",
+      "deleteError": "Erro ao eliminar.",
+      "forbidden": "Sem permissão para esta ação.",
+      "partyNameRequired": "Indique o nome ao registar um novo utilizador."
+    },
+    "confirm": { "deleteOne": "Eliminar esta encomenda?" },
 
     "cancel": "Cancelar"
   },
   "keys": {
     "title": "Entrega de Chaves",
-    "subtitle": "Controlo de chaves entregues aos colaboradores",
-    "new": "Novo Registo",
+    "subtitle": "Registo de entregas e devoluções de chaves por organização.",
+    "new": "Novo registo",
+    "empty": "Nenhum registo encontrado.",
+    "cancel": "Cancelar",
 
     "stats": {
-      "total": "Total de Registos",
-      "returned": "Chaves Devolvidas",
-      "sectors": "Total de Setores",
-      "employees": "Colaboradores"
+      "total": "Total de registos",
+      "inProgress": "Em curso",
+      "returned": "Devolvidas"
     },
 
     "filters": {
-      "search": "Pesquisar...",
-      "sector": "Setor",
+      "search": "Pesquisar por chave ou observações…",
+      "allResidences": "Todas as residências",
+      "allStatuses": "Todos os estados",
+      "dateFrom": "Data de entrega (de)",
+      "dateTo": "Data de entrega (até)",
       "apply": "Aplicar filtros"
+    },
+
+    "status": {
+      "ongoing": "Em curso",
+      "returned": "Devolvida"
     },
 
     "table": {
       "id": "ID",
-      "date": "Data",
-      "sector": "Setor",
-      "employee": "Colaborador que Solicita",
-      "exitTime": "Horário de Saída",
-      "signature": "Assinatura do Solicitante",
-      "returnedBy": "Devolvida Por",
-      "returnTime": "Horário da Devolução",
+      "delivery": "Entrega",
+      "key": "Chave",
+      "residence": "Residência",
+      "handedBy": "Morador (entrega)",
+      "receivedBy": "Operador (recebe na portaria)",
+      "status": "Estado",
+      "return": "Devolução ao morador",
       "actions": "Ações"
     },
 
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "remove": "Eliminar",
+      "registerReturn": "Registar devolução"
+    },
+
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Seguinte"
+    },
+
     "form": {
-      "title": "Novo Registo de Chave",
-      "employee": "Colaborador",
-      "sector": "Setor",
+      "title": "Novo registo de chave",
+      "edit": "Editar registo",
+      "detail": "Detalhe",
+      "deliveryAt": "Data e hora de entrega",
+      "keyLabel": "Identificação da chave",
+      "residenceOptional": "Residência (opcional)",
+      "handedByMorador": "Morador que entrega a chave",
+      "receivedByOperator": "Operador da portaria que recebe a chave",
+      "selectMorador": "Seleccionar morador",
+      "selectOperator": "Seleccionar operador da portaria",
       "notes": "Observações",
+      "image": "Fotografia",
+      "modeExisting": "Existente",
+      "modeNew": "Novo",
+      "newMoradorHint": "Será criado um novo morador na organização (como na página de moradores).",
+      "newMoradorResidenceOptional": "Residência do novo morador (opcional)",
+      "partyName": "Nome",
+      "moradorEmail": "E-mail",
+      "partyPhone": "Telefone",
+      "register": "Registar",
+      "update": "Actualizar",
       "save": "Guardar"
     },
 
-    "cancel": "Cancelar"
+    "returnPanel": {
+      "title": "Registar devolução",
+      "date": "Data e hora da devolução",
+      "returnedToMorador": "Morador a quem a chave é devolvida",
+      "notes": "Notas da devolução (opcional)",
+      "submit": "Confirmar devolução"
+    },
+
+    "detail": {
+      "returnedToMorador": "Devolvida ao morador"
+    },
+
+    "toast": {
+      "orgRequired": "Seleccione uma organização.",
+      "loadError": "Erro ao carregar os registos.",
+      "statsError": "Erro ao carregar estatísticas.",
+      "saveError": "Verifique os dados e tente novamente.",
+      "saved": "Entrega registada com sucesso.",
+      "updated": "Registo actualizado.",
+      "deleted": "Registo eliminado.",
+      "deleteError": "Erro ao eliminar.",
+      "forbidden": "Sem permissão para esta acção.",
+      "partyNameRequired": "Indique o nome ao registar um novo morador.",
+      "moradorEmailRequired": "O e-mail é obrigatório para registar um novo morador.",
+      "returnError": "Indique a data da devolução e o morador a quem a chave é devolvida.",
+      "returnedOk": "Devolução registada com sucesso."
+    },
+
+    "confirm": {
+      "deleteOne": "Eliminar este registo de entrega de chave?"
+    }
   },
   "organizacao": {
     "title": "Organização",
@@ -948,10 +1147,10 @@
     "confirm": { "deleteOne": "Remover este utilizador?", "deleteBulk": "Remover os utilizadores selecionados?" }
   },
   "guardsPage": {
-    "title": "Porteiros",
-    "subtitle": "Gestão dos porteiros e operadores de portaria (tipo 5).",
+    "title": "Efetivos",
+    "subtitle": "Gestão dos efetivos e operadores de portaria (tipo 5).",
     "new": "Novo porteiro",
-    "stats": { "total": "Total de Porteiros", "idCard": "Bilhete", "passport": "Passaporte" },
+    "stats": { "total": "Total de Efetivos", "idCard": "Bilhete", "passport": "Passaporte" },
     "filters": { "name": "Pesquisar por nome", "documentType": "Tipo de Documento", "documentRef": "Documento Ref", "apply": "Aplicar filtros" },
     "document": { "idCard": "Bilhete", "passport": "Passaporte", "other": "Outro" },
     "bulk": { "selected": "selecionado(s)", "activate": "Ativar selecionados", "deactivate": "Desativar selecionados", "delete": "Eliminar selecionados" },
@@ -965,18 +1164,18 @@
     "toast": {
       "loadError": "Erro ao carregar porteiros.",
       "orgRequired": "Organização não selecionada.",
-      "updated": "Porteiro atualizado com sucesso.",
-      "created": "Porteiro registado com sucesso.",
+      "updated": "Efetivo atualizado com sucesso.",
+      "created": "Efetivo registado com sucesso.",
       "saveError": "Erro ao guardar.",
-      "deleted": "Porteiro eliminado com sucesso.",
+      "deleted": "Efetivo eliminado com sucesso.",
       "deleteError": "Erro ao eliminar.",
       "selectAtLeastOne": "Selecione pelo menos um registo.",
-      "bulkActivated": "Porteiros ativados com sucesso.",
-      "bulkDeactivated": "Porteiros desativados com sucesso.",
-      "bulkDeleted": "Porteiros eliminados com sucesso.",
+      "bulkActivated": "Efetivos ativados com sucesso.",
+      "bulkDeactivated": "Efetivos desativados com sucesso.",
+      "bulkDeleted": "Efetivos eliminados com sucesso.",
       "bulkError": "Erro ao executar ação em lote."
     },
-    "confirm": { "deleteOne": "Remover este porteiro?", "deleteBulk": "Remover os porteiros selecionados?" }
+    "confirm": { "deleteOne": "Remover este Efetivo?", "deleteBulk": "Remover os Efetivos selecionados?" }
   },
   "clientsPage": {
     "title": "Clientes",
@@ -1200,6 +1399,473 @@
     },
     "confirm": { "deleteOne": "Remover este cargo?", "deleteBulk": "Remover os cargos selecionados?" }
   },
+  "equipaContratoPage": {
+    "title": "Equipa de contrato",
+    "subtitle": "Planeamento de quadros por cargo, número de contratos, turnos e regime de trabalho.",
+    "new": "Nova linha",
+    "stats": {
+      "rows": "Linhas (página atual)",
+      "contracts": "Soma de contratos (página)",
+      "shifts": "Soma de turnos (página)"
+    },
+    "filters": {
+      "cargoAll": "Todos os cargos",
+      "regimeAll": "Todos os regimes",
+      "apply": "Aplicar filtros"
+    },
+    "regimes": {
+      "1": "8/8",
+      "2": "12/12",
+      "3": "12/24",
+      "4": "24/12",
+      "5": "24/24",
+      "6": "24/48",
+      "7": "48/24",
+      "8": "48/48"
+    },
+    "bulk": { "selected": "selecionado(s)", "delete": "Eliminar selecionados" },
+    "table": {
+      "cargo": "Cargo",
+      "qtdContrato": "Qtd. contrato",
+      "qtdTurno": "Qtd. turno",
+      "regime": "Regime",
+      "actions": "Ações"
+    },
+    "actions": { "edit": "Editar", "remove": "Remover" },
+    "empty": "Nenhum registo de equipa de contrato.",
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Próxima",
+      "totalResults": "{total} resultado(s)",
+      "pageOf": "Página {current} de {total}"
+    },
+    "form": {
+      "new": "Nova linha",
+      "edit": "Editar linha",
+      "cargo": "Cargo",
+      "cargoPlaceholder": "Selecione o cargo",
+      "loadingCargos": "A carregar cargos…",
+      "reloadCargos": "Recarregar lista de cargos ativos",
+      "qtdContrato": "Quantidade de contrato",
+      "qtdTurno": "Quantidade de turno",
+      "regime": "Regime de trabalho",
+      "update": "Atualizar",
+      "register": "Registar"
+    },
+    "cancel": "Cancelar",
+    "toast": {
+      "forbidden": "Sem permissão para gerir equipa de contrato.",
+      "loadError": "Erro ao carregar equipa de contrato.",
+      "cargosLoadError": "Erro ao carregar cargos ativos.",
+      "orgRequired": "Organização não selecionada.",
+      "cargoRequired": "Selecione um cargo.",
+      "updated": "Equipa de contrato atualizada com sucesso.",
+      "created": "Equipa de contrato registada com sucesso.",
+      "saveError": "Erro ao guardar.",
+      "deleted": "Registo eliminado com sucesso.",
+      "deleteError": "Erro ao eliminar.",
+      "selectAtLeastOne": "Selecione pelo menos um registo.",
+      "bulkDeleted": "Registos eliminados com sucesso.",
+      "bulkError": "Erro ao eliminar em lote."
+    },
+    "confirm": {
+      "deleteOne": "Eliminar este registo?",
+      "deleteBulk": "Eliminar os registos selecionados?"
+    }
+  },
+  "supervisoesPage": {
+    "title": "Supervisões",
+    "subtitle": "Registo de visitas de supervisão: dados, imagens, efetivos e materiais verificados.",
+    "empty": { "forbidden": "Não tem permissão para aceder a supervisões.", "noOrg": "Selecione uma organização." },
+    "actions": {
+      "refresh": "Atualizar",
+      "new": "Nova supervisão",
+      "view": "Ver",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "delete": "Eliminar",
+      "edit": "Editar"
+    },
+    "filters": {
+      "estado": "Estado",
+      "estadoAll": "Todos",
+      "supervisor": "Supervisor",
+      "supervisorAll": "Todos",
+      "q": "Observações",
+      "qPlaceholder": "Pesquisar nas observações…",
+      "data1": "Desde",
+      "data2": "Até",
+      "apply": "Aplicar filtros"
+    },
+    "estadoSupervisao": { "normal": "Normal", "anormal": "Anormal / ocorrência" },
+    "estadoEfetivo": { "ok": "Em condições", "bad": "Fora de condições" },
+    "estadoMaterial": {
+      "1": "Boa condição",
+      "2": "Má condição",
+      "3": "Danificado",
+      "4": "Perdido"
+    },
+    "table": {
+      "when": "Data / hora",
+      "supervisor": "Supervisor",
+      "estado": "Estado",
+      "observacoes": "Observações",
+      "actions": "Ações",
+      "empty": "Nenhuma supervisão encontrada."
+    },
+    "pagination": { "prev": "Anterior", "next": "Seguinte", "summary": "Página {page} de {pages} · {total} registo(s)" },
+    "toast": {
+      "forbidden": "Sem permissão.",
+      "loadError": "Não foi possível carregar as supervisões.",
+      "loadDetailError": "Não foi possível carregar o detalhe.",
+      "supervisorRequired": "Indique o supervisor.",
+      "dateRequired": "Indique a data e hora.",
+      "saveError": "Erro ao guardar.",
+      "createOk": "Supervisão criada.",
+      "updateOk": "Supervisão atualizada.",
+      "deleteOk": "Supervisão eliminada.",
+      "deleteError": "Erro ao eliminar.",
+      "imagesAdded": "Imagens adicionadas.",
+      "imageDeleted": "Imagem eliminada.",
+      "imageError": "Erro com imagens.",
+      "efetivoAdded": "Efetivo adicionado.",
+      "efetivoUpdated": "Efetivo atualizado.",
+      "efetivoDeleted": "Efetivo removido.",
+      "efetivoError": "Erro ao guardar efetivo.",
+      "efetivoUserRequired": "Selecione o porteiro (efetivo).",
+      "materialRequired": "Selecione o material.",
+      "materialAdded": "Material associado.",
+      "materialUpdated": "Material atualizado.",
+      "materialDeleted": "Material removido.",
+      "materialError": "Erro ao guardar material."
+    },
+    "confirm": {
+      "deleteSupervisao": "Eliminar esta supervisão e todos os dados associados?",
+      "deleteImagem": "Eliminar esta imagem da supervisão?",
+      "deleteEfetivo": "Remover este efetivo da supervisão?",
+      "deleteMaterial": "Remover este material da supervisão?"
+    },
+    "create": { "title": "Nova supervisão" },
+    "form": {
+      "dataHora": "Data e hora",
+      "supervisor": "Supervisor",
+      "pickSupervisor": "Selecione…",
+      "estado": "Estado da supervisão",
+      "observacoes": "Observações",
+      "images": "Imagens (opcional)"
+    },
+    "detail": { "title": "Supervisão #{id}" },
+    "tabs": {
+      "detalhes": "Detalhes",
+      "imagens": "Imagens",
+      "efetivos": "Efetivos",
+      "materiais": "Materiais"
+    },
+    "images": { "add": "Adicionar imagens", "remove": "Eliminar", "empty": "Sem imagens." },
+    "efetivos": {
+      "addTitle": "Adicionar efetivo",
+      "editTitle": "Editar efetivo",
+      "add": "Adicionar",
+      "efetivoUser": "Porteiro (efetivo)",
+      "pickPorteiro": "Selecione o porteiro…",
+      "uniforme": "Uniformização adequada",
+      "equipamento": "Equipamento adequado",
+      "estado": "Estado",
+      "observacoes": "Observações",
+      "na": "—",
+      "sim": "Sim",
+      "nao": "Não",
+      "colNome": "Nome",
+      "colCargo": "Cargo",
+      "colEstado": "Estado",
+      "empty": "Sem efetivos registados."
+    },
+    "materiais": {
+      "addTitle": "Associar material",
+      "editTitle": "Editar linha de material",
+      "add": "Associar",
+      "material": "Material",
+      "pick": "Selecione…",
+      "unidade": "Unidade",
+      "quantidade": "Quantidade",
+      "estado": "Estado",
+      "observacoes": "Observações",
+      "colMaterial": "Material",
+      "colQty": "Qtd.",
+      "colEstado": "Estado",
+      "empty": "Sem materiais associados."
+    }
+  },
+  "trocasDobrasPage": {
+    "title": "Trocas e dobras",
+    "subtitle": "Registo de trocas e dobras de turno: entrante, saiente, tipo, data e imagens.",
+    "empty": { "forbidden": "Não tem permissão para aceder a trocas e dobras.", "noOrg": "Selecione uma organização." },
+    "tipo": { "1": "Troca", "2": "Dobra" },
+    "actions": {
+      "refresh": "Atualizar",
+      "new": "Novo registo",
+      "view": "Ver",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "delete": "Eliminar"
+    },
+    "filters": {
+      "tipo": "Tipo",
+      "tipoAll": "Todos",
+      "entrante": "Entrante",
+      "saiente": "Saiente",
+      "userAll": "Todos",
+      "data1": "Desde",
+      "data2": "Até",
+      "apply": "Aplicar filtros"
+    },
+    "table": {
+      "when": "Data / hora",
+      "tipo": "Tipo",
+      "entrante": "Entrante",
+      "saiente": "Saiente",
+      "photos": "Fotos",
+      "actions": "Ações",
+      "empty": "Nenhum registo encontrado."
+    },
+    "pagination": { "prev": "Anterior", "next": "Seguinte", "summary": "Página {page} de {pages} · {total} registo(s)" },
+    "toast": {
+      "forbidden": "Sem permissão.",
+      "loadError": "Não foi possível carregar os registos.",
+      "loadDetailError": "Não foi possível carregar o detalhe.",
+      "usersRequired": "Seleccione o utilizador entrante e o saiente.",
+      "dateRequired": "Indique a data e hora.",
+      "saveError": "Erro ao guardar.",
+      "createOk": "Registo criado.",
+      "updateOk": "Registo atualizado.",
+      "deleteOk": "Registo eliminado.",
+      "deleteError": "Erro ao eliminar.",
+      "imagesAdded": "Imagens adicionadas.",
+      "imageDeleted": "Imagem eliminada.",
+      "imageError": "Erro com imagens."
+    },
+    "confirm": { "deleteRegisto": "Eliminar este registo e todas as imagens?", "deleteImagem": "Eliminar esta imagem?" },
+    "create": { "title": "Novo registo" },
+    "form": {
+      "dataHora": "Data e hora",
+      "tipo": "Tipo",
+      "entrante": "Utilizador entrante",
+      "saiente": "Utilizador saiente",
+      "pickUser": "Selecione…",
+      "img1": "Foto do entrante (opcional)",
+      "img2": "Foto do saiente (opcional)",
+      "extras": "Imagens extra (opcional)",
+      "slotImg1": "Foto principal — entrante",
+      "slotImg2": "Foto principal — saiente",
+      "removeImg1": "Remover foto do entrante",
+      "removeImg2": "Remover foto do saiente"
+    },
+    "detail": { "title": "Troca/dobra #{id}" },
+    "tabs": { "geral": "Geral", "imagens": "Imagens extra" },
+    "images": { "add": "Adicionar imagens", "remove": "Eliminar", "emptySlot": "Sem imagem.", "emptyExtra": "Sem imagens extra." }
+  },
+  "materialContratoPage": {
+    "title": "Material de contrato",
+    "subtitle": "Quantidades de materiais previstas no contrato: por material, número de contratos, turnos e regime de trabalho.",
+    "new": "Nova linha",
+    "stats": {
+      "rows": "Linhas (página atual)",
+      "contracts": "Soma de contratos (página)",
+      "shifts": "Soma de turnos (página)"
+    },
+    "filters": {
+      "materialAll": "Todos os materiais",
+      "regimeAll": "Todos os regimes",
+      "apply": "Aplicar filtros"
+    },
+    "regimes": {
+      "1": "8/8",
+      "2": "12/12",
+      "3": "12/24",
+      "4": "24/12",
+      "5": "24/24",
+      "6": "24/48",
+      "7": "48/24",
+      "8": "48/48"
+    },
+    "bulk": { "selected": "selecionado(s)", "delete": "Eliminar selecionados" },
+    "table": {
+      "image": "Imagem",
+      "material": "Material",
+      "qtdContrato": "Qtd. contrato",
+      "qtdTurno": "Qtd. turno",
+      "regime": "Regime",
+      "actions": "Ações"
+    },
+    "actions": { "edit": "Editar", "remove": "Remover" },
+    "empty": "Nenhum registo de material de contrato.",
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Próxima",
+      "totalResults": "{total} resultado(s)",
+      "pageOf": "Página {current} de {total}"
+    },
+    "form": {
+      "new": "Nova linha",
+      "edit": "Editar linha",
+      "material": "Material",
+      "materialPlaceholder": "Selecione o material",
+      "loadingMateriais": "A carregar materiais…",
+      "reloadMateriais": "Recarregar lista de materiais",
+      "qtdContrato": "Quantidade de contrato",
+      "qtdTurno": "Quantidade de turno",
+      "regime": "Regime de trabalho",
+      "update": "Atualizar",
+      "register": "Registar"
+    },
+    "cancel": "Cancelar",
+    "toast": {
+      "forbidden": "Sem permissão para gerir material de contrato.",
+      "loadError": "Erro ao carregar material de contrato.",
+      "materiaisLoadError": "Erro ao carregar materiais.",
+      "showError": "Erro ao carregar o registo.",
+      "orgRequired": "Organização não selecionada.",
+      "materialRequired": "Selecione um material.",
+      "updated": "Material de contrato atualizado com sucesso.",
+      "created": "Material de contrato registado com sucesso.",
+      "saveError": "Erro ao guardar.",
+      "deleted": "Registo eliminado com sucesso.",
+      "deleteError": "Erro ao eliminar.",
+      "selectAtLeastOne": "Selecione pelo menos um registo.",
+      "bulkDeleted": "Registos eliminados com sucesso.",
+      "bulkError": "Erro ao eliminar em lote."
+    },
+    "confirm": {
+      "deleteOne": "Eliminar este registo?",
+      "deleteBulk": "Eliminar os registos selecionados?"
+    }
+  },
+  "materiaisPage": {
+    "title": "Materiais",
+    "subtitle": "Gestão de equipamentos e materiais da organização: categorias, estado, imagens e ações em lote.",
+    "new": "Novo material",
+    "noOrg": "Selecione uma organização para gerir materiais.",
+    "stats": { "rows": "Linhas (página atual)", "active": "Ativos (página)" },
+    "filters": {
+      "designacao": "Designação (contém)",
+      "marca": "Marca (contém)",
+      "modelo": "Modelo (contém)",
+      "categoriaAll": "Todas as categorias",
+      "estadoAll": "Todos os estados",
+      "apply": "Aplicar filtros"
+    },
+    "categories": {
+      "1": "Equipamentos de proteção (EPI)",
+      "2": "Equipamentos de vigilância",
+      "3": "Veículos operacionais",
+      "4": "Equipamentos de iluminação",
+      "5": "Material administrativo / operacional",
+      "6": "Equipamentos de apoio operacional",
+      "7": "Infraestrutura e postos",
+      "8": "Energia e backup",
+      "9": "Manutenção e logística",
+      "10": "Tecnologia e sistemas",
+      "11": "Segurança contra incêndio",
+      "12": "Armamento"
+    },
+    "estados": {
+      "0": "Inativo",
+      "1": "Ativo",
+      "2": "Em manutenção",
+      "3": "Fora de serviço"
+    },
+    "bulk": {
+      "selected": "selecionado(s)",
+      "activate": "Ativar",
+      "deactivate": "Desativar",
+      "maintenance": "Marcar em manutenção",
+      "outOfService": "Marcar fora de serviço",
+      "delete": "Eliminar selecionados"
+    },
+    "table": {
+      "rowNum": "#",
+      "id": "ID",
+      "imagem": "Imagem",
+      "designacao": "Designação",
+      "descricao": "Descrição",
+      "modelo": "Modelo",
+      "marca": "Marca",
+      "unidade": "Unidade",
+      "categoria": "Categoria",
+      "fabricante": "Fabricante",
+      "estado": "Estado",
+      "organizacao": "Organização",
+      "createdAt": "Criado",
+      "updatedAt": "Atualizado",
+      "actions": "Ações",
+      "noImage": "Sem imagem"
+    },
+    "actions": { "view": "Ver detalhes", "edit": "Editar", "remove": "Eliminar" },
+    "empty": "Nenhum material encontrado.",
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Próxima",
+      "totalResults": "{total} resultado(s)",
+      "pageOf": "Página {current} de {total}"
+    },
+    "form": {
+      "new": "Novo material",
+      "edit": "Editar material",
+      "designacao": "Designação",
+      "descricao": "Descrição",
+      "modelo": "Modelo",
+      "marca": "Marca",
+      "unidade": "Unidade",
+      "unidadePlaceholder": "ex.: un, kg, m",
+      "categoria": "Categoria",
+      "fabricante": "Fabricante",
+      "estado": "Estado",
+      "imagem": "Imagem",
+      "imagemHint": "JPEG, PNG, GIF ou WebP. Máx. 5 MB.",
+      "noPreview": "Sem pré-visualização",
+      "clearNewImage": "Remover ficheiro selecionado",
+      "keepExistingImageHint": "A imagem atual mantém-se no servidor até carregar uma nova.",
+      "update": "Atualizar",
+      "register": "Registar"
+    },
+    "cancel": "Cancelar",
+    "modal": {
+      "noImage": "Este material não tem imagem.",
+      "id": "ID",
+      "descricao": "Descrição",
+      "modelo": "Modelo",
+      "marca": "Marca",
+      "unidade": "Unidade",
+      "categoria": "Categoria",
+      "fabricante": "Fabricante",
+      "estado": "Estado",
+      "organizacao": "Organização",
+      "imagemFile": "Ficheiro de imagem",
+      "createdAt": "Criado",
+      "updatedAt": "Atualizado",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "toast": {
+      "forbidden": "Sem permissão para gerir materiais.",
+      "loadError": "Erro ao carregar materiais.",
+      "orgRequired": "Organização não selecionada.",
+      "designacaoRequired": "Indique a designação.",
+      "updated": "Material atualizado com sucesso.",
+      "created": "Material registado com sucesso.",
+      "saveError": "Erro ao guardar.",
+      "deleted": "Registo eliminado com sucesso.",
+      "deleteError": "Erro ao eliminar.",
+      "selectAtLeastOne": "Selecione pelo menos um registo.",
+      "bulkError": "Erro na ação em lote.",
+      "bulkActivateFallback": "Materiais selecionados ativados.",
+      "bulkDeactivateFallback": "Materiais selecionados desativados.",
+      "bulkMaintenanceFallback": "Materiais selecionados marcados em manutenção.",
+      "bulkOutFallback": "Materiais selecionados marcados fora de serviço.",
+      "bulkDeleteFallback": "Materiais selecionados eliminados."
+    },
+    "confirm": { "deleteOne": "Eliminar este material?", "deleteBulk": "Eliminar os materiais selecionados?" }
+  },
   "cardsPage": {
     "title": "Cartões",
     "subtitle": "Gestão de cartões de acesso atribuídos a visitantes, colaboradores e prestadores.",
@@ -1268,13 +1934,17 @@
     "stats": { "total": "Total na página", "active": "Câmeras ativas", "inactive": "Câmeras inativas" },
     "filters": { "designation": "Pesquisar por designação", "block": "Bloco / Área", "status": "Estado", "apply": "Aplicar filtros" },
     "bulk": { "selected": "selecionada(s)", "activate": "Ativar", "deactivate": "Desativar", "delete": "Eliminar" },
-    "table": { "noBlock": "Sem bloco" },
+    "table": { "noBlock": "Sem bloco", "stream": "Ligação" },
     "status": { "active": "Ativa", "inactive": "Inativa" },
     "actions": { "edit": "Editar", "activate": "Ativar", "deactivate": "Desativar", "remove": "Eliminar", "refreshBlocks": "Recarregar blocos" },
     "empty": "Nenhuma câmera encontrada.",
     "pagination": { "prev": "Anterior", "next": "Seguinte", "results": "{total} resultado(s) · página {currentPage} de {totalPages}" },
     "cameraPreview": {
       "title": "Demonstração da câmera do dispositivo",
+      "titleRemote": "Stream da câmera",
+      "titleDevice": "Câmera do dispositivo",
+      "mixedContent": "O site abre em HTTPS e o link do stream é HTTP. O navegador bloqueia este conteúdo por segurança. Use um stream HTTPS ou aceda à app em HTTP em ambiente de teste.",
+      "streamError": "Não foi possível carregar o stream. Verifique o URL, a rede e se o servidor permite incorporação no navegador.",
       "notSupported": "Este dispositivo/navegador não suporta acesso à câmera.",
       "permissionError": "Não foi possível aceder à câmera. Verifique as permissões do navegador."
     },
@@ -1282,6 +1952,8 @@
       "new": "Registar nova câmera",
       "edit": "Editar câmera",
       "designation": "Designação da câmera",
+      "linkPlaceholder": "URL, IP ou endereço da câmara (opcional)",
+      "linkHint": "Endereço de stream, IP ou URL configurada no sistema de vídeo.",
       "noBlock": "Sem bloco",
       "loadingBlocks": "A carregar blocos...",
       "imagePreviewAlt": "Pré-visualização da câmera",

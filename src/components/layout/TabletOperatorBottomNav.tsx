@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LayoutDashboard, UsersRound, Truck, AlertTriangle } from "lucide-react";
 import useLocale from "@/hooks/useLocale";
+import { useSession } from "@/contexts/AuthContext";
 
 function pathActive(activePath: string, href: string) {
   if (activePath == href) return true;
@@ -16,6 +17,12 @@ export default function TabletOperatorBottomNav() {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations("tabletNav");
+  const { data } = useSession();
+  const nivel = data?.user?.nivel;
+
+  if (nivel != 3 && nivel != 5) {
+    return null;
+  }
 
   const base = `/${locale}`;
 

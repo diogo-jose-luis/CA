@@ -39,6 +39,10 @@ function NivelBadge({ nivel }: { nivel: number }) {
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
     cliente:
       "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    supervisor:
+      "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300",
+    anfitriao:
+      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
     "n/d": "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400",
   };
   return (
@@ -245,7 +249,7 @@ export default function Page() {
       formData.append("email", form.email.trim());
       formData.append("telefone", form.telefone.trim());
       formData.append("estado", String(form.estado));
-      if (form.nivel && ["1", "2", "3", "4"].includes(form.nivel))
+      if (form.nivel && ["1", "2", "3", "4", "5", "6"].includes(form.nivel))
         formData.append("nivel", form.nivel);
       if (form.imagem) formData.append("imagem", form.imagem);
 
@@ -519,6 +523,8 @@ export default function Page() {
             <option value="2">gestor</option>
             <option value="3">operador</option>
             <option value="4">cliente</option>
+            <option value="5">supervisor</option>
+            <option value="6">anfitrião</option>
           </select>
           <input
             className="ca-input"
@@ -818,6 +824,8 @@ export default function Page() {
                   <option value="2">Gestor</option>
                   <option value="3">Operador</option>
                   <option value="4">Cliente</option>
+                  <option value="5">Supervisor</option>
+                  <option value="6">Anfitrião</option>
                 </select>
                 {editingId != null && (
                   <select

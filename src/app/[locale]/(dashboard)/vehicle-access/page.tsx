@@ -299,6 +299,7 @@ export default function Page() {
   const [formAprovado, setFormAprovado] = useState("1");
   const [formMotivo, setFormMotivo] = useState("");
   const [formObservacoes, setFormObservacoes] = useState("");
+  const [formQtd, setFormQtd] = useState("1");
 
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [attachmentsAcessoId, setAttachmentsAcessoId] = useState<number | null>(null);
@@ -315,7 +316,7 @@ export default function Page() {
   const isCondominio = orgTipoNum == 2;
   const destinoApi = isCondominio ? 2 : 1;
 
-  const canEdit = authUser && [1, 2, 3].includes(Number(authUser.nivel));
+  const canEdit = authUser && [1, 2, 3, 5, 6].includes(Number(authUser.nivel));
   const canDelete = authUser && [1, 2].includes(Number(authUser.nivel));
 
   useEffect(() => {
@@ -665,6 +666,7 @@ export default function Page() {
     setFormAprovado("1");
     setFormMotivo("");
     setFormObservacoes("");
+    setFormQtd("1");
   };
 
   const openNew = () => {
@@ -727,6 +729,7 @@ export default function Page() {
     setFormAprovado(ap == 0 || ap == 1 || ap == 2 ? String(ap) : "1");
     setFormMotivo(row.motivo?.trim() ?? "");
     setFormObservacoes(row.observacoes?.trim() ?? "");
+    setFormQtd(row.qtd != null && row.qtd >= 1 ? String(row.qtd) : "1");
     setShowPanel(true);
     void ensurePanelSelectUsers();
   };
@@ -789,6 +792,9 @@ export default function Page() {
     const docRefStr = formDocumentoRef.trim();
     const { documento, documento_tipo: docTipoApi } = mapDocumentUiToApi(formDocumentUi);
 
+    const qtdN = Math.floor(Number(String(formQtd).trim()));
+    const qtdSafe = Number.isFinite(qtdN) && qtdN >= 1 ? Math.min(qtdN, 9999) : 1;
+
     const payload: Record<string, string | number | boolean | null | undefined> = {
       destino: destinoApi,
       destino_id: Number(formDestinoId),
@@ -798,6 +804,7 @@ export default function Page() {
       matricula: formMatricula.trim() || null,
       tipo_veiculo: Number(formTipoVeiculo) || 1,
       tem_carga: formTemCarga,
+      qtd: qtdSafe,
       aprovado: Number(formAprovado) == 0 || Number(formAprovado) == 1 || Number(formAprovado) == 2 ? Number(formAprovado) : 1,
       motivo: formMotivo.trim() || null,
       observacoes: formObservacoes.trim() || null,
@@ -1109,7 +1116,7 @@ export default function Page() {
         ) : (
           <>
             <div className="hidden overflow-x-auto desktop-auth:block">
-              <table className="w-full text-sm min-w-[1200px]">
+              <table className="w-full text-sm min-w-[1260px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/40">
                   <tr>
                     <th className="px-4 py-3 text-left whitespace-nowrap">{t("table.entry")}</th>
@@ -1118,6 +1125,7 @@ export default function Page() {
                     <th className="px-4 py-3 text-left">{t("table.approval")}</th>
                     <th className="px-4 py-3 text-left">{t("table.vehicle")}</th>
                     <th className="px-4 py-3 text-left">{t("table.plate")}</th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap">{t("table.qtd")}</th>
                     <th className="px-4 py-3 text-left">{t("table.type")}</th>
                     <th className="px-4 py-3 text-left">{t("table.driver")}</th>
                     <th className="px-4 py-3 text-left">{t("table.driverContact")}</th>
@@ -1131,7 +1139,7 @@ export default function Page() {
                 <tbody className="divide-y ca-border">
                   {list.length == 0 ? (
                     <tr>
-                      <td colSpan={14} className="px-4 py-8 text-center ca-muted">
+                      <td colSpan={15} className="px-4 py-8 text-center ca-muted">
                         {t("table.empty")}
                       </td>
                     </tr>
@@ -1172,6 +1180,9 @@ export default function Page() {
                           </td>
                           <td className="px-4 py-3 font-medium whitespace-nowrap">
                             {row.matricula?.trim() || "—"}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap tabular-nums">
+                            {row.qtd != null && row.qtd >= 1 ? row.qtd : "—"}
                           </td>
                           <td className="px-4 py-3">{tipoVeiculoLabel(row.tipo_veiculo)}</td>
                           <td className="px-4 py-3 max-w-[140px]">
@@ -1264,7 +1275,14 @@ export default function Page() {
                               {ap.label}
                             </span>
                           </div>
-                          <div className="mt-1 text-xs ca-muted">{tipoVeiculoLabel(row.tipo_veiculo)}</div>
+                          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs ca-muted">
+                            <span>{tipoVeiculoLabel(row.tipo_veiculo)}</span>
+                            {row.qtd != null && row.qtd >= 1 ? (
+                              <span>
+                                · {t("table.qtd")}: {row.qtd}
+                              </span>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
                       <div className="space-y-3 px-4 py-3 text-sm">
@@ -1402,6 +1420,12 @@ export default function Page() {
               <div>
                 <dt className="ca-muted">{t("table.plate")}</dt>
                 <dd className="font-medium">{detailRow.matricula?.trim() || "—"}</dd>
+              </div>
+              <div>
+                <dt className="ca-muted">{t("table.qtd")}</dt>
+                <dd className="tabular-nums">
+                  {detailRow.qtd != null && detailRow.qtd >= 1 ? detailRow.qtd : "—"}
+                </dd>
               </div>
               <div>
                 <dt className="ca-muted">{t("table.type")}</dt>
@@ -1607,6 +1631,21 @@ export default function Page() {
                   />
                   {t("form.temCarga")}
                 </label>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t("form.qtd")}</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={9999}
+                    step={1}
+                    className="ca-input w-full"
+                    inputMode="numeric"
+                    value={formQtd}
+                    onChange={(e) => setFormQtd(e.target.value)}
+                  />
+                  <p className="text-xs ca-muted">{t("form.qtdHint")}</p>
+                </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">{t("form.condutor")}</label>

@@ -17,6 +17,8 @@ export interface AcessoPessoa {
   aprovado?: number | null;
   motivo?: string | null;
   observacoes?: string | null;
+  /** Quantidade de pessoas associadas ao acesso. */
+  qtd?: number | null;
   created_at?: string;
   updated_at?: string;
   user?: Utilizador | null;

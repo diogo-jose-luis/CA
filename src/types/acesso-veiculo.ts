@@ -20,6 +20,8 @@ export interface AcessoVeiculo {
   aprovado?: number | null;
   motivo?: string | null;
   observacoes?: string | null;
+  /** Quantidade de pessoas (ocupantes) associadas ao acesso. */
+  qtd?: number | null;
   created_at?: string;
   updated_at?: string;
   condutor?: Utilizador | null;

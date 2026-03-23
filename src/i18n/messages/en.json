@@ -9,6 +9,34 @@
       "pt": "Portuguese",
       "en": "English",
       "fr": "French"
+    },
+    "logoutConfirm": {
+      "title": "Sign out?",
+      "description": "You will leave the app. To access the dashboard again you will need to sign in.",
+      "cancel": "Cancel",
+      "confirm": "Sign out",
+      "confirming": "Signing out…"
+    },
+    "changePin": {
+      "menuItem": "Change PIN",
+      "title": "Change PIN",
+      "verificationByPin": "I have a PIN",
+      "verificationByPassword": "Use account password",
+      "oldPin": "Current PIN",
+      "currentPassword": "Current password",
+      "newPin": "New PIN",
+      "confirmNewPin": "Confirm new PIN",
+      "pinPlaceholder": "••••",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "close": "Close",
+      "success": "PIN updated successfully.",
+      "error": "Could not update PIN.",
+      "pinLength": "The new PIN must be exactly 4 digits.",
+      "pinMismatch": "New PIN confirmation does not match.",
+      "oldPinLength": "Enter your current 4-digit PIN.",
+      "passwordRequired": "Enter your current password."
     }
   },
   "login": {
@@ -17,13 +45,17 @@
     "subtitle": "Access your management dashboard.",
     "email": "Email",
     "password": "Password",
+    "pin": "PIN (4 digits)",
+    "modePin": "PIN",
+    "modePassword": "Password",
     "loginButton": "Sign in",
     "loading": "Signing in...",
     "bannerTitle": "Smart access management platform",
     "bannerDescription": "Security, control and centralized monitoring for condominiums and industrial environments.",
     "errors": {
       "invalidCredentials": "Invalid credentials.",
-      "authError": "Authentication error."
+      "authError": "Authentication error.",
+      "pinLength": "The PIN must be exactly 4 digits."
     },
     "lang": {
       "pt": "Portuguese",
@@ -46,11 +78,16 @@
     "orders": "Orders",
     "serviceReview": "Service Review",
     "keyDelivery": "Key Delivery",
+    "trocasDobras": "Shift handovers",
+    "supervision": "Supervisions",
 
     "organizationMenu": "Organization",
     "residences": "Residences",
     "areas": "Areas",
     "cargos": "Roles",
+    "equipaContrato": "Contract team",
+    "materialContrato": "Contract materials",
+    "materials": "Materials",
     "cards": "Cards",
     "cameras": "Cameras",
     "residents": "Residents",
@@ -64,6 +101,7 @@
 
     "sections": {
       "operator": "Operator",
+      "host": "Host",
       "manager": "Manager",
       "admin": "Admin"
     }
@@ -181,6 +219,7 @@
     "table": {
       "person": "Person",
       "name": "Name",
+      "qtd": "People qty.",
       "type": "Type",
       "document": "Document",
       "contact": "Contact",
@@ -276,6 +315,8 @@
       "documentRefPlaceholder": "Document number or reference",
       "entry": "Entry date and time",
       "exit": "Exit date and time (optional)",
+      "qtd": "Number of people",
+      "qtdHint": "How many people this access record represents (minimum 1).",
       "approval": "Approval",
       "approvalUnspecified": "Do not change / omit",
       "notes": "Notes",
@@ -358,6 +399,7 @@
     "table": {
       "vehicle": "Vehicle",
       "plate": "Plate",
+      "qtd": "People qty.",
       "type": "Type",
       "driver": "Driver / Company",
       "driverContact": "Driver contact",
@@ -455,6 +497,8 @@
       "platePlaceholder": "e.g. AB-12-CD",
       "vehicleType": "Vehicle type",
       "temCarga": "Carrying cargo",
+      "qtd": "Number of people",
+      "qtdHint": "Occupants / people in the vehicle for this access (minimum 1).",
       "cargoYes": "Yes",
       "cargoNo": "No",
       "condutor": "Driver",
@@ -519,6 +563,9 @@
     "title": "Notices",
     "subtitle": "Notices from the building management for residents.",
     "newNotice": "New notice",
+    "noPermission": "You do not have permission to view notices.",
+    "noOrg": "Select an organization to view notices.",
+    "empty": "No notices found.",
 
     "stats": {
       "active": "Active Notices",
@@ -531,7 +578,9 @@
       "category": "Category",
       "priority": "Priority",
       "status": "Status",
-      "apply": "Apply filters"
+      "apply": "Apply filters",
+      "dateFrom": "Publication date (from)",
+      "dateTo": "Publication date (to)"
     },
 
     "categories": {
@@ -567,9 +616,48 @@
 
     "form": {
       "title": "New notice",
+      "editTitle": "Edit notice",
       "titlePlaceholder": "Notice title",
       "message": "Notice message",
-      "publish": "Publish notice"
+      "publish": "Publish notice",
+      "save": "Save changes",
+      "publicationDate": "Publication date and time",
+      "priorityOptional": "Priority (optional)",
+      "image": "Image (optional)",
+      "discardNewImage": "Remove selected image",
+      "sendToAll": "Send to all residents"
+    },
+
+    "detail": {
+      "recipients": "Recipients"
+    },
+
+    "broadcasts": {
+      "all": "All residents",
+      "department": "Department",
+      "residence": "Residence",
+      "resident": "Resident"
+    },
+
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "results": "result(s)",
+      "page": "Page"
+    },
+
+    "toast": {
+      "loadError": "Could not load notices.",
+      "saveError": "Could not save the notice.",
+      "deleteError": "Could not delete the notice.",
+      "created": "Notice created successfully.",
+      "updated": "Notice updated successfully.",
+      "deleted": "Notice deleted successfully.",
+      "orgRequired": "Organization is required."
+    },
+
+    "confirm": {
+      "delete": "Delete this notice?"
     },
 
     "cancel": "Cancel"
@@ -701,6 +789,8 @@
       "state": "Status",
       "local": "Department / location",
       "localNone": "None",
+      "medidas": "Measures taken",
+      "medidasPlaceholder": "Describe the measures taken in response to this incident",
       "observations": "Notes",
       "image": "Photo",
       "imageHint": "JPEG, PNG, GIF or WebP · max 5 MB",
@@ -767,17 +857,6 @@
       "delivered": "Delivered"
     },
 
-    "filters": {
-      "search": "Search...",
-      "status": "Status",
-      "apply": "Apply filters"
-    },
-
-    "status": {
-      "pending": "Pending",
-      "delivered": "Delivered"
-    },
-
     "table": {
       "order": "Order",
       "date": "Date",
@@ -792,56 +871,176 @@
 
     "form": {
       "title": "New package",
+      "edit": "Edit package",
+      "detail": "Package details",
       "order": "Package number",
+      "date": "Date",
       "sender": "Sender",
       "receiver": "Receiver",
       "description": "Description",
       "security": "Received by (Security)",
       "notes": "Notes",
-      "save": "Save"
-    },
-
-    "cancel": "Cancel"
-  },
-  "keys": {
-    "title": "Key Delivery",
-    "subtitle": "Control of keys delivered to employees",
-    "new": "New Record",
-
-    "stats": {
-      "total": "Total Records",
-      "returned": "Returned Keys",
-      "sectors": "Total Sectors",
-      "employees": "Employees"
+      "entregueA": "Delivered by (user)",
+      "state": "Status",
+      "image": "Image (optional)",
+      "selectUser": "Select user",
+      "selectSender": "Select sender",
+      "selectReceiver": "Select recipient",
+      "modeExisting": "Existing user",
+      "modeNew": "Register new",
+      "newPartyHint": "A user will be created in the organization with the details below.",
+      "partyName": "Name",
+      "partyEmailOptional": "Email (optional)",
+      "partyPhone": "Phone",
+      "partyTypeVisitor": "Visitor",
+      "partyTypeClient": "Client",
+      "partyTypeSupplier": "Supplier",
+      "save": "Save",
+      "register": "Register",
+      "update": "Update"
     },
 
     "filters": {
       "search": "Search...",
-      "sector": "Sector",
+      "status": "Status",
+      "apply": "Apply filters",
+      "dateFrom": "From date",
+      "dateTo": "To date",
+      "allStatuses": "All"
+    },
+
+    "status": {
+      "pending": "Pending",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+
+    "pagination": { "prev": "Previous", "next": "Next" },
+    "empty": "No packages found.",
+    "actions": { "edit": "Edit", "remove": "Delete", "view": "View" },
+    "toast": {
+      "loadError": "Failed to load packages.",
+      "statsError": "Failed to load totals.",
+      "orgRequired": "Select an organization.",
+      "saved": "Package saved successfully.",
+      "updated": "Package updated successfully.",
+      "saveError": "Failed to save.",
+      "deleted": "Package deleted successfully.",
+      "deleteError": "Failed to delete.",
+      "forbidden": "You do not have permission for this action.",
+      "partyNameRequired": "Enter the name when registering a new user."
+    },
+    "confirm": { "deleteOne": "Delete this package?" },
+
+    "cancel": "Cancel"
+  },
+  "keys": {
+    "title": "Key handovers",
+    "subtitle": "Track key deliveries and returns for your organization.",
+    "new": "New record",
+    "empty": "No records found.",
+    "cancel": "Cancel",
+
+    "stats": {
+      "total": "Total records",
+      "inProgress": "In progress",
+      "returned": "Returned"
+    },
+
+    "filters": {
+      "search": "Search by key or notes…",
+      "allResidences": "All residences",
+      "allStatuses": "All statuses",
+      "dateFrom": "Delivery date (from)",
+      "dateTo": "Delivery date (to)",
       "apply": "Apply filters"
+    },
+
+    "status": {
+      "ongoing": "In progress",
+      "returned": "Returned"
     },
 
     "table": {
       "id": "ID",
-      "date": "Date",
-      "sector": "Sector",
-      "employee": "Employee Requesting",
-      "exitTime": "Exit Time",
-      "signature": "Requester Signature",
-      "returnedBy": "Returned By",
-      "returnTime": "Return Time",
+      "delivery": "Handover",
+      "key": "Key",
+      "residence": "Residence",
+      "handedBy": "Resident (hands over)",
+      "receivedBy": "Reception operator (receives)",
+      "status": "Status",
+      "return": "Return to resident",
       "actions": "Actions"
     },
 
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "remove": "Delete",
+      "registerReturn": "Record return"
+    },
+
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+
     "form": {
-      "title": "New Key Record",
-      "employee": "Employee",
-      "sector": "Sector",
+      "title": "New key record",
+      "edit": "Edit record",
+      "detail": "Details",
+      "deliveryAt": "Handover date and time",
+      "keyLabel": "Key label",
+      "residenceOptional": "Residence (optional)",
+      "handedByMorador": "Resident handing over the key",
+      "receivedByOperator": "Reception operator who receives the key",
+      "selectMorador": "Select resident",
+      "selectOperator": "Select reception operator",
       "notes": "Notes",
+      "image": "Photo",
+      "modeExisting": "Existing",
+      "modeNew": "New",
+      "newMoradorHint": "A new resident will be created (same flow as the Residents page).",
+      "newMoradorResidenceOptional": "New resident’s residence (optional)",
+      "partyName": "Name",
+      "moradorEmail": "Email",
+      "partyPhone": "Phone",
+      "register": "Save",
+      "update": "Update",
       "save": "Save"
     },
 
-    "cancel": "Cancel"
+    "returnPanel": {
+      "title": "Record return",
+      "date": "Return date and time",
+      "returnedToMorador": "Resident receiving the key back",
+      "notes": "Return notes (optional)",
+      "submit": "Confirm return"
+    },
+
+    "detail": {
+      "returnedToMorador": "Returned to resident"
+    },
+
+    "toast": {
+      "orgRequired": "Select an organization.",
+      "loadError": "Could not load records.",
+      "statsError": "Could not load statistics.",
+      "saveError": "Check the form and try again.",
+      "saved": "Handover saved.",
+      "updated": "Record updated.",
+      "deleted": "Record deleted.",
+      "deleteError": "Could not delete.",
+      "forbidden": "You do not have permission.",
+      "partyNameRequired": "Enter the name when creating a new resident.",
+      "moradorEmailRequired": "Email is required to register a new resident.",
+      "returnError": "Enter the return time and the resident who receives the key.",
+      "returnedOk": "Return recorded successfully."
+    },
+
+    "confirm": {
+      "deleteOne": "Delete this key handover record?"
+    }
   },
   "organizacao": {
     "title": "Organization",
@@ -1199,6 +1398,473 @@
     },
     "confirm": { "deleteOne": "Remove this role?", "deleteBulk": "Remove selected roles?" }
   },
+  "equipaContratoPage": {
+    "title": "Contract team",
+    "subtitle": "Workforce planning by role, contract count, shifts, and work schedule pattern.",
+    "new": "New row",
+    "stats": {
+      "rows": "Rows (current page)",
+      "contracts": "Contract total (page)",
+      "shifts": "Shift total (page)"
+    },
+    "filters": {
+      "cargoAll": "All roles",
+      "regimeAll": "All schedules",
+      "apply": "Apply filters"
+    },
+    "regimes": {
+      "1": "8/8",
+      "2": "12/12",
+      "3": "12/24",
+      "4": "24/12",
+      "5": "24/24",
+      "6": "24/48",
+      "7": "48/24",
+      "8": "48/48"
+    },
+    "bulk": { "selected": "selected", "delete": "Delete selected" },
+    "table": {
+      "cargo": "Role",
+      "qtdContrato": "Contract qty",
+      "qtdTurno": "Shift qty",
+      "regime": "Schedule",
+      "actions": "Actions"
+    },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No contract team records.",
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "totalResults": "{total} result(s)",
+      "pageOf": "Page {current} of {total}"
+    },
+    "form": {
+      "new": "New row",
+      "edit": "Edit row",
+      "cargo": "Role",
+      "cargoPlaceholder": "Select a role",
+      "loadingCargos": "Loading roles…",
+      "reloadCargos": "Reload active roles list",
+      "qtdContrato": "Contract quantity",
+      "qtdTurno": "Shift quantity",
+      "regime": "Work schedule",
+      "update": "Update",
+      "register": "Save"
+    },
+    "cancel": "Cancel",
+    "toast": {
+      "forbidden": "You do not have permission to manage contract team records.",
+      "loadError": "Error loading contract team.",
+      "cargosLoadError": "Error loading active roles.",
+      "orgRequired": "Organization not selected.",
+      "cargoRequired": "Select a role.",
+      "updated": "Contract team row updated successfully.",
+      "created": "Contract team row created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Record deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkDeleted": "Selected records deleted successfully.",
+      "bulkError": "Error deleting in bulk."
+    },
+    "confirm": {
+      "deleteOne": "Delete this record?",
+      "deleteBulk": "Delete selected records?"
+    }
+  },
+  "supervisoesPage": {
+    "title": "Supervisions",
+    "subtitle": "Supervision visits: details, photos, staff checked, and materials verified.",
+    "empty": { "forbidden": "You do not have access to supervisions.", "noOrg": "Select an organization." },
+    "actions": {
+      "refresh": "Refresh",
+      "new": "New supervision",
+      "view": "View",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "filters": {
+      "estado": "Status",
+      "estadoAll": "All",
+      "supervisor": "Supervisor",
+      "supervisorAll": "All",
+      "q": "Notes",
+      "qPlaceholder": "Search in notes…",
+      "data1": "From",
+      "data2": "To",
+      "apply": "Apply filters"
+    },
+    "estadoSupervisao": { "normal": "Normal", "anormal": "Abnormal / incident" },
+    "estadoEfetivo": { "ok": "In order", "bad": "Out of order" },
+    "estadoMaterial": {
+      "1": "Good condition",
+      "2": "Poor condition",
+      "3": "Damaged",
+      "4": "Lost"
+    },
+    "table": {
+      "when": "Date / time",
+      "supervisor": "Supervisor",
+      "estado": "Status",
+      "observacoes": "Notes",
+      "actions": "Actions",
+      "empty": "No supervisions found."
+    },
+    "pagination": { "prev": "Previous", "next": "Next", "summary": "Page {page} of {pages} · {total} record(s)" },
+    "toast": {
+      "forbidden": "Permission denied.",
+      "loadError": "Could not load supervisions.",
+      "loadDetailError": "Could not load details.",
+      "supervisorRequired": "Select a supervisor.",
+      "dateRequired": "Enter date and time.",
+      "saveError": "Could not save.",
+      "createOk": "Supervision created.",
+      "updateOk": "Supervision updated.",
+      "deleteOk": "Supervision deleted.",
+      "deleteError": "Could not delete.",
+      "imagesAdded": "Images added.",
+      "imageDeleted": "Image deleted.",
+      "imageError": "Image error.",
+      "efetivoAdded": "Staff line added.",
+      "efetivoUpdated": "Staff line updated.",
+      "efetivoDeleted": "Staff line removed.",
+      "efetivoError": "Could not save staff line.",
+      "efetivoUserRequired": "Select a guard (staff member).",
+      "materialRequired": "Select a material.",
+      "materialAdded": "Material linked.",
+      "materialUpdated": "Material updated.",
+      "materialDeleted": "Material removed.",
+      "materialError": "Could not save material."
+    },
+    "confirm": {
+      "deleteSupervisao": "Delete this supervision and all related data?",
+      "deleteImagem": "Delete this image from the supervision?",
+      "deleteEfetivo": "Remove this staff line from the supervision?",
+      "deleteMaterial": "Remove this material from the supervision?"
+    },
+    "create": { "title": "New supervision" },
+    "form": {
+      "dataHora": "Date and time",
+      "supervisor": "Supervisor",
+      "pickSupervisor": "Choose…",
+      "estado": "Supervision status",
+      "observacoes": "Notes",
+      "images": "Images (optional)"
+    },
+    "detail": { "title": "Supervision #{id}" },
+    "tabs": {
+      "detalhes": "Details",
+      "imagens": "Images",
+      "efetivos": "Staff",
+      "materiais": "Materials"
+    },
+    "images": { "add": "Add images", "remove": "Remove", "empty": "No images." },
+    "efetivos": {
+      "addTitle": "Add staff line",
+      "editTitle": "Edit staff line",
+      "add": "Add",
+      "efetivoUser": "Guard (staff)",
+      "pickPorteiro": "Select a guard…",
+      "uniforme": "Uniform OK",
+      "equipamento": "Equipment OK",
+      "estado": "Status",
+      "observacoes": "Notes",
+      "na": "—",
+      "sim": "Yes",
+      "nao": "No",
+      "colNome": "Name",
+      "colCargo": "Role",
+      "colEstado": "Status",
+      "empty": "No staff lines."
+    },
+    "materiais": {
+      "addTitle": "Link material",
+      "editTitle": "Edit material line",
+      "add": "Link",
+      "material": "Material",
+      "pick": "Choose…",
+      "unidade": "Unit",
+      "quantidade": "Quantity",
+      "estado": "Status",
+      "observacoes": "Notes",
+      "colMaterial": "Material",
+      "colQty": "Qty",
+      "colEstado": "Status",
+      "empty": "No materials linked."
+    }
+  },
+  "trocasDobrasPage": {
+    "title": "Shift handovers",
+    "subtitle": "Record shift exchanges (troca) and doubles (dobra): incoming and outgoing staff, type, date and photos.",
+    "empty": { "forbidden": "You do not have access to handovers.", "noOrg": "Select an organization." },
+    "tipo": { "1": "Handover (troca)", "2": "Double (dobra)" },
+    "actions": {
+      "refresh": "Refresh",
+      "new": "New record",
+      "view": "View",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete"
+    },
+    "filters": {
+      "tipo": "Type",
+      "tipoAll": "All",
+      "entrante": "Incoming",
+      "saiente": "Outgoing",
+      "userAll": "All",
+      "data1": "From",
+      "data2": "To",
+      "apply": "Apply filters"
+    },
+    "table": {
+      "when": "Date / time",
+      "tipo": "Type",
+      "entrante": "Incoming",
+      "saiente": "Outgoing",
+      "photos": "Photos",
+      "actions": "Actions",
+      "empty": "No records found."
+    },
+    "pagination": { "prev": "Previous", "next": "Next", "summary": "Page {page} of {pages} · {total} record(s)" },
+    "toast": {
+      "forbidden": "Permission denied.",
+      "loadError": "Could not load records.",
+      "loadDetailError": "Could not load details.",
+      "usersRequired": "Select incoming and outgoing users.",
+      "dateRequired": "Enter date and time.",
+      "saveError": "Could not save.",
+      "createOk": "Record created.",
+      "updateOk": "Record updated.",
+      "deleteOk": "Record deleted.",
+      "deleteError": "Could not delete.",
+      "imagesAdded": "Images added.",
+      "imageDeleted": "Image removed.",
+      "imageError": "Image error."
+    },
+    "confirm": { "deleteRegisto": "Delete this record and all images?", "deleteImagem": "Delete this image?" },
+    "create": { "title": "New record" },
+    "form": {
+      "dataHora": "Date and time",
+      "tipo": "Type",
+      "entrante": "Incoming user",
+      "saiente": "Outgoing user",
+      "pickUser": "Choose…",
+      "img1": "Incoming photo (optional)",
+      "img2": "Outgoing photo (optional)",
+      "extras": "Extra images (optional)",
+      "slotImg1": "Main photo — incoming",
+      "slotImg2": "Main photo — outgoing",
+      "removeImg1": "Remove incoming photo",
+      "removeImg2": "Remove outgoing photo"
+    },
+    "detail": { "title": "Handover #{id}" },
+    "tabs": { "geral": "General", "imagens": "Extra images" },
+    "images": { "add": "Add images", "remove": "Remove", "emptySlot": "No image.", "emptyExtra": "No extra images." }
+  },
+  "materialContratoPage": {
+    "title": "Contract materials",
+    "subtitle": "Planned material quantities under contract: per item, contract count, shifts, and work schedule pattern.",
+    "new": "New row",
+    "stats": {
+      "rows": "Rows (current page)",
+      "contracts": "Contract total (page)",
+      "shifts": "Shift total (page)"
+    },
+    "filters": {
+      "materialAll": "All materials",
+      "regimeAll": "All schedules",
+      "apply": "Apply filters"
+    },
+    "regimes": {
+      "1": "8/8",
+      "2": "12/12",
+      "3": "12/24",
+      "4": "24/12",
+      "5": "24/24",
+      "6": "24/48",
+      "7": "48/24",
+      "8": "48/48"
+    },
+    "bulk": { "selected": "selected", "delete": "Delete selected" },
+    "table": {
+      "image": "Image",
+      "material": "Material",
+      "qtdContrato": "Contract qty",
+      "qtdTurno": "Shift qty",
+      "regime": "Schedule",
+      "actions": "Actions"
+    },
+    "actions": { "edit": "Edit", "remove": "Remove" },
+    "empty": "No contract material records.",
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "totalResults": "{total} result(s)",
+      "pageOf": "Page {current} of {total}"
+    },
+    "form": {
+      "new": "New row",
+      "edit": "Edit row",
+      "material": "Material",
+      "materialPlaceholder": "Select a material",
+      "loadingMateriais": "Loading materials…",
+      "reloadMateriais": "Reload materials list",
+      "qtdContrato": "Contract quantity",
+      "qtdTurno": "Shift quantity",
+      "regime": "Work schedule",
+      "update": "Update",
+      "register": "Save"
+    },
+    "cancel": "Cancel",
+    "toast": {
+      "forbidden": "You do not have permission to manage contract materials.",
+      "loadError": "Error loading contract materials.",
+      "materiaisLoadError": "Error loading materials.",
+      "showError": "Error loading the record.",
+      "orgRequired": "Organization not selected.",
+      "materialRequired": "Select a material.",
+      "updated": "Contract material row updated successfully.",
+      "created": "Contract material row created successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Record deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkDeleted": "Selected records deleted successfully.",
+      "bulkError": "Error deleting in bulk."
+    },
+    "confirm": {
+      "deleteOne": "Delete this record?",
+      "deleteBulk": "Delete selected records?"
+    }
+  },
+  "materiaisPage": {
+    "title": "Materials",
+    "subtitle": "Manage organisation equipment and consumables: categories, status, images, and bulk updates.",
+    "new": "New material",
+    "noOrg": "Select an organisation to manage materials.",
+    "stats": { "rows": "Rows (current page)", "active": "Active (page)" },
+    "filters": {
+      "designacao": "Name (contains)",
+      "marca": "Brand (contains)",
+      "modelo": "Model (contains)",
+      "categoriaAll": "All categories",
+      "estadoAll": "All statuses",
+      "apply": "Apply filters"
+    },
+    "categories": {
+      "1": "Personal protective equipment (PPE)",
+      "2": "Surveillance equipment",
+      "3": "Operational vehicles",
+      "4": "Lighting equipment",
+      "5": "Administrative / operational supplies",
+      "6": "Operational support equipment",
+      "7": "Infrastructure and posts",
+      "8": "Energy and backup",
+      "9": "Maintenance and logistics",
+      "10": "Technology & systems",
+      "11": "Fire safety",
+      "12": "Armament"
+    },
+    "estados": {
+      "0": "Inactive",
+      "1": "Active",
+      "2": "Under maintenance",
+      "3": "Out of service"
+    },
+    "bulk": {
+      "selected": "selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "maintenance": "Mark under maintenance",
+      "outOfService": "Mark out of service",
+      "delete": "Delete selected"
+    },
+    "table": {
+      "rowNum": "#",
+      "id": "ID",
+      "imagem": "Image",
+      "designacao": "Name",
+      "descricao": "Description",
+      "modelo": "Model",
+      "marca": "Brand",
+      "unidade": "Unit",
+      "categoria": "Category",
+      "fabricante": "Manufacturer",
+      "estado": "Status",
+      "organizacao": "Organisation",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "actions": "Actions",
+      "noImage": "No image"
+    },
+    "actions": { "view": "View details", "edit": "Edit", "remove": "Delete" },
+    "empty": "No materials found.",
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "totalResults": "{total} result(s)",
+      "pageOf": "Page {current} of {total}"
+    },
+    "form": {
+      "new": "New material",
+      "edit": "Edit material",
+      "designacao": "Name",
+      "descricao": "Description",
+      "modelo": "Model",
+      "marca": "Brand",
+      "unidade": "Unit",
+      "unidadePlaceholder": "e.g. pcs, kg, m",
+      "categoria": "Category",
+      "fabricante": "Manufacturer",
+      "estado": "Status",
+      "imagem": "Image",
+      "imagemHint": "JPEG, PNG, GIF or WebP. Max. 5 MB.",
+      "noPreview": "No preview",
+      "clearNewImage": "Remove selected file",
+      "keepExistingImageHint": "Current image is kept unless you choose a new file.",
+      "update": "Update",
+      "register": "Save"
+    },
+    "cancel": "Cancel",
+    "modal": {
+      "noImage": "No image for this material.",
+      "id": "ID",
+      "descricao": "Description",
+      "modelo": "Model",
+      "marca": "Brand",
+      "unidade": "Unit",
+      "categoria": "Category",
+      "fabricante": "Manufacturer",
+      "estado": "Status",
+      "organizacao": "Organisation",
+      "imagemFile": "Image file",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "toast": {
+      "forbidden": "You do not have permission to manage materials.",
+      "loadError": "Error loading materials.",
+      "orgRequired": "Organisation not selected.",
+      "designacaoRequired": "Enter a name.",
+      "updated": "Material updated successfully.",
+      "created": "Material registered successfully.",
+      "saveError": "Error saving.",
+      "deleted": "Record deleted successfully.",
+      "deleteError": "Error deleting.",
+      "selectAtLeastOne": "Select at least one record.",
+      "bulkError": "Error running bulk action.",
+      "bulkActivateFallback": "Selected materials activated.",
+      "bulkDeactivateFallback": "Selected materials deactivated.",
+      "bulkMaintenanceFallback": "Selected materials marked under maintenance.",
+      "bulkOutFallback": "Selected materials marked out of service.",
+      "bulkDeleteFallback": "Selected materials deleted."
+    },
+    "confirm": { "deleteOne": "Delete this material?", "deleteBulk": "Delete selected materials?" }
+  },
   "cardsPage": {
     "title": "Cards",
     "subtitle": "Access card management for guests, employees, and providers.",
@@ -1267,13 +1933,17 @@
     "stats": { "total": "Total on page", "active": "Active cameras", "inactive": "Inactive cameras" },
     "filters": { "designation": "Search by designation", "block": "Block / Area", "status": "Status", "apply": "Apply filters" },
     "bulk": { "selected": "selected", "activate": "Activate", "deactivate": "Deactivate", "delete": "Delete" },
-    "table": { "noBlock": "No block" },
+    "table": { "noBlock": "No block", "stream": "Stream / link" },
     "status": { "active": "Active", "inactive": "Inactive" },
     "actions": { "edit": "Edit", "activate": "Activate", "deactivate": "Deactivate", "remove": "Delete", "refreshBlocks": "Refresh blocks" },
     "empty": "No cameras found.",
     "pagination": { "prev": "Previous", "next": "Next", "results": "{total} result(s) · page {currentPage} of {totalPages}" },
     "cameraPreview": {
       "title": "Device camera demo",
+      "titleRemote": "Camera stream",
+      "titleDevice": "Device camera",
+      "mixedContent": "This page is served over HTTPS but the stream URL is HTTP. The browser blocks this for security. Use an HTTPS stream or access the app over HTTP in a test environment.",
+      "streamError": "Could not load the stream. Check the URL, your network, and whether the server allows embedding in the browser.",
       "notSupported": "This device/browser does not support camera access.",
       "permissionError": "Could not access the camera. Check browser permissions."
     },
@@ -1281,6 +1951,8 @@
       "new": "Register new camera",
       "edit": "Edit camera",
       "designation": "Camera designation",
+      "linkPlaceholder": "URL, IP or camera address (optional)",
+      "linkHint": "Stream URL, IP or address as configured in your video system.",
       "noBlock": "No block",
       "loadingBlocks": "Loading blocks...",
       "imagePreviewAlt": "Camera preview",
