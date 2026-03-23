@@ -103,7 +103,7 @@ export default function DashboardShell({
     /** API supervisões: admin, gestor, cliente, supervisor — não operador (3) nem anfitrião (6) */
     const menuComSupervisao = nivel == 1 || nivel == 2 || nivel == 4 || nivel == 5;
 
-    /** Nível 6 — anfitrião: apenas pessoas, veículos, avisos, chaves, encomendas */
+    /** Nível 6 — anfitrião: pessoas, veículos, ocorrências, encomendas, chaves, avisos */
     const hostMenu: SidebarItem[] = [
       { label: ts("dashboard", "Dashboard"), href: l("/dashboard"), icon: "dashboard" },
       { divider: true, label: ts("sections.host", "Anfitrião") },
@@ -113,14 +113,25 @@ export default function DashboardShell({
         href: l("/vehicle-access"),
         icon: "vehicles",
       },
+      { label: ts("incidents", "Ocorrencias"), href: l("/ocorrencias"), icon: "alert-triangle" },
       { label: ts("alerts", "Avisos"), href: l("/avisos"), icon: "bell" },
       { label: ts("orders", "Encomendas"), href: l("/encomendas"), icon: "package" },
       { label: ts("keyDelivery", "Entrega de Chaves"), href: l("/chaves"), icon: "key" },
-      { label: ts("trocasDobras", "Trocas e dobras"), href: l("/trocas-dobras"), icon: "arrow-left-right" },
+    ];
+
+    /** Nível 5 — supervisor: operação + supervisões + relatórios */
+    const supervisorMenu: SidebarItem[] = [
+      ...operatorSection,
+      supervisionItem,
+      { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
     ];
 
     if (nivel == 6) {
       return hostMenu;
+    }
+
+    if (nivel == 5) {
+      return supervisorMenu;
     }
 
     const base: SidebarItem[] = menuComSupervisao
@@ -147,8 +158,6 @@ export default function DashboardShell({
 
     const gestorItems: SidebarItem[] = [
       { divider: true, label: ts("sections.manager", "Gestor") },
-
-      { label: ts("organizationMenu", "Organizacao"), href: l("/organizacao"), icon: "building2" },
 
       !isEmpresa && {
         label: ts("residences", "Moradias"),
@@ -188,6 +197,7 @@ export default function DashboardShell({
       { label: ts("clients", "Clientes"), href: l("/clientes"), icon: "briefcase" },
 
       { label: ts("guards", "Porteiros"), href: l("/porteiros"), icon: "shield" },
+      { label: ts("supervisorPermissions", "Permissões de supervisores"), href: l("/supervisor-permissoes"), icon: "shield" },
     ].filter(Boolean) as SidebarItem[];
 
     const adminItems: SidebarItem[] =
@@ -195,9 +205,12 @@ export default function DashboardShell({
         ? [
             { divider: true, label: ts("sections.admin", "Admin") },
 
+            { label: ts("organizationMenu", "Organizacao"), href: l("/organizacao"), icon: "building2" },
+
             { label: ts("users", "Utilizadores"), href: l("/utilizadores"), icon: "user-cog" },
 
             { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
+            { label: ts("serviceReview", "Avaliacao de Servicos"), href: l("/avaliacao-servicos"), icon: "star" },
 
             { label: ts("settings", "Configuracoes"), href: l("/settings"), icon: "settings" },
           ]
@@ -207,6 +220,7 @@ export default function DashboardShell({
             { label: ts("users", "Utilizadores"), href: l("/utilizadores"), icon: "user-cog" },
 
             { label: ts("reports", "Relatorios"), href: l("/reports"), icon: "reports" },
+            { label: ts("serviceReview", "Avaliacao de Servicos"), href: l("/avaliacao-servicos"), icon: "star" },
           ];
 
     return [...base, ...gestorItems, ...adminItems];

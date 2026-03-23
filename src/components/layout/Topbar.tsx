@@ -30,7 +30,7 @@ export default function Topbar({
   const t = useTranslations("topbar");
 
   const nivel = user?.nivel;
-  const canSwitchOrg = nivel == 1 || nivel == 2;
+  const canSwitchOrg = nivel == 1 || nivel == 2 || nivel == 4 || nivel == 5;
 
   const [langOpen, setLangOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -138,7 +138,7 @@ export default function Topbar({
               onClick={() => setLangOpen((v) => !v)}
               className="flex items-center gap-1 border ca-border rounded-xl px-3 py-2 ca-panel text-sm"
             >
-              {language == "pt" && "🇵🇹"}
+              {language == "pt" && "🇦🇴"}
               {language == "en" && "🇬🇧"}
               {language == "fr" && "🇫🇷"}
               <ChevronDown size={14} />
@@ -150,7 +150,7 @@ export default function Topbar({
                   onClick={() => changeLanguage("pt")}
                   className="w-full text-left px-2 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
                 >
-                  🇵🇹 {t("lang.pt")}
+                  🇦🇴 {t("lang.pt")}
                 </button>
 
                 <button

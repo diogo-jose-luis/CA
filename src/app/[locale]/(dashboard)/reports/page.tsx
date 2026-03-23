@@ -1,385 +1,356 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FileText,
   Users,
   Car,
-  Home,
+  AlertTriangle,
   Bell,
-  Download,
-  FileSpreadsheet,
-  Eye,
-  Calendar,
+  ClipboardList,
+  Sparkles,
+  FileCheck2,
+  Loader2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { useAuth } from "@/hooks/useAuth";
 
-/* ================
-   Mock data
-================ */
+type ExportingState = { key: string; mode: "sample" | "real" } | null;
 
-const stats = [
+type PeriodReportDef = {
+  key: string;
+  apiPath: string;
+  titleKey: string;
+  moduleKey: string;
+  icon: typeof Users;
+};
+
+const PERIOD_REPORTS: PeriodReportDef[] = [
   {
-    label: "generatedMonth",
-    value: 42,
-    icon: FileText,
-    color: "text-blue-600",
-    bg: "bg-blue-100/60 dark:bg-blue-900/20",
-  },
-  {
-    label: "accessReports",
-    value: 21,
+    key: "acesso-pessoas",
+    apiPath: "acesso-pessoas",
+    titleKey: "periodReports.peopleAccess.title",
+    moduleKey: "periodReports.peopleAccess.module",
     icon: Users,
-    color: "text-green-600",
-    bg: "bg-green-100/60 dark:bg-green-900/20",
   },
   {
-    label: "vehicleReports",
-    value: 13,
+    key: "acesso-veiculos",
+    apiPath: "acesso-veiculos",
+    titleKey: "periodReports.vehicleAccess.title",
+    moduleKey: "periodReports.vehicleAccess.module",
     icon: Car,
-    color: "text-slate-600",
-    bg: "bg-slate-100/60 dark:bg-slate-800/40",
   },
   {
-    label: "adminReports",
-    value: 8,
-    icon: Home,
-    color: "text-amber-600",
-    bg: "bg-amber-100/60 dark:bg-amber-900/20",
+    key: "ocorrencias",
+    apiPath: "ocorrencias",
+    titleKey: "periodReports.occurrences.title",
+    moduleKey: "periodReports.occurrences.module",
+    icon: AlertTriangle,
+  },
+  {
+    key: "avisos",
+    apiPath: "avisos",
+    titleKey: "periodReports.notices.title",
+    moduleKey: "periodReports.notices.module",
+    icon: Bell,
+  },
+  {
+    key: "supervisoes",
+    apiPath: "supervisoes",
+    titleKey: "periodReports.supervisions.title",
+    moduleKey: "periodReports.supervisions.module",
+    icon: ClipboardList,
   },
 ];
 
-const availableReports = [
-  {
-    nome: "Relatório de Acesso de Pessoas",
-    modulo: "Acessos",
-    formatos: ["PDF", "Excel"],
-  },
-  {
-    nome: "Relatório de Acesso de Veículos",
-    modulo: "Veículos",
-    formatos: ["PDF", "Excel"],
-  },
-  {
-    nome: "Relatório de Cartões Activos",
-    modulo: "Cartões",
-    formatos: ["PDF"],
-  },
-  {
-    nome: "Relatório de Moradias e Ocupação",
-    modulo: "Moradias",
-    formatos: ["PDF", "Excel"],
-  },
-  {
-    nome: "Relatório de Avisos Publicados",
-    modulo: "Avisos",
-    formatos: ["PDF"],
-  },
-];
+function isExporting(exporting: ExportingState, key: string, mode: "sample" | "real") {
+  return exporting?.key === key && exporting?.mode === mode;
+}
 
-const history = [
-  {
-    relatorio: "Acesso de Pessoas",
-    periodo: "01/02/2026 - 15/02/2026",
-    formato: "PDF",
-    geradoEm: "15/02/2026 10:32",
-  },
-  {
-    relatorio: "Acesso de Veículos",
-    periodo: "01/02/2026 - 10/02/2026",
-    formato: "Excel",
-    geradoEm: "10/02/2026 08:14",
-  },
-  {
-    relatorio: "Moradias e Ocupação",
-    periodo: "01/01/2026 - 31/01/2026",
-    formato: "PDF",
-    geradoEm: "02/02/2026 16:45",
-  },
-];
-
-const peopleAccessData = [
-  ["João Manuel", "Funcionário", "Entrada", "12/02/2026 08:12"],
-  ["Maria Pedro", "Visitante", "Entrada", "12/02/2026 09:04"],
-  ["Carlos Silva", "Fornecedor", "Saída", "12/02/2026 10:21"],
-  ["Ana Costa", "Funcionária", "Entrada", "12/02/2026 11:11"],
-  ["Pedro Gomes", "Visitante", "Saída", "12/02/2026 12:30"],
-];
-
-const vehicleAccessData = [
-  ["LD-45-23-AA", "Toyota Hilux", "Entrada", "12/02/2026 07:50"],
-  ["LD-22-88-BB", "Kia Sportage", "Entrada", "12/02/2026 08:32"],
-  ["LD-99-32-CC", "Hyundai i10", "Saída", "12/02/2026 09:40"],
-  ["LD-77-55-DD", "Isuzu DMAX", "Entrada", "12/02/2026 10:14"],
-  ["LD-66-11-EE", "Toyota Prado", "Saída", "12/02/2026 11:03"],
-];
-
-const noticesData = [
-  ["Interrupção de água", "Manutenção", "Alta", "12/02/2026"],
-  ["Assembleia geral", "Reunião", "Normal", "10/02/2026"],
-  ["Horário portaria", "Informação", "Normal", "08/02/2026"],
-  ["Manutenção elevadores", "Manutenção", "Alta", "05/02/2026"],
-  ["Recolha de lixo", "Informação", "Normal", "01/02/2026"],
-];
-
-/* ================
-   Page
-================ */
+async function parseBlobErrorMessage(blob: Blob): Promise<string | null> {
+  try {
+    const text = await blob.text();
+    const parsed = JSON.parse(text) as { errors?: Record<string, string[]>; message?: string };
+    if (parsed.errors) {
+      return Object.values(parsed.errors)
+        .flat()
+        .join(" ");
+    }
+    if (typeof parsed.message === "string") return parsed.message;
+  } catch {
+    /* not JSON */
+  }
+  return null;
+}
 
 export default function Page() {
   const t = useTranslations("reports");
+  const { http } = useAuth();
 
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [organizacaoId, setOrganizacaoId] = useState<number | null>(null);
+  const [mes, setMes] = useState(String(new Date().getMonth() + 1));
+  const [ano, setAno] = useState(String(new Date().getFullYear()));
+  const [exporting, setExporting] = useState<ExportingState>(null);
 
-  function createReport(title: string, columns: string[], rows: any[]) {
-    const doc = new jsPDF();
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("ca.selected.organization");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { id?: number | string };
+      const id = typeof parsed.id == "number" ? parsed.id : Number(parsed.id);
+      if (Number.isFinite(id) && id > 0) setOrganizacaoId(id);
+    } catch {
+      /* noop */
+    }
+  }, []);
 
-    const exportedBy = "Diogo Luís"; // depois pode vir da sessão
-    const exportDate = new Date().toLocaleString();
+  const mesAnoValido = useMemo(() => {
+    const m = Number(mes);
+    const a = Number(ano);
+    return {
+      ok: Number.isInteger(m) && m >= 1 && m <= 12 && Number.isInteger(a) && a >= 2000 && a <= 2100,
+      mes: m,
+      ano: a,
+    };
+  }, [mes, ano]);
 
-    const orgName = "";
-    const logo = "/organizacao/ponticelli.png"; // colocar logo real se existir
-
-    doc.addImage(logo, "PNG", 15, 10, 20, 20);
-
-    doc.setFontSize(16);
-    doc.text(orgName, 40, 18);
-
-    doc.setFontSize(12);
-    doc.text(title, 15, 40);
-
-    const period = from && to ? `${from} - ${to}` : "01/02/2026 - 15/02/2026";
-
-    doc.text(`Período: ${period}`, 15, 48);
-
-    doc.line(15, 52, 195, 52);
-
-    autoTable(doc, {
-      startY: 60,
-      head: [columns],
-      body: rows,
-
-      didDrawPage: (data) => {
-        const pageHeight = doc.internal.pageSize.height;
-        const pageWidth = doc.internal.pageSize.width;
-
-        doc.setFontSize(9);
-
-        // linha separadora
-        doc.line(15, pageHeight - 15, pageWidth - 15, pageHeight - 15);
-
-        // texto esquerda
-        doc.text(`Exportado por: ${exportedBy}`, 15, pageHeight - 8);
-
-        // texto direita
-        doc.text(
-          `Data de exportação: ${exportDate}`,
-          pageWidth - 15,
-          pageHeight - 8,
-          { align: "right" },
-        );
-
-        const pageNumber = doc.getCurrentPageInfo().pageNumber;
-
-        doc.text(`Página ${pageNumber}`, pageWidth / 2, pageHeight - 8, {
-          align: "center",
-        });
-      },
-    });
-
-    doc.save(`${title}.pdf`);
+  function validateBeforeExport(): { mes: number; ano: number } | null {
+    if (!organizacaoId) {
+      window.alert(t("errors.noOrganization"));
+      return null;
+    }
+    if (!mesAnoValido.ok) {
+      window.alert(t("errors.invalidPeriod"));
+      return null;
+    }
+    return { mes: mesAnoValido.mes, ano: mesAnoValido.ano };
   }
 
-  function exportPeopleAccess() {
-    createReport(
-      "Relatório de Acesso de Pessoas",
-      ["Nome", "Tipo", "Movimento", "Data"],
-      peopleAccessData,
-    );
+  async function downloadPdf(
+    exportKey: string,
+    modo: "sample" | "real",
+    urlPath: string,
+    suggestedName: string
+  ) {
+    const period = validateBeforeExport();
+    if (!period || !organizacaoId) return;
+
+    setExporting({ key: exportKey, mode: modo });
+    try {
+      const res = await http.get(`/relatorios/${organizacaoId}/${urlPath}`, {
+        params: { mes: period.mes, ano: period.ano, modo },
+        responseType: "blob",
+      });
+
+      const ctype = (res.headers["content-type"] || "").toString().toLowerCase();
+      if (ctype.includes("application/json") || ctype.includes("text/")) {
+        const msg = await parseBlobErrorMessage(res.data as Blob);
+        window.alert(msg || t("errors.exportFailed"));
+        return;
+      }
+
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = suggestedName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err: unknown) {
+      const data = (err as { response?: { data?: unknown } })?.response?.data;
+      if (data instanceof Blob) {
+        const msg = await parseBlobErrorMessage(data);
+        window.alert(msg || t("errors.exportFailed"));
+      } else {
+        window.alert(t("errors.exportFailed"));
+      }
+    } finally {
+      setExporting(null);
+    }
   }
 
-  function exportVehicleAccess() {
-    createReport(
-      "Relatório de Acesso de Veículos",
-      ["Matrícula", "Veículo", "Movimento", "Data"],
-      vehicleAccessData,
-    );
-  }
-
-  function exportNotices() {
-    createReport(
-      "Relatório de Avisos Publicados",
-      ["Título", "Categoria", "Prioridade", "Data"],
-      noticesData,
-    );
-  }
+  const period = mesAnoValido.ok ? { mes: mesAnoValido.mes, ano: mesAnoValido.ano } : null;
 
   return (
     <div className="p-4 md:p-6 space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-xl md:text-2xl font-semibold">{t("title")}</h1>
-
-        <p className="text-sm ca-muted">{t("subtitle")}</p>
+        <p className="text-sm ca-muted mt-1">{t("subtitle")}</p>
       </div>
 
-      {/* Indicadores */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {stats.map((item) => (
-          <div key={item.label} className="ca-card p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm ca-muted">{item.label}</div>
-                <div className="text-2xl font-semibold mt-1">{item.value}</div>
+      <div className="ca-card p-4">
+        <div className="font-medium mb-1">{t("period.title")}</div>
+        <p className="text-xs ca-muted mb-3">{t("period.hint")}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
+          <select className="ca-input" value={mes} onChange={(e) => setMes(e.target.value)}>
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+              <option key={m} value={m}>
+                {t(`generalReport.months.${m}`)}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            min={2000}
+            max={2100}
+            className="ca-input"
+            value={ano}
+            onChange={(e) => setAno(e.target.value)}
+            placeholder={t("generalReport.year")}
+          />
+        </div>
+      </div>
+
+      <div className="ca-card">
+        <div className="p-4 border-b ca-border font-medium">{t("sections.general")}</div>
+
+        <div className="p-4 border-b ca-border bg-slate-50/60 dark:bg-slate-800/20">
+          <div className="flex flex-col md:flex-row md:items-end gap-3">
+            <div className="flex-1 flex gap-3">
+              <div className="h-11 w-11 rounded-2xl flex items-center justify-center bg-blue-100/60 dark:bg-blue-900/20 shrink-0">
+                <FileText className="text-blue-600" size={22} />
               </div>
-              <div
-                className={`h-11 w-11 rounded-2xl flex items-center justify-center ${item.bg}`}
-              >
-                <item.icon className={item.color} size={20} />
+              <div>
+                <div className="font-medium">{t("generalReport.title")}</div>
+                <div className="text-xs ca-muted">{t("generalReport.subtitle")}</div>
               </div>
             </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                className="ca-icon-btn h-11 w-11 shrink-0 disabled:opacity-50"
+                title={t("generalReport.exportSampleTitle")}
+                aria-label={t("generalReport.exportSampleTitle")}
+                onClick={() =>
+                  downloadPdf(
+                    "mensal",
+                    "sample",
+                    "mensal/pdf",
+                    period
+                      ? `relatorio_mensal_sample_${organizacaoId}_${period.ano}_${String(period.mes).padStart(2, "0")}.pdf`
+                      : "relatorio_mensal_sample.pdf"
+                  )
+                }
+                disabled={exporting !== null}
+              >
+                {isExporting(exporting, "mensal", "sample") ? (
+                  <Loader2 size={20} className="animate-spin ca-muted" aria-hidden />
+                ) : (
+                  <Sparkles size={20} className="text-amber-600 dark:text-amber-400" aria-hidden />
+                )}
+              </button>
+              <button
+                type="button"
+                className="ca-icon-btn h-11 w-11 shrink-0 disabled:opacity-50"
+                title={t("generalReport.exportRealTitle")}
+                aria-label={t("generalReport.exportRealTitle")}
+                onClick={() =>
+                  downloadPdf(
+                    "mensal",
+                    "real",
+                    "mensal/pdf",
+                    period
+                      ? `relatorio_mensal_real_${organizacaoId}_${period.ano}_${String(period.mes).padStart(2, "0")}.pdf`
+                      : "relatorio_mensal_real.pdf"
+                  )
+                }
+                disabled={exporting !== null}
+              >
+                {isExporting(exporting, "mensal", "real") ? (
+                  <Loader2 size={20} className="animate-spin ca-muted" aria-hidden />
+                ) : (
+                  <FileCheck2 size={20} className="text-emerald-600 dark:text-emerald-400" aria-hidden />
+                )}
+              </button>
+              <span className="text-xs ca-muted w-full sm:w-auto sm:max-w-[16rem]">
+                {isExporting(exporting, "mensal", "sample")
+                  ? t("generalReport.exportingSample")
+                  : isExporting(exporting, "mensal", "real")
+                    ? t("generalReport.exportingReal")
+                    : t("generalReport.exportHint")}
+              </span>
+            </div>
           </div>
-        ))}
-      </div>
-
-      {/* Filtros globais */}
-      <div className="ca-card p-4">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select className="ca-input">
-            <option>{t("filters.reportType")}</option>
-            <option>{t("modules.access")}</option>
-            <option>{t("modules.vehicles")}</option>
-            <option>{t("modules.cards")}</option>
-            <option>{t("modules.residences")}</option>
-            <option>{t("modules.notices")}</option>
-          </select>
-
-          <div className="relative">
-            <Calendar
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60"
-            />
-            <input
-              type="date"
-              className="ca-input pl-9"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-          </div>
-
-          <div className="relative">
-            <Calendar
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60"
-            />
-            <input
-              type="date"
-              className="ca-input pl-9"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </div>
-
-          <button className="ca-btn md:col-span-5">{t("filters.apply")}</button>
         </div>
-      </div>
 
-      {/* Relatórios disponíveis */}
-      <div className="ca-card">
-        <div className="p-4 border-b ca-border font-medium">
-          {t("available")}
-        </div>
+        <div className="p-4 border-b ca-border font-medium">{t("sections.byModule")}</div>
 
         <div className="divide-y ca-border">
-          {availableReports.map((rep, idx) => (
-            <div
-              key={idx}
-              className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
-            >
-              <div>
-                <div className="font-medium">{rep.nome}</div>
-                <div className="text-xs ca-muted">
-                  {t("module")}: {rep.modulo}
+          {PERIOD_REPORTS.map((rep) => {
+            const Icon = rep.icon;
+            const fileBase = rep.key.replace(/-/g, "_");
+            return (
+              <div
+                key={rep.key}
+                className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+              >
+                <div className="flex gap-3 min-w-0">
+                  <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 shrink-0">
+                    <Icon size={20} className="ca-muted" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-medium">{t(rep.titleKey)}</div>
+                    <div className="text-xs ca-muted">
+                      {t("module")}: {t(rep.moduleKey)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    className="ca-icon-btn h-11 w-11 disabled:opacity-50"
+                    title={t("actions.exportSamplePdf")}
+                    aria-label={t("actions.exportSamplePdf")}
+                    onClick={() =>
+                      downloadPdf(
+                        rep.key,
+                        "sample",
+                        `${rep.apiPath}/pdf`,
+                        period
+                          ? `${fileBase}_sample_${organizacaoId}_${period.ano}_${String(period.mes).padStart(2, "0")}.pdf`
+                          : `${fileBase}_sample.pdf`
+                      )
+                    }
+                    disabled={exporting !== null}
+                  >
+                    {isExporting(exporting, rep.key, "sample") ? (
+                      <Loader2 size={20} className="animate-spin ca-muted" aria-hidden />
+                    ) : (
+                      <Sparkles size={20} className="text-amber-600 dark:text-amber-400" aria-hidden />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="ca-icon-btn h-11 w-11 disabled:opacity-50"
+                    title={t("actions.exportRealPdf")}
+                    aria-label={t("actions.exportRealPdf")}
+                    onClick={() =>
+                      downloadPdf(
+                        rep.key,
+                        "real",
+                        `${rep.apiPath}/pdf`,
+                        period
+                          ? `${fileBase}_real_${organizacaoId}_${period.ano}_${String(period.mes).padStart(2, "0")}.pdf`
+                          : `${fileBase}_real.pdf`
+                      )
+                    }
+                    disabled={exporting !== null}
+                  >
+                    {isExporting(exporting, rep.key, "real") ? (
+                      <Loader2 size={20} className="animate-spin ca-muted" aria-hidden />
+                    ) : (
+                      <FileCheck2 size={20} className="text-emerald-600 dark:text-emerald-400" aria-hidden />
+                    )}
+                  </button>
                 </div>
               </div>
-
-              <div className="flex gap-2">
-                {rep.formatos.includes("PDF") && (
-                  <button
-                    className="ca-icon-btn"
-                    title={t("actions.generatePDF")}
-                    onClick={() => {
-                      if (rep.nome == "Relatório de Acesso de Pessoas") {
-                        exportPeopleAccess();
-                      }
-
-                      if (rep.nome == "Relatório de Acesso de Veículos") {
-                        exportVehicleAccess();
-                      }
-
-                      if (rep.nome == "Relatório de Avisos Publicados") {
-                        exportNotices();
-                      }
-                    }}
-                  >
-                    <Download size={16} />
-                  </button>
-                )}
-                {rep.formatos.includes("Excel") && (
-                  <button
-                    className="ca-icon-btn"
-                    title={t("actions.generateExcel")}
-                  >
-                    <FileSpreadsheet size={16} />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      </div>
-
-      {/* Histórico */}
-      <div className="ca-card overflow-hidden">
-        <div className="p-4 border-b ca-border font-medium">
-          <div className="p-4 border-b ca-border font-medium">
-            {t("history.title")}
-          </div>
-        </div>
-
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-800/40">
-            <tr>
-              <th>{t("history.report")}</th>
-              <th>{t("history.period")}</th>
-              <th>{t("history.format")}</th>
-              <th>{t("history.generated")}</th>
-              <th className="text-right">{t("history.actions")}</th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y ca-border">
-            {history.map((row, idx) => (
-              <tr
-                key={idx}
-                className="hover:bg-slate-50 dark:hover:bg-slate-800/30"
-              >
-                <td className="px-4 py-3 font-medium">{row.relatorio}</td>
-                <td className="px-4 py-3">{row.periodo}</td>
-                <td className="px-4 py-3">{row.formato}</td>
-                <td className="px-4 py-3">{row.geradoEm}</td>
-                <td className="px-4 py-3 text-right">
-                  <button className="ca-icon-btn" title={t("actions.view")}>
-                    <Eye size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );

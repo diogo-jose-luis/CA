@@ -94,6 +94,7 @@
     "suppliers": "Fournisseurs",
     "clients": "Clients",
     "guards": "Gardiens",
+    "supervisorPermissions": "Permissions superviseurs",
     "users": "Utilisateurs",
     "settings": "Paramètres",
     "sections": {
@@ -125,6 +126,8 @@
     "collapseMenu": "Réduire menu",
     "loading": "Chargement des organisations…",
     "empty": "Aucune organisation active disponible.",
+    "searchPlaceholder": "Rechercher une organisation par nom ou description…",
+    "emptySearch": "Aucune organisation ne correspond a votre recherche.",
     "lang": {
       "pt": "Portugais",
       "en": "Anglais",
@@ -178,7 +181,8 @@
       "insideHint": "Basé sur les 250 derniers enregistrements sans heure de sortie.",
       "entriesToday": "Entrées aujourd'hui",
       "exitsRegistered": "Sorties aujourd'hui",
-      "pending": "En attente d'approbation"
+      "expiredUnused": "Accès expirés non utilisés",
+      "expiredUnusedHint": "Fenêtre de validité terminée et aucune sortie enregistrée."
     },
     "filters": {
       "documentType": "Type de document",
@@ -209,7 +213,8 @@
       "inside": "À l'intérieur",
       "left": "Sorti",
       "late": "En retard / longue présence",
-      "pending": "En attente"
+      "pending": "En attente",
+      "expiredUnused": "Expiré non utilisé"
     },
     "table": {
       "person": "Personne",
@@ -225,6 +230,7 @@
       "host": "Hôte",
       "entry": "Entrée",
       "exit": "Sortie",
+      "validityWindow": "Fenêtre de validité",
       "status": "Statut",
       "actions": "Actions",
       "empty": "Aucun enregistrement."
@@ -302,6 +308,8 @@
       "documentRefPlaceholder": "Numéro ou référence du document",
       "entry": "Date et heure d'entrée",
       "exit": "Date et heure de sortie (optionnel)",
+      "validFrom": "Valide à partir de (optionnel)",
+      "validUntil": "Valide jusqu'à (optionnel)",
       "qtd": "Nombre de personnes",
       "qtdHint": "Nombre de personnes associées à cet accès (minimum 1).",
       "approval": "Approbation",
@@ -350,8 +358,8 @@
       "insideHint": "Basé sur les 250 derniers enregistrements sans heure de sortie.",
       "entriesToday": "Entrées aujourd'hui",
       "exitsRegistered": "Sorties aujourd'hui",
-      "pendingIrregular": "Séjour prolongé",
-      "pendingIrregularHint": "Toujours à l'intérieur depuis plus de 8 heures (même échantillon)."
+      "expiredUnused": "Accès expirés non utilisés",
+      "expiredUnusedHint": "Fenêtre de validité terminée et aucune sortie enregistrée."
     },
     "details": {
       "title": "Enregistrement photographique du véhicule",
@@ -387,6 +395,7 @@
       "hostContact": "Contact hôte",
       "entry": "Entrée",
       "exit": "Sortie",
+      "validityWindow": "Fenêtre de validité",
       "status": "Statut",
       "approval": "Approbation",
       "actions": "Actions",
@@ -413,7 +422,8 @@
     "status": {
       "inside": "À l'intérieur",
       "left": "Sorti",
-      "late": "Retard / long séjour"
+      "late": "Retard / long séjour",
+      "expiredUnused": "Expiré non utilisé"
     },
     "aprovado": {
       "0": "En attente",
@@ -489,6 +499,8 @@
       "documentRefPlaceholder": "Numéro ou référence du document",
       "entry": "Date et heure d'entrée",
       "exit": "Date et heure de sortie (optionnel)",
+      "validFrom": "Valide à partir de (optionnel)",
+      "validUntil": "Valide jusqu'à (optionnel)",
       "aprovado": "Statut d'approbation",
       "motivo": "Motif",
       "motivoPlaceholder": "Motif du refus ou notes sur l'approbation",
@@ -615,38 +627,85 @@
   },
   "reports": {
     "title": "Rapports",
-    "subtitle": "Génération et exportation de rapports opérationnels et administratifs.",
-    "stats": {
-      "generatedMonth": "Rapports générés (mois)",
-      "accessReports": "Rapports d'accès",
-      "vehicleReports": "Rapports de véhicules",
-      "adminReports": "Rapports administratifs"
+    "subtitle": "Exportations PDF disponibles via l'API. Choisissez le mois et l'année (mois calendaire complet), puis utilisez les icônes : exemple (données illustratives) ou réel (données de l'organisation).",
+
+    "period": {
+      "title": "Période du rapport",
+      "hint": "Tous les PDF ci-dessous utilisent ce mois et cette année (du 1er au dernier jour du mois)."
     },
-    "filters": {
-      "reportType": "Type de rapport",
-      "apply": "Appliquer les filtres"
+
+    "sections": {
+      "general": "Rapport général",
+      "byModule": "Rapports par module"
     },
-    "modules": {
-      "access": "Accès",
-      "vehicles": "Véhicules",
-      "cards": "Cartes",
-      "residences": "Résidences",
-      "notices": "Avis"
-    },
-    "available": "Rapports disponibles",
+
     "module": "Module",
-    "history": {
-      "title": "Historique des rapports générés",
-      "report": "Rapport",
-      "period": "Période",
-      "format": "Format",
-      "generated": "Généré le",
-      "actions": "Actions"
+
+    "errors": {
+      "noOrganization": "Sélectionnez une organisation pour exporter.",
+      "invalidPeriod": "Indiquez un mois (1–12) et une année (2000–2100) valides.",
+      "exportFailed": "Impossible d'exporter le PDF. Vérifiez les permissions et réessayez."
     },
+
     "actions": {
-      "generatePDF": "Générer PDF",
-      "generateExcel": "Générer Excel",
-      "view": "Visualiser"
+      "exportSamplePdf": "Exporter PDF d'exemple",
+      "exportRealPdf": "Exporter PDF avec données réelles"
+    },
+
+    "generalReport": {
+      "title": "Rapport mensuel général",
+      "subtitle": "Vue mensuelle consolidée (modèle API).",
+      "year": "Année",
+      "export": "Exporter",
+      "exporting": "Exportation...",
+      "exportSampleTitle": "Exporter PDF (exemple)",
+      "exportRealTitle": "Exporter PDF (réel)",
+      "exportingSample": "Exportation du PDF d'exemple…",
+      "exportingReal": "Exportation du PDF avec données réelles…",
+      "exportHint": "Exemple : données illustratives. Réel : données de l'organisation.",
+      "months": {
+        "1": "Janvier",
+        "2": "Février",
+        "3": "Mars",
+        "4": "Avril",
+        "5": "Mai",
+        "6": "Juin",
+        "7": "Juillet",
+        "8": "Août",
+        "9": "Septembre",
+        "10": "Octobre",
+        "11": "Novembre",
+        "12": "Décembre"
+      },
+      "errors": {
+        "noOrganization": "Sélectionnez une organisation pour exporter le rapport.",
+        "invalidMonth": "Saisissez un mois valide (1-12).",
+        "invalidYear": "Saisissez une année valide (2000-2100).",
+        "exportFailed": "Impossible d'exporter le rapport général."
+      }
+    },
+
+    "periodReports": {
+      "peopleAccess": {
+        "title": "Rapport d'accès aux personnes",
+        "module": "Accès"
+      },
+      "vehicleAccess": {
+        "title": "Rapport d'accès aux véhicules",
+        "module": "Véhicules"
+      },
+      "occurrences": {
+        "title": "Rapport d'incidents",
+        "module": "Incidents"
+      },
+      "notices": {
+        "title": "Rapport d'avis",
+        "module": "Avis"
+      },
+      "supervisions": {
+        "title": "Rapport de supervisions",
+        "module": "Supervisions"
+      }
     }
   },
   "occurrences": {
@@ -963,6 +1022,43 @@
       "deleteOne": "Supprimer cet enregistrement de remise de clé ?"
     }
   },
+  "supervisorPermissoesPage": {
+    "title": "Permissions des superviseurs",
+    "subtitle": "Associez et dissociez des superviseurs a l'organisation selectionnee.",
+    "forbidden": "Vous n'avez pas la permission de gerer les liaisons des superviseurs.",
+    "hint": "Les superviseurs associes pourront selectionner cette organisation a la connexion.",
+    "linkForm": {
+      "title": "Associer un superviseur",
+      "selectOrganization": "Selectionner une organisation",
+      "refreshOrganizations": "Actualiser les organisations",
+      "selectSupervisor": "Selectionner un superviseur",
+      "refreshSupervisors": "Actualiser les superviseurs",
+      "submit": "Associer"
+    },
+    "table": {
+      "supervisor": "Superviseur",
+      "email": "E-mail",
+      "id": "ID",
+      "actions": "Actions",
+      "empty": "Aucun superviseur associe."
+    },
+    "actions": {
+      "unlink": "Dissocier"
+    },
+    "toast": {
+      "orgRequired": "Selectionnez une organisation.",
+      "forbidden": "Vous n'avez pas la permission pour cette action.",
+      "supervisorRequired": "Selectionnez ou saisissez un superviseur.",
+      "loadError": "Impossible de charger les liaisons.",
+      "linked": "Superviseur associe avec succes.",
+      "linkError": "Impossible d'associer le superviseur.",
+      "unlinked": "Superviseur dissocie avec succes.",
+      "unlinkError": "Impossible de dissocier le superviseur."
+    },
+    "confirm": {
+      "unlink": "Voulez-vous dissocier ce superviseur ?"
+    }
+  },
   "organizacao": {
     "title": "Organisation",
     "subtitle": "Gestion des entreprises et copropriétés enregistrées.",
@@ -1042,6 +1138,7 @@
     },
     "filters": {
       "name": "Rechercher par nom",
+      "type": "Type",
       "level": "Niveau d'accès",
       "email": "E-mail",
       "status": "État",
@@ -1056,11 +1153,26 @@
     "table": {
       "photo": "Photo",
       "name": "Nom",
+      "type": "Type",
       "level": "Niveau",
       "email": "E-mail",
       "phone": "Téléphone",
       "status": "État",
       "actions": "Actions"
+    },
+    "types": {
+      "user": "Utilisateur",
+      "guard": "Gardien",
+      "client": "Client",
+      "supplier": "Fournisseur",
+      "guest": "Invité",
+      "resident": "Résident",
+      "1": "Utilisateur",
+      "2": "Gardien",
+      "3": "Client",
+      "4": "Fournisseur",
+      "5": "Invité",
+      "6": "Résident"
     },
     "status": {
       "active": "Actif",
@@ -1084,6 +1196,7 @@
       "name": "Nom complet",
       "email": "E-mail",
       "phone": "Téléphone",
+      "type": "Type",
       "level": "Niveau d'accès",
       "photo": "Photo (optionnel)",
       "update": "Mettre à jour",
@@ -1150,6 +1263,9 @@
       "name": "Nom",
       "document": "Document",
       "documentRef": "Réf. document",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "cargo": "Poste",
       "status": "État",
       "actions": "Actions"
     },
@@ -1159,7 +1275,8 @@
     },
     "actions": {
       "edit": "Modifier",
-      "remove": "Supprimer"
+      "remove": "Supprimer",
+      "refreshCargos": "Actualiser les postes"
     },
     "empty": "Aucun gardien trouvé.",
     "pagination": {
@@ -1172,6 +1289,7 @@
       "name": "Nom complet",
       "email": "E-mail",
       "phone": "Téléphone",
+      "cargo": "Poste",
       "documentRef": "Réf. document",
       "photo": "Photo (optionnel)",
       "update": "Mettre à jour",
@@ -1934,6 +2052,7 @@
       "tipoAll": "Tous",
       "entrante": "Entrant",
       "saiente": "Sortant",
+      "sainte": "Sortant",
       "userAll": "Tous",
       "data1": "Du",
       "data2": "Au",
@@ -1944,6 +2063,7 @@
       "tipo": "Type",
       "entrante": "Entrant",
       "saiente": "Sortant",
+      "sainte": "Sortant",
       "photos": "Photos",
       "actions": "Actions",
       "empty": "Aucun enregistrement."
@@ -1978,6 +2098,7 @@
       "tipo": "Type",
       "entrante": "Utilisateur entrant",
       "saiente": "Utilisateur sortant",
+      "sainte": "Utilisateur sortant",
       "pickUser": "Sélectionnez…",
       "img1": "Photo entrant (optionnel)",
       "img2": "Photo sortant (optionnel)",
@@ -2492,17 +2613,58 @@
       "date": "Date de soumission",
       "actions": "Actions"
     },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "months": {
+      "1": "Janvier",
+      "2": "Février",
+      "3": "Mars",
+      "4": "Avril",
+      "5": "Mai",
+      "6": "Juin",
+      "7": "Juillet",
+      "8": "Août",
+      "9": "Septembre",
+      "10": "Octobre",
+      "11": "Novembre",
+      "12": "Décembre"
+    },
     "form": {
       "title": "Nouvelle Évaluation",
+      "editTitle": "Modifier l'évaluation",
+      "selectMonth": "Sélectionnez le mois",
       "month": "Mois",
       "year": "Année",
       "quality": "Qualité du service (1–5)",
       "professionalism": "Professionnalisme (1–5)",
       "response": "Temps de réponse (1–5)",
       "communication": "Communication (1–5)",
+      "general": "Évaluation générale (1–5)",
       "comments": "Commentaires",
-      "submit": "Soumettre l'évaluation"
+      "submit": "Soumettre l'évaluation",
+      "update": "Mettre à jour l'évaluation"
     },
-    "cancel": "Annuler"
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "page": "Page {page}",
+      "total": "Total : {total}"
+    },
+    "empty": "Aucune évaluation trouvée.",
+    "accessDenied": "Vous n'avez pas la permission d'accéder à cette page.",
+    "cancel": "Annuler",
+    "toast": {
+      "loadError": "Erreur lors du chargement des évaluations.",
+      "created": "Évaluation soumise avec succès.",
+      "updated": "Évaluation mise à jour avec succès.",
+      "deleted": "Évaluation supprimée avec succès.",
+      "saveError": "Impossible d'enregistrer l'évaluation.",
+      "deleteError": "Impossible de supprimer l'évaluation."
+    },
+    "confirm": {
+      "deleteOne": "Voulez-vous vraiment supprimer cette évaluation ?"
+    }
   }
 }

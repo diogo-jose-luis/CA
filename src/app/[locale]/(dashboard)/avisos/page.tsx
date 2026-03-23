@@ -451,6 +451,28 @@ export default function Page() {
     return "—";
   };
 
+  const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
+    const raw = row as Record<string, unknown> | null | undefined;
+    const id =
+      Number(
+        raw?.[`${kind}_por`] ??
+          (kind == "registado" ? raw?.registadoPorId : raw?.atualizadoPorId) ??
+          0,
+      ) || null;
+    const rel = (raw?.[kind == "registado" ? "registadoPor" : "atualizadoPor"] ??
+      raw?.[`${kind}_por_user`] ??
+      null) as
+      | { id?: number | string; name?: string | null; email?: string | null }
+      | null;
+    const relId = rel?.id != null ? Number(rel.id) : null;
+    const finalId = relId && Number.isFinite(relId) ? relId : id;
+    const name = rel?.name?.trim() || rel?.email?.trim() || "";
+    if (name && finalId) return `${name} (#${finalId})`;
+    if (name) return name;
+    if (finalId) return `#${finalId}`;
+    return "—";
+  }, []);
+
   if (!canList) {
     return (
       <div className="p-4 md:p-6">
@@ -834,6 +856,12 @@ export default function Page() {
                   </div>
                   <p className="text-sm ca-muted">
                     {t("table.published")}: {formatPublished(viewing.data_publicacao ?? null, locale)}
+                  </p>
+                  <p className="text-sm">
+                    <span className="ca-muted">Registado por:</span> {auditActorLabel(viewing, "registado")}
+                  </p>
+                  <p className="text-sm">
+                    <span className="ca-muted">Atualizado por:</span> {auditActorLabel(viewing, "atualizado")}
                   </p>
                   {(() => {
                     const url = avisoImagePublicUrl(api_base_url, viewing.imagem);

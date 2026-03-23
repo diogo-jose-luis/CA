@@ -25,11 +25,11 @@ import type {
 } from "@/types/troca-dobra";
 
 const API_PREFIX = "/trocas-dobras";
-const GUARDAS_PREFIX = "/guardas";
+const UTILIZADORES_PREFIX = "/utilizadores";
 const ORG_KEY = "ca.selected.organization";
 
-/** Tipo utilizador porteiro / efetivo (alinhado com `porteiros/page.tsx` e supervisões). */
-const PORTEIRO_TIPO = 5;
+/** Nível operador na app. */
+const NIVEL_OPERADOR = 3;
 
 /** API: ver listagem e detalhe */
 const NIVEIS_VER = [1, 2, 3, 4, 5, 6] as const;
@@ -131,18 +131,18 @@ function porteiroOptionLabel(u: Utilizador): string {
   return cargoNome ? `${nome} · ${cargoNome}` : nome;
 }
 
-/** Efetivos / porteiros da organização (lista de seleção). */
+/** Operadores da organização (lista de seleção entrante/sainte). */
 async function fetchPorteiros(http: AxiosInstance, organizacaoId: number): Promise<Utilizador[]> {
   const map = new Map<number, Utilizador>();
   let page = 1;
   for (;;) {
     try {
-      const res = await http.get<UtilizadorListResponse>(`${GUARDAS_PREFIX}/${organizacaoId}`, {
+      const res = await http.get<UtilizadorListResponse>(`${UTILIZADORES_PREFIX}/${organizacaoId}`, {
         params: { per_page: 100, page },
       });
       const chunk = res.data?.data ?? [];
       for (const u of chunk) {
-        if (u?.id && typeof u.id == "number" && (u.tipo == null || u.tipo === PORTEIRO_TIPO)) {
+        if (u?.id && typeof u.id == "number" && Number(u.nivel) === NIVEL_OPERADOR) {
           map.set(u.id, u);
         }
       }
@@ -195,6 +195,7 @@ export default function Page() {
 
   const [organizacaoId, setOrganizacaoId] = useState<number | null>(null);
   const [porteiros, setPorteiros] = useState<Utilizador[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
 
   const [list, setList] = useState<TrocaDobraApi[]>([]);
   const [total, setTotal] = useState(0);
@@ -298,13 +299,18 @@ export default function Page() {
       setPorteiros([]);
       return;
     }
-    let list = await fetchPorteiros(http, organizacaoId);
-    if (user?.id && user.tipo === PORTEIRO_TIPO && !list.some((u) => u.id === user.id)) {
-      list = [...list, minimalUserFromSession(user)].sort((a, b) =>
-        (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }),
-      );
+    setUsersLoading(true);
+    try {
+      let list = await fetchPorteiros(http, organizacaoId);
+      if (user?.id && Number(user.nivel) === NIVEL_OPERADOR && !list.some((u) => u.id === user.id)) {
+        list = [...list, minimalUserFromSession(user)].sort((a, b) =>
+          (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }),
+        );
+      }
+      setPorteiros(list);
+    } finally {
+      setUsersLoading(false);
     }
-    setPorteiros(list);
   }, [http, organizacaoId, user]);
 
   useEffect(() => {
@@ -453,7 +459,7 @@ export default function Page() {
     const localDefault = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
     setCreateForm({
       entrante_id: "",
-      sainte_id: "",
+      sainte_id: user?.id ? String(user.id) : "",
       tipo: 1,
       data_hora: localDefault,
       img1: null,
@@ -609,6 +615,28 @@ export default function Page() {
   };
 
   const imagensExtra = detail?.imagens ?? [];
+
+  const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
+    const raw = row as Record<string, unknown> | null | undefined;
+    const id =
+      Number(
+        raw?.[`${kind}_por`] ??
+          (kind == "registado" ? raw?.registadoPorId : raw?.atualizadoPorId) ??
+          0,
+      ) || null;
+    const rel = (raw?.[kind == "registado" ? "registadoPor" : "atualizadoPor"] ??
+      raw?.[`${kind}_por_user`] ??
+      null) as
+      | { id?: number | string; name?: string | null; email?: string | null }
+      | null;
+    const relId = rel?.id != null ? Number(rel.id) : null;
+    const finalId = relId && Number.isFinite(relId) ? relId : id;
+    const name = rel?.name?.trim() || rel?.email?.trim() || "";
+    if (name && finalId) return `${name} (#${finalId})`;
+    if (name) return name;
+    if (finalId) return `#${finalId}`;
+    return "—";
+  }, []);
 
   const emptyState = useMemo(() => {
     if (!canAccess) return t("empty.forbidden");
@@ -841,11 +869,23 @@ export default function Page() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs ca-muted">{t("form.entrante")}</label>
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <label className="block text-xs ca-muted">{t("form.entrante")}</label>
+                  <button
+                    type="button"
+                    className="ca-icon-btn"
+                    title={t("actions.refresh")}
+                    onClick={() => void loadPorteiros()}
+                    disabled={usersLoading}
+                  >
+                    {usersLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  </button>
+                </div>
                 <select
                   className="ca-input w-full"
                   value={createForm.entrante_id}
                   onChange={(e) => setCreateForm((f) => ({ ...f, entrante_id: e.target.value }))}
+                  disabled={usersLoading}
                 >
                   <option value="">{t("form.pickUser")}</option>
                   {porteiros.map((u) => (
@@ -856,11 +896,23 @@ export default function Page() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs ca-muted">{t("form.sainte")}</label>
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <label className="block text-xs ca-muted">{t("form.sainte")}</label>
+                  <button
+                    type="button"
+                    className="ca-icon-btn"
+                    title={t("actions.refresh")}
+                    onClick={() => void loadPorteiros()}
+                    disabled={usersLoading}
+                  >
+                    {usersLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  </button>
+                </div>
                 <select
                   className="ca-input w-full"
                   value={createForm.sainte_id}
                   onChange={(e) => setCreateForm((f) => ({ ...f, sainte_id: e.target.value }))}
+                  disabled={usersLoading}
                 >
                   <option value="">{t("form.pickUser")}</option>
                   {porteiros.map((u) => (
@@ -1002,6 +1054,14 @@ export default function Page() {
                 </div>
               ) : detailTab === "geral" ? (
                 <div className="mx-auto max-w-3xl space-y-3">
+                  <div className="rounded-xl border ca-border bg-[var(--panel-alt)] p-3 text-sm space-y-1">
+                    <p>
+                      <span className="ca-muted">Registado por:</span> {auditActorLabel(detail, "registado")}
+                    </p>
+                    <p>
+                      <span className="ca-muted">Atualizado por:</span> {auditActorLabel(detail, "atualizado")}
+                    </p>
+                  </div>
                   <div>
                     <label className="mb-1 block text-xs ca-muted">{t("form.dataHora")}</label>
                     <input
@@ -1025,10 +1085,25 @@ export default function Page() {
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs ca-muted">{t("form.entrante")}</label>
+                    <div className="mb-1 flex items-center justify-between gap-2">
+                      <label className="block text-xs ca-muted">{t("form.entrante")}</label>
+                      <button
+                        type="button"
+                        className="ca-icon-btn"
+                        title={t("actions.refresh")}
+                        onClick={() => void loadPorteiros()}
+                        disabled={!canGestao || usersLoading}
+                      >
+                        {usersLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     <select
                       className="ca-input w-full"
-                      disabled={!canGestao}
+                      disabled={!canGestao || usersLoading}
                       value={detailForm.entrante_id}
                       onChange={(e) => setDetailForm((f) => ({ ...f, entrante_id: e.target.value }))}
                     >
@@ -1041,10 +1116,25 @@ export default function Page() {
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs ca-muted">{t("form.sainte")}</label>
+                    <div className="mb-1 flex items-center justify-between gap-2">
+                      <label className="block text-xs ca-muted">{t("form.sainte")}</label>
+                      <button
+                        type="button"
+                        className="ca-icon-btn"
+                        title={t("actions.refresh")}
+                        onClick={() => void loadPorteiros()}
+                        disabled={!canGestao || usersLoading}
+                      >
+                        {usersLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     <select
                       className="ca-input w-full"
-                      disabled={!canGestao}
+                      disabled={!canGestao || usersLoading}
                       value={detailForm.sainte_id}
                       onChange={(e) => setDetailForm((f) => ({ ...f, sainte_id: e.target.value }))}
                     >

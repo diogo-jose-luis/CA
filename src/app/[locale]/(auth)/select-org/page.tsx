@@ -3,7 +3,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { Building2, Home, CheckCircle2, LogOut, ChevronDown } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSession } from "@/contexts/AuthContext";
 import { useTranslations } from "next-intl";
 import LogoutConfirmDialog from "@/components/layout/LogoutConfirmDialog";
@@ -45,6 +45,7 @@ export default function SelectOrganizationPage() {
   const [organizations, setOrganizations] = useState<Organizacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
   const [langOpen, setLangOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
@@ -82,6 +83,16 @@ export default function SelectOrganizationPage() {
       setLoading(false);
     }
   }, []);
+
+  const filteredOrganizations = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return organizations;
+    return organizations.filter((org) => {
+      const nome = (org.designacao ?? "").toLowerCase();
+      const desc = (org.descricao ?? "").toLowerCase();
+      return nome.includes(q) || desc.includes(q);
+    });
+  }, [organizations, search]);
 
   function handleSelect(org: Organizacao) {
     const logotipoUrl = buildImageUrl(org) ?? "";
@@ -121,7 +132,7 @@ export default function SelectOrganizationPage() {
             onClick={() => setLangOpen((v) => !v)}
             className="flex items-center gap-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl px-3 py-2 text-sm backdrop-blur-md transition-all"
           >
-            {locale == "pt" && "🇵🇹"}
+            {locale == "pt" && "🇦🇴"}
             {locale == "en" && "🇬🇧"}
             {locale == "fr" && "🇫🇷"}
             <ChevronDown size={14} />
@@ -136,7 +147,7 @@ export default function SelectOrganizationPage() {
                 }}
                 className="w-full text-left px-2 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-800 dark:text-slate-200"
               >
-                🇵🇹 {t("lang.pt")}
+                🇦🇴 {t("lang.pt")}
               </button>
               <button
                 type="button"
@@ -195,8 +206,20 @@ export default function SelectOrganizationPage() {
           {t("empty")}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {organizations.map((org) => {
+        <>
+          <div className="mb-6">
+            <input
+              className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/60 backdrop-blur-md outline-none focus:border-white/40"
+              placeholder={t("searchPlaceholder")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          {filteredOrganizations.length == 0 ? (
+            <div className="text-center text-white/70 py-12">{t("emptySearch")}</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {filteredOrganizations.map((org) => {
             const isLoading = loadingId == org.id;
             const tipoLabel =
               org.tipo != null ? TIPO_MAP[org.tipo] ?? "Outro" : "Outro";
@@ -266,8 +289,10 @@ export default function SelectOrganizationPage() {
                 </div>
               </div>
             );
-          })}
-        </div>
+              })}
+            </div>
+          )}
+        </>
       )}
 
       <div className="text-center text-xs text-white/50 mt-16">

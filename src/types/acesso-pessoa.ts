@@ -14,6 +14,8 @@ export interface AcessoPessoa {
   imagem: string | null;
   entrada: string;
   saida: string | null;
+  intervalo_hora_permitido_inicio?: string | null;
+  intervalo_hora_permitido_fim?: string | null;
   aprovado?: number | null;
   motivo?: string | null;
   observacoes?: string | null;

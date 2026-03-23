@@ -363,6 +363,28 @@ export default function Page() {
     fetchList();
   }, [fetchList]);
 
+  const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
+    const raw = row as Record<string, unknown> | null | undefined;
+    const id =
+      Number(
+        raw?.[`${kind}_por`] ??
+          (kind == "registado" ? raw?.registadoPorId : raw?.atualizadoPorId) ??
+          0,
+      ) || null;
+    const rel = (raw?.[kind == "registado" ? "registadoPor" : "atualizadoPor"] ??
+      raw?.[`${kind}_por_user`] ??
+      null) as
+      | { id?: number | string; name?: string | null; email?: string | null }
+      | null;
+    const relId = rel?.id != null ? Number(rel.id) : null;
+    const finalId = relId && Number.isFinite(relId) ? relId : id;
+    const name = rel?.name?.trim() || rel?.email?.trim() || "";
+    if (name && finalId) return `${name} (#${finalId})`;
+    if (name) return name;
+    if (finalId) return `#${finalId}`;
+    return "—";
+  }, []);
+
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(total / Math.max(1, perPage))),
     [total, perPage],
@@ -1100,6 +1122,12 @@ export default function Page() {
               </div>
               <p>
                 <span className="ca-muted">{t("table.deliveredTo")}:</span> {deliveredName(detailRow)}
+              </p>
+              <p>
+                <span className="ca-muted">Registado por:</span> {auditActorLabel(detailRow, "registado")}
+              </p>
+              <p>
+                <span className="ca-muted">Atualizado por:</span> {auditActorLabel(detailRow, "atualizado")}
               </p>
               {buildEncomendaImageUrl(detailRow.imagem) && (
                 <img

@@ -32,6 +32,14 @@ function orgToStored(org: Organizacao, logotipoUrl: string) {
   };
 }
 
+function parseOrganizationsPayload(payload: unknown): Organizacao[] {
+  const root = payload as { data?: unknown; organizacoes?: unknown } | unknown[];
+  if (Array.isArray(root)) return root as Organizacao[];
+  if (Array.isArray(root?.data)) return root.data as Organizacao[];
+  if (Array.isArray(root?.organizacoes)) return root.organizacoes as Organizacao[];
+  return [];
+}
+
 export default function PostLogin() {
   const { data, status, refetch } = useSession();
   const router = useRouter();
@@ -62,17 +70,43 @@ export default function PostLogin() {
     const user = data.user;
     const nivel = user.nivel;
 
-    // Apenas nível 1 (admin) e 2 (gestor) têm acesso ao select-org.
-    // Operador, cliente e outros vão direto ao dashboard com a organização do user.
-    if (nivel == 1 || nivel == 2) {
+    // Admin (1), gestor (2), cliente (4) e supervisor (5) escolhem organização no select-org.
+    if (nivel == 1 || nivel == 2 || nivel == 4 || nivel == 5) {
       let cancelled = false;
       (async () => {
         try {
-          const res = await http.get<{ data: Organizacao[] }>("/organizacoes", {
-            params: { estado: 1 },
-          });
+          let list: Organizacao[] = [];
+
+          // Novo endpoint unificado no backend.
+          try {
+            const unified = await http.get(`/utilizador/${user.id}/organizacoes-permitidas`);
+            list = parseOrganizationsPayload(unified.data);
+          } catch {
+            // Fallback de compatibilidade (instâncias com endpoints antigos).
+            const candidates =
+              nivel == 1 || nivel == 2
+                ? ["/organizacoes"]
+                : [
+                    `/supervisores/${user.id}/organizacoes-permitidas`,
+                    `/utilizadores/${user.id}/organizacoes-permitidas`,
+                    `/clientes/${user.id}/organizacoes-permitidas`,
+                  ];
+
+            for (const path of candidates) {
+              try {
+                const res =
+                  path == "/organizacoes"
+                    ? await http.get<{ data: Organizacao[] }>(path, { params: { estado: 1 } })
+                    : await http.get(path);
+                list = parseOrganizationsPayload(res.data);
+                if (list.length > 0) break;
+              } catch {
+                // try next path
+              }
+            }
+          }
           if (cancelled) return;
-          const list = res.data?.data ?? [];
+          if (!Array.isArray(list)) list = [];
           localStorage.setItem(ORG_LIST_STORAGE_KEY, JSON.stringify(list));
           doneRef.current = true;
           router.replace(`/${locale}/select-org`);

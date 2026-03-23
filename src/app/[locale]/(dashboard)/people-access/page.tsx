@@ -124,6 +124,23 @@ function localDateTimeToApi(value: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
 }
 
+function apiDateTimeToLocalInput(value: string | null | undefined): string {
+  if (!value?.trim()) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function getTimingFlags(row: AcessoPessoa): { isExpiredWindow: boolean } {
+  const fimRaw = row.intervalo_hora_permitido_fim;
+  const fim = fimRaw ? new Date(fimRaw) : null;
+  const isExpiredWindow = Boolean(
+    !row.saida && fim && !Number.isNaN(fim.getTime()) && Date.now() > fim.getTime(),
+  );
+  return { isExpiredWindow };
+}
+
 function parseApiErrors(err: unknown, fallback: string): string {
   if (err && typeof err == "object" && "response" in err) {
     const data = (err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } })
@@ -188,6 +205,14 @@ async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Pro
 }
 
 function rowVisualStatus(row: AcessoPessoa, t: (k: string) => string): { key: string; className: string; label: string } {
+  const timing = getTimingFlags(row);
+  if (timing.isExpiredWindow) {
+    return {
+      key: "expired_unused",
+      label: t("status.expiredUnused"),
+      className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    };
+  }
   const ap = row.aprovado;
   if (ap == 0) {
     return {
@@ -247,7 +272,7 @@ export default function Page() {
   const [statInside, setStatInside] = useState(0);
   const [statEntriesToday, setStatEntriesToday] = useState(0);
   const [statExitsToday, setStatExitsToday] = useState(0);
-  const [statPending, setStatPending] = useState(0);
+  const [statExpiredUnused, setStatExpiredUnused] = useState(0);
 
   const [allUsers, setAllUsers] = useState<Utilizador[]>([]);
   const [anfitrioes, setAnfitrioes] = useState<Utilizador[]>([]);
@@ -277,6 +302,8 @@ export default function Page() {
   const [formAnfitriaoId, setFormAnfitriaoId] = useState("");
   const [formEntrada, setFormEntrada] = useState("");
   const [formSaida, setFormSaida] = useState("");
+  const [formIntervaloInicio, setFormIntervaloInicio] = useState("");
+  const [formIntervaloFim, setFormIntervaloFim] = useState("");
   const [formObservacoes, setFormObservacoes] = useState("");
   const [formMotivo, setFormMotivo] = useState("");
   const [formAprovado, setFormAprovado] = useState("");
@@ -373,18 +400,54 @@ export default function Page() {
     }
     setAnfitrioesLoading(true);
     try {
-      const path = isCondominio ? "/moradores" : "/colaboradores";
-      const res = await http.get<UtilizadorListResponse>(`${path}/${organizacaoId}`, {
-        params: { per_page: 200, page: 1 },
-      });
-      setAnfitrioes(res.data?.data ?? []);
+      const primaryPath = isCondominio ? "/moradores" : "/colaboradores";
+      const fallbackPath = isCondominio ? "/colaboradores" : "/moradores";
+      const merged = new Map<number, Utilizador>();
+      const loadFrom = async (path: string) => {
+        const res = await http.get<UtilizadorListResponse>(`${path}/${organizacaoId}`, {
+          params: { per_page: 200, page: 1 },
+        });
+        const rows = Array.isArray(res.data?.data) ? res.data.data : [];
+        for (const row of rows) {
+          if (typeof row?.id == "number") merged.set(row.id, row);
+        }
+      };
+
+      await loadFrom(primaryPath);
+      if (merged.size == 0) {
+        await loadFrom(fallbackPath);
+      }
+
+      // When authenticated as host, ensure current user is selectable/visible.
+      if (isHostUser && authUser?.id && !merged.has(Number(authUser.id))) {
+        merged.set(Number(authUser.id), {
+          id: Number(authUser.id),
+          tipo: Number(authUser.tipo ?? 0),
+          name: authUser.name ?? `#${authUser.id}`,
+          email: authUser.email ?? "",
+          telefone: null,
+          imagem: null,
+          estado: 1,
+          nivel: Number(authUser.nivel ?? 6),
+          genero: null,
+          site: null,
+          documento: null,
+          documento_ref: null,
+          organizacao_id: organizacaoId,
+          empresa_id: null,
+          cargo_id: null,
+          departamento_id: null,
+        } satisfies Utilizador);
+      }
+
+      setAnfitrioes(Array.from(merged.values()));
     } catch {
       setAnfitrioes([]);
       showToast(t("toast.loadHostsError"), true);
     } finally {
       setAnfitrioesLoading(false);
     }
-  }, [http, organizacaoId, isCondominio, showToast, t]);
+  }, [http, organizacaoId, isCondominio, isHostUser, authUser, showToast, t]);
 
   const fetchAllUsersForSelect = useCallback(async () => {
     if (!organizacaoId) {
@@ -487,7 +550,7 @@ export default function Page() {
       setStatInside(0);
       setStatEntriesToday(0);
       setStatExitsToday(0);
-      setStatPending(0);
+      setStatExpiredUnused(0);
       return;
     }
     setStatsLoading(true);
@@ -514,28 +577,13 @@ export default function Page() {
 
       setStatEntriesToday(todayHead.data?.total ?? 0);
 
-      let pendingTotal = 0;
-      try {
-        const pr = await http.get<AcessoPessoaListResponse>(`${API_PREFIX}/${organizacaoId}`, {
-          params: {
-            aprovado: 0,
-            per_page: 1,
-            page: 1,
-            ...(isHostUser && authUser?.id ? { anfitriao_id: Number(authUser.id) } : {}),
-          },
-        });
-        pendingTotal = pr.data?.total ?? 0;
-      } catch {
-        pendingTotal = 0;
-      }
-      setStatPending(pendingTotal);
-
       const recentItemsRaw = recent.data?.data ?? [];
       const recentItems =
         isHostUser && authUser?.id
           ? recentItemsRaw.filter((r) => Number(r.anfitriao_id) == Number(authUser.id))
           : recentItemsRaw;
       setStatInside(recentItems.filter((r) => !r.saida).length);
+      setStatExpiredUnused(recentItems.filter((r) => getTimingFlags(r).isExpiredWindow).length);
 
       let exits = 0;
       try {
@@ -562,7 +610,7 @@ export default function Page() {
       setStatInside(0);
       setStatEntriesToday(0);
       setStatExitsToday(0);
-      setStatPending(0);
+      setStatExpiredUnused(0);
     } finally {
       setStatsLoading(false);
     }
@@ -640,6 +688,28 @@ export default function Page() {
     );
   }, []);
 
+  const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
+    const raw = row as Record<string, unknown> | null | undefined;
+    const id =
+      Number(
+        raw?.[`${kind}_por`] ??
+          (kind == "registado" ? raw?.registadoPorId : raw?.atualizadoPorId) ??
+          0,
+      ) || null;
+    const rel = (raw?.[kind == "registado" ? "registadoPor" : "atualizadoPor"] ??
+      raw?.[`${kind}_por_user`] ??
+      null) as
+      | { id?: number | string; name?: string | null; email?: string | null }
+      | null;
+    const relId = rel?.id != null ? Number(rel.id) : null;
+    const finalId = relId && Number.isFinite(relId) ? relId : id;
+    const name = rel?.name?.trim() || rel?.email?.trim() || "";
+    if (name && finalId) return `${name} (#${finalId})`;
+    if (name) return name;
+    if (finalId) return `#${finalId}`;
+    return "—";
+  }, []);
+
   const destinoLabel = useCallback(
     (row: AcessoPessoa) => {
       if (row.destino == 1 && row.destino_id) {
@@ -670,6 +740,8 @@ export default function Page() {
     setFormAnfitriaoId("");
     setFormEntrada("");
     setFormSaida("");
+    setFormIntervaloInicio("");
+    setFormIntervaloFim("");
     setFormObservacoes("");
     setFormMotivo("");
     setFormAprovado("");
@@ -723,12 +795,10 @@ export default function Page() {
       }
     }
     if (row.saida) {
-      const d = new Date(row.saida);
-      if (!Number.isNaN(d.getTime())) {
-        const pad = (n: number) => String(n).padStart(2, "0");
-        setFormSaida(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
-      }
+      setFormSaida(apiDateTimeToLocalInput(row.saida));
     } else setFormSaida("");
+    setFormIntervaloInicio(apiDateTimeToLocalInput(row.intervalo_hora_permitido_inicio));
+    setFormIntervaloFim(apiDateTimeToLocalInput(row.intervalo_hora_permitido_fim));
     setFormObservacoes(row.observacoes ?? "");
     setFormMotivo(row.motivo?.trim() ?? "");
     setFormAprovado(row.aprovado != null ? String(row.aprovado) : "");
@@ -792,6 +862,10 @@ export default function Page() {
     }
 
     const saidaApi = formSaida.trim() ? localDateTimeToApi(formSaida) : null;
+    const intervaloInicioApi = formIntervaloInicio.trim()
+      ? localDateTimeToApi(formIntervaloInicio)
+      : null;
+    const intervaloFimApi = formIntervaloFim.trim() ? localDateTimeToApi(formIntervaloFim) : null;
     const docRefStr = formDocumentoRef.trim();
     const { documento, documento_tipo: docTipoApi } = mapDocumentUiToApi(formDocumentUi);
 
@@ -804,6 +878,8 @@ export default function Page() {
       anfitriao_id: formAnfitriaoId.trim() ? Number(formAnfitriaoId) : null,
       entrada: entradaApi,
       saida: saidaApi,
+      intervalo_hora_permitido_inicio: intervaloInicioApi,
+      intervalo_hora_permitido_fim: intervaloFimApi,
       qtd: qtdSafe,
       observacoes: formObservacoes.trim() || null,
       motivo: formMotivo.trim() || null,
@@ -980,14 +1056,15 @@ export default function Page() {
         bg: "bg-slate-100/60 dark:bg-slate-800/40",
       },
       {
-        label: t("stats.pending"),
-        value: statsLoading ? "…" : statPending,
+        label: t("stats.expiredUnused"),
+        value: statsLoading ? "…" : statExpiredUnused,
         icon: Clock,
-        color: "text-amber-600",
-        bg: "bg-amber-100/60 dark:bg-amber-900/20",
+        color: "text-red-600",
+        bg: "bg-red-100/60 dark:bg-red-900/20",
+        hint: t("stats.expiredUnusedHint"),
       },
     ],
-    [statInside, statEntriesToday, statExitsToday, statPending, statsLoading, t],
+    [statInside, statEntriesToday, statExitsToday, statExpiredUnused, statsLoading, t],
   );
 
   const displayName = (row: AcessoPessoa) =>
@@ -1117,11 +1194,12 @@ export default function Page() {
         ) : (
           <>
             <div className="hidden overflow-x-auto desktop-auth:block">
-              <table className="w-full text-sm min-w-[1540px]">
+              <table className="w-full text-sm min-w-[1720px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/40">
                   <tr>
                     <th className="px-4 py-3 text-left">{t("table.entry")}</th>
                     <th className="px-4 py-3 text-left">{t("table.exit")}</th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap">{t("table.validityWindow")}</th>
                     <th className="px-4 py-3 text-left">{t("table.status")}</th>
                     <th className="px-4 py-3 text-left">{t("table.person")}</th>
                     <th className="px-4 py-3 text-left">{t("table.name")}</th>
@@ -1139,7 +1217,7 @@ export default function Page() {
                 <tbody className="divide-y ca-border">
                   {list.length == 0 ? (
                     <tr>
-                      <td colSpan={14} className="px-4 py-8 text-center ca-muted">
+                      <td colSpan={15} className="px-4 py-8 text-center ca-muted">
                         {t("table.empty")}
                       </td>
                     </tr>
@@ -1154,6 +1232,11 @@ export default function Page() {
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             {row.saida ? new Date(row.saida).toLocaleString() : "—"}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            {row.intervalo_hora_permitido_inicio || row.intervalo_hora_permitido_fim
+                              ? `${row.intervalo_hora_permitido_inicio ? new Date(row.intervalo_hora_permitido_inicio).toLocaleString() : "—"} - ${row.intervalo_hora_permitido_fim ? new Date(row.intervalo_hora_permitido_fim).toLocaleString() : "—"}`
+                              : "—"}
                           </td>
                           <td className="px-4 py-3">
                             <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${st.className}`}>
@@ -1279,6 +1362,14 @@ export default function Page() {
                             <div className="text-xs font-medium ca-muted">{t("table.exit")}</div>
                             <div className="mt-0.5 font-medium">
                               {row.saida ? new Date(row.saida).toLocaleString() : "—"}
+                            </div>
+                          </div>
+                          <div className="sm:col-span-2">
+                            <div className="text-xs font-medium ca-muted">{t("table.validityWindow")}</div>
+                            <div className="mt-0.5 font-medium">
+                              {row.intervalo_hora_permitido_inicio || row.intervalo_hora_permitido_fim
+                                ? `${row.intervalo_hora_permitido_inicio ? new Date(row.intervalo_hora_permitido_inicio).toLocaleString() : "—"} - ${row.intervalo_hora_permitido_fim ? new Date(row.intervalo_hora_permitido_fim).toLocaleString() : "—"}`
+                                : "—"}
                             </div>
                           </div>
                         </div>
@@ -1433,6 +1524,14 @@ export default function Page() {
                 </dd>
               </div>
               <div>
+                <dt className="ca-muted">Registado por</dt>
+                <dd>{auditActorLabel(detailRow, "registado")}</dd>
+              </div>
+              <div>
+                <dt className="ca-muted">Atualizado por</dt>
+                <dd>{auditActorLabel(detailRow, "atualizado")}</dd>
+              </div>
+              <div>
                 <dt className="ca-muted">{t("table.destination")}</dt>
                 <dd>{destinoLabel(detailRow)}</dd>
               </div>
@@ -1447,6 +1546,14 @@ export default function Page() {
               <div>
                 <dt className="ca-muted">{t("table.exit")}</dt>
                 <dd>{detailRow.saida ? new Date(detailRow.saida).toLocaleString() : "—"}</dd>
+              </div>
+              <div>
+                <dt className="ca-muted">{t("table.validityWindow")}</dt>
+                <dd>
+                  {detailRow.intervalo_hora_permitido_inicio || detailRow.intervalo_hora_permitido_fim
+                    ? `${detailRow.intervalo_hora_permitido_inicio ? new Date(detailRow.intervalo_hora_permitido_inicio).toLocaleString() : "—"} - ${detailRow.intervalo_hora_permitido_fim ? new Date(detailRow.intervalo_hora_permitido_fim).toLocaleString() : "—"}`
+                    : "—"}
+                </dd>
               </div>
               {detailRow.observacoes ? (
                 <div>
@@ -1663,6 +1770,20 @@ export default function Page() {
                   className="ca-input w-full"
                   value={formSaida}
                   onChange={(e) => setFormSaida(e.target.value)}
+                />
+                <label className="text-sm font-medium">{t("form.validFrom")}</label>
+                <input
+                  type="datetime-local"
+                  className="ca-input w-full"
+                  value={formIntervaloInicio}
+                  onChange={(e) => setFormIntervaloInicio(e.target.value)}
+                />
+                <label className="text-sm font-medium">{t("form.validUntil")}</label>
+                <input
+                  type="datetime-local"
+                  className="ca-input w-full"
+                  value={formIntervaloFim}
+                  onChange={(e) => setFormIntervaloFim(e.target.value)}
                 />
               </div>
 

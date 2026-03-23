@@ -724,6 +724,28 @@ export default function Page() {
   const efetivos = detail?.efetivos ?? [];
   const matRows = detail?.materiais ?? [];
 
+  const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
+    const raw = row as Record<string, unknown> | null | undefined;
+    const id =
+      Number(
+        raw?.[`${kind}_por`] ??
+          (kind == "registado" ? raw?.registadoPorId : raw?.atualizadoPorId) ??
+          0,
+      ) || null;
+    const rel = (raw?.[kind == "registado" ? "registadoPor" : "atualizadoPor"] ??
+      raw?.[`${kind}_por_user`] ??
+      null) as
+      | { id?: number | string; name?: string | null; email?: string | null }
+      | null;
+    const relId = rel?.id != null ? Number(rel.id) : null;
+    const finalId = relId && Number.isFinite(relId) ? relId : id;
+    const name = rel?.name?.trim() || rel?.email?.trim() || "";
+    if (name && finalId) return `${name} (#${finalId})`;
+    if (name) return name;
+    if (finalId) return `#${finalId}`;
+    return "—";
+  }, []);
+
   const materialLabel = (m?: Material | null) => {
     if (!m) return "—";
     const d = m.designacao?.trim();
@@ -1055,6 +1077,14 @@ export default function Page() {
                 </div>
               ) : detailTab === "detalhes" ? (
                 <div className="mx-auto max-w-xl space-y-3">
+                  <div className="rounded-xl border ca-border bg-[var(--panel-alt)] p-3 text-sm space-y-1">
+                    <p>
+                      <span className="ca-muted">Registado por:</span> {auditActorLabel(detail, "registado")}
+                    </p>
+                    <p>
+                      <span className="ca-muted">Atualizado por:</span> {auditActorLabel(detail, "atualizado")}
+                    </p>
+                  </div>
                   <div>
                     <label className="mb-1 block text-xs ca-muted">{t("form.dataHora")}</label>
                     <input

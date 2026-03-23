@@ -13,6 +13,8 @@ export interface AcessoVeiculo {
   imagem: string | null;
   entrada: string;
   saida: string | null;
+  intervalo_hora_permitido_inicio?: string | null;
+  intervalo_hora_permitido_fim?: string | null;
   tem_carga?: boolean | null;
   matricula: string | null;
   tipo_veiculo?: number | null;

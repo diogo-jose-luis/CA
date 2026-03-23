@@ -14,6 +14,26 @@ function getLocaleFromPathname(pathname: string): string {
   return match?.[1] ?? "pt";
 }
 
+function shouldForceLoginFromAuthError(error: unknown): boolean {
+  const status = (error as { response?: { status?: number } })?.response?.status;
+  if (status === 419) return true;
+  if (status !== 401) return false;
+
+  const data = (error as { response?: { data?: { message?: string; error?: string } } })?.response?.data;
+  const raw = `${data?.message ?? ""} ${data?.error ?? ""}`.toLowerCase();
+
+  // Só forçar login quando o 401 indica autenticação inválida/expirada.
+  return (
+    raw.includes("unauthenticated") ||
+    raw.includes("não autenticado") ||
+    raw.includes("nao autenticado") ||
+    raw.includes("token") ||
+    raw.includes("expired") ||
+    raw.includes("expirad") ||
+    raw.includes("jwt")
+  );
+}
+
 export function useAuth() {
   const { data } = useSession();
   const session = data;
@@ -41,8 +61,7 @@ export function useAuth() {
     const interceptorId = http.interceptors.response.use(
       (response) => response,
       async (error) => {
-        const status = error?.response?.status;
-        if (status === 401 || status === 419) {
+        if (shouldForceLoginFromAuthError(error)) {
           if (typeof window !== "undefined") {
             const state = window as Window & { __caAuthRedirecting?: boolean };
             if (!state.__caAuthRedirecting) {

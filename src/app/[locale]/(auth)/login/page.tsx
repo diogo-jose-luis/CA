@@ -146,7 +146,7 @@ export default function LoginPage() {
             onClick={() => setLangOpen((v) => !v)}
             className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-sm shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/90 tablet-app:min-h-12 tablet-app:px-4 tablet-app:text-base"
           >
-            {locale == "pt" && "🇵🇹"}
+            {locale == "pt" && "🇦🇴"}
             {locale == "en" && "🇬🇧"}
             {locale == "fr" && "🇫🇷"}
             <ChevronDown className="size-3.5 shrink-0 tablet-app:size-5" aria-hidden />
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 onClick={() => changeLanguage("pt")}
                 className="w-full rounded-xl px-2 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700 tablet-app:min-h-12 tablet-app:px-3 tablet-app:text-base"
               >
-                🇵🇹 {t("lang.pt")}
+                🇦🇴 {t("lang.pt")}
               </button>
 
               <button

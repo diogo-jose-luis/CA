@@ -436,6 +436,28 @@ export default function Page() {
     }
   };
 
+  const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
+    const raw = row as Record<string, unknown> | null | undefined;
+    const id =
+      Number(
+        raw?.[`${kind}_por`] ??
+          (kind == "registado" ? raw?.registadoPorId : raw?.atualizadoPorId) ??
+          0,
+      ) || null;
+    const rel = (raw?.[kind == "registado" ? "registadoPor" : "atualizadoPor"] ??
+      raw?.[`${kind}_por_user`] ??
+      null) as
+      | { id?: number | string; name?: string | null; email?: string | null }
+      | null;
+    const relId = rel?.id != null ? Number(rel.id) : null;
+    const finalId = relId && Number.isFinite(relId) ? relId : id;
+    const name = rel?.name?.trim() || rel?.email?.trim() || "";
+    if (name && finalId) return `${name} (#${finalId})`;
+    if (name) return name;
+    if (finalId) return `#${finalId}`;
+    return "—";
+  }, []);
+
   const openNew = () => {
     setEditingId(null);
     const now = new Date();
@@ -1073,6 +1095,12 @@ export default function Page() {
                   </p>
                   <p>
                     <span className="ca-muted">{t("form.local")}:</span> {localLabel(viewing)}
+                  </p>
+                  <p>
+                    <span className="ca-muted">Registado por:</span> {auditActorLabel(viewing, "registado")}
+                  </p>
+                  <p>
+                    <span className="ca-muted">Atualizado por:</span> {auditActorLabel(viewing, "atualizado")}
                   </p>
                   <p>
                     <span className="ca-muted">{t("table.description")}:</span>

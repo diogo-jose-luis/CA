@@ -73,6 +73,7 @@ export default function TabletOperatorBottomNav({ nivel, items }: Props) {
 
   const base = `/${locale}`;
   const isSupervisor = nivel == 5;
+  const isHost = nivel == 6;
 
   const primaryItems = useMemo(() => {
     if (isSupervisor) {
@@ -83,13 +84,23 @@ export default function TabletOperatorBottomNav({ nivel, items }: Props) {
         navItemFromHref(items, `${base}/vehicle-access`, t("vehicles"), Truck),
       ];
     }
+
+    if (isHost) {
+      return [
+        navItemFromHref(items, `${base}/dashboard`, t("home"), Home),
+        navItemFromHref(items, `${base}/people-access`, t("people"), UsersRound),
+        navItemFromHref(items, `${base}/vehicle-access`, t("vehicles"), Truck),
+        navItemFromHref(items, `${base}/avisos`, t("alerts"), Bell),
+      ];
+    }
+
     return [
       navItemFromHref(items, `${base}/dashboard`, t("home"), Home),
       navItemFromHref(items, `${base}/people-access`, t("people"), UsersRound),
       navItemFromHref(items, `${base}/vehicle-access`, t("vehicles"), Truck),
-      navItemFromHref(items, `${base}/avisos`, t("alerts"), Bell),
+      navItemFromHref(items, `${base}/ocorrencias`, t("incidents"), AlertTriangle),
     ];
-  }, [base, isSupervisor, items, t]);
+  }, [base, isHost, isSupervisor, items, t]);
 
   const primarySet = new Set(primaryItems.map((item) => item.href));
   const drawerItems = useMemo(

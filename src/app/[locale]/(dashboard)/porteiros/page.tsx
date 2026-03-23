@@ -14,6 +14,7 @@ import {
   Trash2,
   User,
   Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
@@ -21,6 +22,7 @@ import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
 const API_PREFIX = "/guardas";
 const PORTEIRO_TIPO = 5;
 const ORG_KEY = "ca.selected.organization";
+type LookupItem = { id: number; nome: string };
 const DOC_LABEL: Record<number, string> = {
   1: "Bilhete",
   2: "Passaporte",
@@ -50,6 +52,8 @@ export default function Page() {
   const [bulkActionLoading, setBulkActionLoading] = useState<
     "ativar" | "desativar" | "eliminar" | null
   >(null);
+  const [cargosAtivos, setCargosAtivos] = useState<LookupItem[]>([]);
+  const [lookupLoading, setLookupLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -58,6 +62,7 @@ export default function Page() {
     name: "",
     email: "",
     telefone: "",
+    cargo_id: "",
     documento: "",
     documento_ref: "",
     imagem: null as File | null,
@@ -99,6 +104,61 @@ export default function Page() {
     if (value == null) return "—";
     return DOC_LABEL[value] ?? `Tipo ${value}`;
   }, []);
+
+  const parseLookupItems = (payload: unknown): LookupItem[] => {
+    const root = payload as
+      | { data?: unknown; cargos?: unknown; items?: unknown }
+      | unknown[];
+    const source = Array.isArray(root)
+      ? root
+      : Array.isArray(root?.data)
+        ? root.data
+        : Array.isArray(root?.cargos)
+          ? root.cargos
+          : Array.isArray(root?.items)
+            ? root.items
+            : [];
+    return source
+      .map((item) => {
+        const raw = item as {
+          id?: number | string;
+          nome?: string;
+          designacao?: string;
+          descricao?: string;
+          name?: string;
+        };
+        const id = typeof raw.id == "number" ? raw.id : Number(raw.id);
+        const nome =
+          typeof raw.nome == "string"
+            ? raw.nome.trim()
+            : typeof raw.designacao == "string"
+              ? raw.designacao.trim()
+              : typeof raw.descricao == "string"
+                ? raw.descricao.trim()
+                : typeof raw.name == "string"
+                  ? raw.name.trim()
+                  : "";
+        if (!Number.isFinite(id) || id <= 0 || !nome) return null;
+        return { id, nome };
+      })
+      .filter((v): v is LookupItem => v != null);
+  };
+
+  const fetchLookupData = useCallback(async () => {
+    if (!organizacaoId) {
+      setCargosAtivos([]);
+      return;
+    }
+    setLookupLoading(true);
+    try {
+      const res = await http.get(`/cargos/${organizacaoId}/ativados`);
+      setCargosAtivos(parseLookupItems(res.data));
+    } catch {
+      setCargosAtivos([]);
+    } finally {
+      setLookupLoading(false);
+    }
+  }, [http, organizacaoId]);
 
   const fetchList = useCallback(async () => {
     let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -153,6 +213,10 @@ export default function Page() {
   }, [fetchList]);
 
   useEffect(() => {
+    fetchLookupData();
+  }, [fetchLookupData]);
+
+  useEffect(() => {
     setSelectedIds([]);
   }, [list]);
 
@@ -162,6 +226,7 @@ export default function Page() {
       name: "",
       email: "",
       telefone: "",
+      cargo_id: "",
       documento: "",
       documento_ref: "",
       imagem: null,
@@ -176,6 +241,7 @@ export default function Page() {
       name: u.name ?? "",
       email: u.email ?? "",
       telefone: u.telefone ?? "",
+      cargo_id: u.cargo?.id ? String(u.cargo.id) : "",
       documento: u.documento != null ? String(u.documento) : "",
       documento_ref: u.documento_ref ?? "",
       imagem: null,
@@ -216,6 +282,7 @@ export default function Page() {
       if (form.email.trim()) formData.append("email", form.email.trim());
       formData.append("telefone", form.telefone.trim());
       formData.append("tipo", String(PORTEIRO_TIPO));
+      if (form.cargo_id) formData.append("cargo_id", form.cargo_id);
       if (["1", "2", "3"].includes(form.documento))
         formData.append("documento", form.documento);
       formData.append("documento_ref", form.documento_ref.trim());
@@ -524,6 +591,9 @@ export default function Page() {
                   <th className="px-4 py-3 text-left font-medium">
                     {t("table.documentRef")}
                   </th>
+                  <th className="px-4 py-3 text-left font-medium">{t("table.phone")}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t("table.email")}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t("table.cargo")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.status")}</th>
                   <th className="px-4 py-3 text-right font-medium">{t("table.actions")}</th>
                 </tr>
@@ -580,6 +650,9 @@ export default function Page() {
                       <td className="px-4 py-3 ca-muted">
                         {row.documento_ref ?? "—"}
                       </td>
+                      <td className="px-4 py-3">{row.telefone ?? "—"}</td>
+                      <td className="px-4 py-3 ca-muted">{row.email ?? "—"}</td>
+                      <td className="px-4 py-3">{row.cargo?.nome ?? "—"}</td>
                       <td className="px-4 py-3">
                         {row.estado == 1 ? (
                           <span className="text-green-600 dark:text-green-400 text-xs font-medium">
@@ -696,6 +769,36 @@ export default function Page() {
                     setForm((f) => ({ ...f, telefone: e.target.value }))
                   }
                 />
+                <select
+                  className="ca-input"
+                  value={form.cargo_id}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, cargo_id: e.target.value }))
+                  }
+                  disabled={lookupLoading}
+                >
+                  <option value="">{t("form.cargo")}</option>
+                  {cargosAtivos.map((cargo) => (
+                    <option key={cargo.id} value={cargo.id}>
+                      {cargo.nome}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="ca-icon-btn"
+                    title={t("actions.refreshCargos")}
+                    onClick={() => void fetchLookupData()}
+                    disabled={lookupLoading}
+                  >
+                    {lookupLoading ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <RefreshCw size={16} />
+                    )}
+                  </button>
+                </div>
                 <select
                   className="ca-input"
                   value={form.documento}

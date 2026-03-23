@@ -23,6 +23,7 @@ import type {
 import { NIVEL_LABEL } from "@/types/utilizador";
 
 const API_PREFIX = "/utilizadores";
+const API_GLOBAL_PREFIX = "/utilizadores-globais/nivel_acesso";
 const ORG_KEY = "ca.selected.organization";
 
 /* ================
@@ -68,6 +69,7 @@ export default function Page() {
 
   const [filtroNome, setFiltroNome] = useState("");
   const [filtroEmail, setFiltroEmail] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState<string>("");
   const [filtroNivel, setFiltroNivel] = useState<string>("");
   const [filtroEstado, setFiltroEstado] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -82,6 +84,7 @@ export default function Page() {
     name: "",
     email: "",
     telefone: "",
+    tipo: "" as string,
     nivel: "" as string,
     estado: 1,
     imagem: null as File | null,
@@ -93,6 +96,15 @@ export default function Page() {
     email: string;
   } | null>(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const getTipoLabel = useCallback(
+    (tipo: number | null | undefined) => {
+      if (tipo == null) return "—";
+      const key = `types.${tipo}` as never;
+      const translated = t(key);
+      return translated == key ? String(tipo) : translated;
+    },
+    [t]
+  );
 
   useEffect(() => {
     try {
@@ -137,23 +149,44 @@ export default function Page() {
     loadingTimeout = setTimeout(() => setLoading(false), 12000);
     try {
       const params: Record<string, string | number> = {
-        per_page: perPage,
-        page: currentPage,
+        organizacao_id: organizacaoId,
       };
-      if (filtroNome.trim()) params.nome = filtroNome.trim();
-      if (filtroEmail.trim()) params.email = filtroEmail.trim();
-      if (filtroNivel && ["1", "2", "3", "4"].includes(filtroNivel))
-        params.nivel = Number(filtroNivel);
-      if (filtroEstado == "0" || filtroEstado == "1") params.estado = Number(filtroEstado);
-
+      if (filtroEstado == "0" || filtroEstado == "1") {
+        params.estado = Number(filtroEstado);
+      }
       const res = await http.get<UtilizadorListResponse>(
-        `${API_PREFIX}/${organizacaoId}`,
+        API_GLOBAL_PREFIX,
         { params }
       );
-      setList(res.data?.data ?? []);
-      setTotal(res.data?.total ?? 0);
-      setPerPage(res.data?.per_page ?? 15);
-      setCurrentPage(res.data?.current_page ?? 1);
+      const payload = res.data as unknown as {
+        utilizadores?: Utilizador[];
+        data?: Utilizador[];
+      };
+      const users = Array.isArray(payload?.utilizadores)
+        ? payload.utilizadores
+        : Array.isArray(payload?.data)
+          ? payload.data
+          : [];
+
+      const nameFilter = filtroNome.trim().toLowerCase();
+      const emailFilter = filtroEmail.trim().toLowerCase();
+      const filtered = users.filter((u) => {
+        if (nameFilter && !(u.name ?? "").toLowerCase().includes(nameFilter)) return false;
+        if (emailFilter && !(u.email ?? "").toLowerCase().includes(emailFilter)) return false;
+        if (filtroTipo && ["1", "2", "3", "4", "5", "6"].includes(filtroTipo) && Number(u.tipo) != Number(filtroTipo)) return false;
+        if (filtroNivel && ["1", "2", "3", "4", "5", "6"].includes(filtroNivel) && Number(u.nivel) != Number(filtroNivel)) return false;
+        return true;
+      });
+
+      const totalFiltered = filtered.length;
+      const computedTotalPages = Math.max(1, Math.ceil(totalFiltered / perPage));
+      const safePage = Math.min(currentPage, computedTotalPages);
+      if (safePage != currentPage) setCurrentPage(safePage);
+      const start = (safePage - 1) * perPage;
+      const end = start + perPage;
+
+      setList(filtered.slice(start, end));
+      setTotal(totalFiltered);
     } catch {
       showToast(t("toast.loadError"), true);
       setList([]);
@@ -169,6 +202,7 @@ export default function Page() {
     currentPage,
     filtroNome,
     filtroEmail,
+    filtroTipo,
     filtroNivel,
     filtroEstado,
     showToast,
@@ -189,6 +223,7 @@ export default function Page() {
       name: "",
       email: "",
       telefone: "",
+      tipo: "",
       nivel: "",
       estado: 1,
       imagem: null,
@@ -203,6 +238,7 @@ export default function Page() {
       name: u.name ?? "",
       email: u.email ?? "",
       telefone: u.telefone ?? "",
+      tipo: u.tipo != null ? String(u.tipo) : "",
       nivel: u.nivel != null ? String(u.nivel) : "",
       estado: u.estado ?? 1,
       imagem: null,
@@ -249,6 +285,8 @@ export default function Page() {
       formData.append("email", form.email.trim());
       formData.append("telefone", form.telefone.trim());
       formData.append("estado", String(form.estado));
+      if (form.tipo && ["1", "2", "3", "4", "5", "6"].includes(form.tipo))
+        formData.append("tipo", form.tipo);
       if (form.nivel && ["1", "2", "3", "4", "5", "6"].includes(form.nivel))
         formData.append("nivel", form.nivel);
       if (form.imagem) formData.append("imagem", form.imagem);
@@ -505,7 +543,7 @@ export default function Page() {
             setCurrentPage(1);
             fetchList();
           }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-3"
+          className="grid grid-cols-1 md:grid-cols-5 gap-3"
         >
           <input
             className="ca-input"
@@ -513,6 +551,19 @@ export default function Page() {
             value={filtroNome}
             onChange={(e) => setFiltroNome(e.target.value)}
           />
+          <select
+            className="ca-input"
+            value={filtroTipo}
+            onChange={(e) => setFiltroTipo(e.target.value)}
+          >
+            <option value="">{t("filters.type")}</option>
+            <option value="1">{t("types.user")}</option>
+            <option value="2">{t("types.guard")}</option>
+            <option value="3">{t("types.client")}</option>
+            <option value="4">{t("types.supplier")}</option>
+            <option value="5">{t("types.guest")}</option>
+            <option value="6">{t("types.resident")}</option>
+          </select>
           <select
             className="ca-input"
             value={filtroNivel}
@@ -541,7 +592,7 @@ export default function Page() {
             <option value="1">{t("status.active")}</option>
             <option value="0">{t("status.inactive")}</option>
           </select>
-          <button type="submit" className="ca-btn md:col-span-4">
+          <button type="submit" className="ca-btn md:col-span-5">
             {t("filters.apply")}
           </button>
         </form>
@@ -615,6 +666,7 @@ export default function Page() {
                   <th className="px-4 py-3 text-left font-medium">#</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.photo")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.name")}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t("table.type")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.level")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.email")}</th>
                   <th className="px-4 py-3 text-left font-medium">{t("table.phone")}</th>
@@ -664,6 +716,9 @@ export default function Page() {
                         </div>
                       </td>
                       <td className="px-4 py-3 font-medium">{row.name}</td>
+                      <td className="px-4 py-3">
+                        <span className="ca-muted">{getTipoLabel(row.tipo)}</span>
+                      </td>
                       <td className="px-4 py-3">
                         {row.nivel != null ? (
                           <NivelBadge nivel={row.nivel} />
@@ -814,6 +869,19 @@ export default function Page() {
                   value={form.telefone}
                   onChange={(e) => setForm((f) => ({ ...f, telefone: e.target.value }))}
                 />
+                <select
+                  className="ca-input"
+                  value={form.tipo}
+                  onChange={(e) => setForm((f) => ({ ...f, tipo: e.target.value }))}
+                >
+                  <option value="">{t("form.type")}</option>
+                  <option value="1">{t("types.user")}</option>
+                  <option value="2">{t("types.guard")}</option>
+                  <option value="3">{t("types.client")}</option>
+                  <option value="4">{t("types.supplier")}</option>
+                  <option value="5">{t("types.guest")}</option>
+                  <option value="6">{t("types.resident")}</option>
+                </select>
                 <select
                   className="ca-input"
                   value={form.nivel}

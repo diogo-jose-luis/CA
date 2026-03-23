@@ -97,6 +97,7 @@
     "suppliers": "Fornecedores",
     "clients": "Clientes",
     "guards": "Efetivos",
+    "supervisorPermissions": "Permissões de supervisores",
     "users": "Utilizadores",
     "settings": "Configurações",
 
@@ -129,6 +130,8 @@
     "collapseMenu": "Colapsar menu",
     "loading": "A carregar organizações…",
     "empty": "Nenhuma organização ativa disponível.",
+    "searchPlaceholder": "Pesquisar organização por nome ou descrição…",
+    "emptySearch": "Nenhuma organização corresponde ao texto pesquisado.",
     "lang": {
       "pt": "Português",
       "en": "Inglês",
@@ -183,7 +186,8 @@
       "insideHint": "Contagem com base nos últimos 250 registos sem data de saída.",
       "entriesToday": "Entradas hoje",
       "exitsRegistered": "Saídas hoje",
-      "pending": "Pendentes de aprovação"
+      "expiredUnused": "Acessos expirados por usar",
+      "expiredUnusedHint": "Janela de validade terminada e sem saída registada."
     },
 
     "filters": {
@@ -218,7 +222,8 @@
       "inside": "No interior",
       "left": "Saiu",
       "late": "Atrasado / longa permanência",
-      "pending": "Pendente"
+      "pending": "Pendente",
+      "expiredUnused": "Expirado por usar"
     },
 
     "table": {
@@ -235,6 +240,7 @@
       "host": "Anfitrião",
       "entry": "Entrada",
       "exit": "Saída",
+      "validityWindow": "Janela de validade",
       "status": "Estado",
       "actions": "Ações",
       "empty": "Sem registos."
@@ -320,6 +326,8 @@
       "documentRefPlaceholder": "Número ou referência do documento",
       "entry": "Data e hora de entrada",
       "exit": "Data e hora de saída (opcional)",
+      "validFrom": "Válido desde (opcional)",
+      "validUntil": "Válido até (opcional)",
       "qtd": "Quantidade de pessoas",
       "qtdHint": "Número de pessoas associadas a este acesso (mínimo 1).",
       "approval": "Aprovação",
@@ -372,8 +380,8 @@
       "insideHint": "Com base nos últimos 250 registos sem hora de saída.",
       "entriesToday": "Entradas hoje",
       "exitsRegistered": "Saídas hoje",
-      "pendingIrregular": "Permanência prolongada",
-      "pendingIrregularHint": "Ainda no interior há mais de 8 horas (mesma amostra)."
+      "expiredUnused": "Acessos expirados por usar",
+      "expiredUnusedHint": "Janela de validade terminada e sem saída registada."
     },
 
     "details": {
@@ -414,6 +422,7 @@
       "hostContact": "Contacto do anfitrião",
       "entry": "Entrada",
       "exit": "Saída",
+      "validityWindow": "Janela de validade",
       "status": "Estado",
       "approval": "Aprovação",
       "actions": "Ações",
@@ -443,7 +452,8 @@
     "status": {
       "inside": "No interior",
       "left": "Saiu",
-      "late": "Atrasado / permanência longa"
+      "late": "Atrasado / permanência longa",
+      "expiredUnused": "Expirado por usar"
     },
 
     "aprovado": {
@@ -526,6 +536,8 @@
       "documentRefPlaceholder": "Número ou referência do documento",
       "entry": "Data e hora de entrada",
       "exit": "Data e hora de saída (opcional)",
+      "validFrom": "Válido desde (opcional)",
+      "validUntil": "Válido até (opcional)",
       "aprovado": "Estado de aprovação",
       "motivo": "Motivo",
       "motivoPlaceholder": "Motivo da rejeição ou notas sobre a aprovação",
@@ -669,44 +681,85 @@
   },
   "reports": {
     "title": "Relatórios",
-    "subtitle": "Geração e exportação de relatórios operacionais e administrativos.",
+    "subtitle": "Exportação em PDF dos relatórios disponíveis na API. Escolha o mês e o ano (calendário completo) e utilize os ícones: exemplo (dados ilustrativos) ou real (dados da organização).",
 
-    "stats": {
-      "generatedMonth": "Relatórios Gerados (Mês)",
-      "accessReports": "Relatórios de Acessos",
-      "vehicleReports": "Relatórios de Veículos",
-      "adminReports": "Relatórios Administrativos"
+    "period": {
+      "title": "Período do relatório",
+      "hint": "Todos os PDFs abaixo usam este mês e ano (do 1.º ao último dia do mês)."
     },
 
-    "filters": {
-      "reportType": "Tipo de relatório",
-      "apply": "Aplicar filtros"
+    "sections": {
+      "general": "Relatório geral",
+      "byModule": "Relatórios por módulo"
     },
 
-    "modules": {
-      "access": "Acessos",
-      "vehicles": "Veículos",
-      "cards": "Cartões",
-      "residences": "Moradias",
-      "notices": "Avisos"
-    },
-
-    "available": "Relatórios disponíveis",
     "module": "Módulo",
 
-    "history": {
-      "title": "Histórico de relatórios gerados",
-      "report": "Relatório",
-      "period": "Período",
-      "format": "Formato",
-      "generated": "Gerado em",
-      "actions": "Ações"
+    "errors": {
+      "noOrganization": "Selecione uma organização para exportar.",
+      "invalidPeriod": "Indique um mês (1–12) e um ano (2000–2100) válidos.",
+      "exportFailed": "Não foi possível exportar o PDF. Verifique as permissões e tente novamente."
     },
 
     "actions": {
-      "generatePDF": "Gerar PDF",
-      "generateExcel": "Gerar Excel",
-      "view": "Visualizar"
+      "exportSamplePdf": "Exportar PDF de exemplo",
+      "exportRealPdf": "Exportar PDF com dados reais"
+    },
+
+    "generalReport": {
+      "title": "Relatório mensal geral",
+      "subtitle": "Visão consolidada mensal (conforme modelo da API).",
+      "year": "Ano",
+      "export": "Exportar",
+      "exporting": "A exportar...",
+      "exportSampleTitle": "Exportar PDF (exemplo)",
+      "exportRealTitle": "Exportar PDF (real)",
+      "exportingSample": "A exportar PDF de exemplo…",
+      "exportingReal": "A exportar PDF com dados reais…",
+      "exportHint": "Exemplo: dados ilustrativos. Real: dados da organização.",
+      "months": {
+        "1": "Janeiro",
+        "2": "Fevereiro",
+        "3": "Março",
+        "4": "Abril",
+        "5": "Maio",
+        "6": "Junho",
+        "7": "Julho",
+        "8": "Agosto",
+        "9": "Setembro",
+        "10": "Outubro",
+        "11": "Novembro",
+        "12": "Dezembro"
+      },
+      "errors": {
+        "noOrganization": "Selecione uma organização para exportar o relatório.",
+        "invalidMonth": "Informe um mês válido (1-12).",
+        "invalidYear": "Informe um ano válido (2000-2100).",
+        "exportFailed": "Não foi possível exportar o relatório geral."
+      }
+    },
+
+    "periodReports": {
+      "peopleAccess": {
+        "title": "Relatório de acesso por pessoas",
+        "module": "Acessos"
+      },
+      "vehicleAccess": {
+        "title": "Relatório de acesso por veículos",
+        "module": "Veículos"
+      },
+      "occurrences": {
+        "title": "Relatório de ocorrências",
+        "module": "Ocorrências"
+      },
+      "notices": {
+        "title": "Relatório de avisos",
+        "module": "Avisos"
+      },
+      "supervisions": {
+        "title": "Relatório de supervisões",
+        "module": "Supervisões"
+      }
     }
   },
   "occurrences": {
@@ -1047,6 +1100,43 @@
       "deleteOne": "Eliminar este registo de entrega de chave?"
     }
   },
+  "supervisorPermissoesPage": {
+    "title": "Permissões de Supervisores",
+    "subtitle": "Vincule e desvincule supervisores à organização selecionada.",
+    "forbidden": "Sem permissão para gerir vínculos de supervisores.",
+    "hint": "Supervisores vinculados poderão selecionar esta organização ao iniciar sessão.",
+    "linkForm": {
+      "title": "Vincular supervisor",
+      "selectOrganization": "Selecionar organização",
+      "refreshOrganizations": "Atualizar organizações",
+      "selectSupervisor": "Selecionar supervisor",
+      "refreshSupervisors": "Atualizar supervisores",
+      "submit": "Vincular"
+    },
+    "table": {
+      "supervisor": "Supervisor",
+      "email": "E-mail",
+      "id": "ID",
+      "actions": "Ações",
+      "empty": "Nenhum supervisor vinculado."
+    },
+    "actions": {
+      "unlink": "Desvincular"
+    },
+    "toast": {
+      "orgRequired": "Selecione uma organização.",
+      "forbidden": "Sem permissão para esta ação.",
+      "supervisorRequired": "Selecione ou informe um supervisor.",
+      "loadError": "Não foi possível carregar os vínculos.",
+      "linked": "Supervisor vinculado com sucesso.",
+      "linkError": "Não foi possível vincular o supervisor.",
+      "unlinked": "Supervisor desvinculado com sucesso.",
+      "unlinkError": "Não foi possível desvincular o supervisor."
+    },
+    "confirm": {
+      "unlink": "Deseja desvincular este supervisor?"
+    }
+  },
   "organizacao": {
     "title": "Organização",
     "subtitle": "Gestão de empresas e condomínios registados no sistema.",
@@ -1119,14 +1209,15 @@
     "subtitle": "Gestão de utilizadores do sistema e níveis de acesso (tipo 1).",
     "new": "Novo utilizador",
     "stats": { "total": "Total de Utilizadores", "admins": "Administradores", "active": "Ativos", "inactive": "Inativos" },
-    "filters": { "name": "Pesquisar por nome", "level": "Nível de acesso", "email": "E-mail", "status": "Estado", "apply": "Aplicar filtros" },
+    "filters": { "name": "Pesquisar por nome", "type": "Tipo", "level": "Nível de acesso", "email": "E-mail", "status": "Estado", "apply": "Aplicar filtros" },
     "bulk": { "selected": "selecionado(s)", "activate": "Ativar selecionados", "deactivate": "Desativar selecionados", "delete": "Eliminar selecionados" },
-    "table": { "photo": "Foto", "name": "Nome", "level": "Nível", "email": "E-mail", "phone": "Telefone", "status": "Estado", "actions": "Ações" },
+    "table": { "photo": "Foto", "name": "Nome", "type": "Tipo", "level": "Nível", "email": "E-mail", "phone": "Telefone", "status": "Estado", "actions": "Ações" },
+    "types": { "user": "Utilizador", "guard": "Efetivo", "client": "Cliente", "supplier": "Fornecedor", "guest": "Visitante", "resident": "Morador", "1": "Utilizador", "2": "Efetivo", "3": "Cliente", "4": "Fornecedor", "5": "Visitante", "6": "Morador" },
     "status": { "active": "Ativo", "inactive": "Inativo" },
     "actions": { "newPassword": "Gerar nova senha", "edit": "Editar", "activate": "Ativar", "deactivate": "Desativar", "remove": "Remover" },
     "empty": "Nenhum utilizador encontrado.",
     "pagination": { "prev": "Anterior", "next": "Próxima" },
-    "form": { "new": "Novo utilizador", "edit": "Editar utilizador", "name": "Nome completo", "email": "E-mail", "phone": "Telefone", "level": "Nível de acesso", "photo": "Foto (opcional)", "update": "Atualizar", "register": "Registar" },
+    "form": { "new": "Novo utilizador", "edit": "Editar utilizador", "name": "Nome completo", "email": "E-mail", "phone": "Telefone", "type": "Tipo", "level": "Nível de acesso", "photo": "Foto (opcional)", "update": "Atualizar", "register": "Registar" },
     "password": { "title": "Senha gerada", "subtitle": "Guarde ou envie ao utilizador. E-mail:", "close": "Fechar" },
     "cancel": "Cancelar",
     "toast": {
@@ -1158,12 +1249,12 @@
     "filters": { "name": "Pesquisar por nome", "documentType": "Tipo de Documento", "documentRef": "Documento Ref", "apply": "Aplicar filtros" },
     "document": { "idCard": "Bilhete", "passport": "Passaporte", "other": "Outro" },
     "bulk": { "selected": "selecionado(s)", "activate": "Ativar selecionados", "deactivate": "Desativar selecionados", "delete": "Eliminar selecionados" },
-    "table": { "photo": "Foto", "name": "Nome", "document": "Documento", "documentRef": "Documento Ref", "status": "Estado", "actions": "Ações" },
+    "table": { "photo": "Foto", "name": "Nome", "document": "Documento", "documentRef": "Documento Ref", "phone": "Telefone", "email": "E-mail", "cargo": "Cargo", "status": "Estado", "actions": "Ações" },
     "status": { "active": "Ativo", "inactive": "Inativo" },
-    "actions": { "edit": "Editar", "remove": "Remover" },
+    "actions": { "edit": "Editar", "remove": "Remover", "refreshCargos": "Atualizar cargos" },
     "empty": "Nenhum porteiro encontrado.",
     "pagination": { "prev": "Anterior", "next": "Próxima" },
-    "form": { "new": "Novo porteiro", "edit": "Editar porteiro", "name": "Nome completo", "email": "E-mail", "phone": "Telefone", "documentRef": "Documento Ref", "photo": "Foto (opcional)", "update": "Atualizar", "register": "Registar" },
+    "form": { "new": "Novo porteiro", "edit": "Editar porteiro", "name": "Nome completo", "email": "E-mail", "phone": "Telefone", "cargo": "Cargo", "documentRef": "Documento Ref", "photo": "Foto (opcional)", "update": "Atualizar", "register": "Registar" },
     "cancel": "Cancelar",
     "toast": {
       "loadError": "Erro ao carregar porteiros.",
@@ -1602,7 +1693,7 @@
   },
   "trocasDobrasPage": {
     "title": "Trocas e dobras",
-    "subtitle": "Registo de trocas e dobras de turno: entrante, saiente, tipo, data e imagens.",
+    "subtitle": "Registo de trocas e dobras de turno: entrante, sainte, tipo, data e imagens.",
     "empty": { "forbidden": "Não tem permissão para aceder a trocas e dobras.", "noOrg": "Selecione uma organização." },
     "tipo": { "1": "Troca", "2": "Dobra" },
     "actions": {
@@ -1617,7 +1708,8 @@
       "tipo": "Tipo",
       "tipoAll": "Todos",
       "entrante": "Entrante",
-      "saiente": "Saiente",
+      "saiente": "Sainte",
+      "sainte": "Sainte",
       "userAll": "Todos",
       "data1": "Desde",
       "data2": "Até",
@@ -1627,7 +1719,8 @@
       "when": "Data / hora",
       "tipo": "Tipo",
       "entrante": "Entrante",
-      "saiente": "Saiente",
+      "saiente": "Sainte",
+      "sainte": "Sainte",
       "photos": "Fotos",
       "actions": "Ações",
       "empty": "Nenhum registo encontrado."
@@ -1637,7 +1730,7 @@
       "forbidden": "Sem permissão.",
       "loadError": "Não foi possível carregar os registos.",
       "loadDetailError": "Não foi possível carregar o detalhe.",
-      "usersRequired": "Seleccione o utilizador entrante e o saiente.",
+      "usersRequired": "Seleccione o utilizador entrante e o sainte.",
       "dateRequired": "Indique a data e hora.",
       "saveError": "Erro ao guardar.",
       "createOk": "Registo criado.",
@@ -1654,15 +1747,16 @@
       "dataHora": "Data e hora",
       "tipo": "Tipo",
       "entrante": "Utilizador entrante",
-      "saiente": "Utilizador saiente",
+      "saiente": "Utilizador sainte",
+      "sainte": "Utilizador sainte",
       "pickUser": "Selecione…",
       "img1": "Foto do entrante (opcional)",
-      "img2": "Foto do saiente (opcional)",
+      "img2": "Foto do sainte (opcional)",
       "extras": "Imagens extra (opcional)",
       "slotImg1": "Foto principal — entrante",
-      "slotImg2": "Foto principal — saiente",
+      "slotImg2": "Foto principal — sainte",
       "removeImg1": "Remover foto do entrante",
-      "removeImg2": "Remover foto do saiente"
+      "removeImg2": "Remover foto do sainte"
     },
     "detail": { "title": "Troca/dobra #{id}" },
     "tabs": { "geral": "Geral", "imagens": "Imagens extra" },
@@ -2035,14 +2129,12 @@
     "title": "Avaliação dos Serviços",
     "subtitle": "Avaliação mensal do serviço de segurança e portaria",
     "newEvaluation": "Nova Avaliação",
-
     "stats": {
       "total": "Total de Avaliações",
       "average": "Média Geral",
       "year": "Avaliações Este Ano",
       "last": "Última Avaliação"
     },
-
     "table": {
       "month": "Mês",
       "year": "Ano",
@@ -2055,19 +2147,58 @@
       "date": "Data de Submissão",
       "actions": "Ações"
     },
-
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "months": {
+      "1": "Janeiro",
+      "2": "Fevereiro",
+      "3": "Março",
+      "4": "Abril",
+      "5": "Maio",
+      "6": "Junho",
+      "7": "Julho",
+      "8": "Agosto",
+      "9": "Setembro",
+      "10": "Outubro",
+      "11": "Novembro",
+      "12": "Dezembro"
+    },
     "form": {
       "title": "Nova Avaliação",
+      "editTitle": "Editar Avaliação",
+      "selectMonth": "Selecione o mês",
       "month": "Mês",
       "year": "Ano",
       "quality": "Qualidade do Serviço (1-5)",
       "professionalism": "Profissionalismo (1-5)",
       "response": "Tempo de Resposta (1-5)",
       "communication": "Comunicação (1-5)",
+      "general": "Avaliação Geral (1-5)",
       "comments": "Comentários",
-      "submit": "Submeter Avaliação"
+      "submit": "Submeter Avaliação",
+      "update": "Atualizar Avaliação"
     },
-
-    "cancel": "Cancelar"
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Seguinte",
+      "page": "Página {page}",
+      "total": "Total: {total}"
+    },
+    "empty": "Nenhuma avaliação encontrada.",
+    "accessDenied": "Sem permissão para aceder a esta página.",
+    "cancel": "Cancelar",
+    "toast": {
+      "loadError": "Erro ao carregar avaliações.",
+      "created": "Avaliação submetida com sucesso.",
+      "updated": "Avaliação atualizada com sucesso.",
+      "deleted": "Avaliação eliminada com sucesso.",
+      "saveError": "Não foi possível guardar a avaliação.",
+      "deleteError": "Não foi possível eliminar a avaliação."
+    },
+    "confirm": {
+      "deleteOne": "Tem certeza que pretende eliminar esta avaliação?"
+    }
   }
 }
