@@ -118,6 +118,14 @@
     "more": "More",
     "closeMore": "Close menu"
   },
+  "cameraCapture": {
+    "title": "Take photo",
+    "hint": "Use the device camera. Tap Capture when ready.",
+    "capture": "Capture",
+    "cancel": "Cancel",
+    "noCamera": "Could not access the camera. Check browser or app permissions.",
+    "notSupported": "This device or browser does not support camera capture (getUserMedia)."
+  },
   "selectOrg": {
     "title": "Select Organization",
     "subtitle": "Choose the organization you want to manage.",
@@ -261,6 +269,8 @@
       "title": "Access photos",
       "empty": "No images for this record.",
       "add": "Add images",
+      "chooseFiles": "Load files",
+      "takePhoto": "Take photo",
       "remove": "Remove image",
       "loadError": "Could not load images.",
       "uploaded": "Images uploaded successfully.",
@@ -439,6 +449,8 @@
       "title": "Vehicle photos",
       "empty": "No images for this record.",
       "add": "Add images",
+      "chooseFiles": "Load files",
+      "takePhoto": "Take photo",
       "remove": "Remove image",
       "loadError": "Could not load images.",
       "uploaded": "Images uploaded successfully.",
@@ -850,6 +862,8 @@
       "medidasPlaceholder": "Describe the measures taken in response to this incident",
       "observations": "Notes",
       "image": "Photo",
+      "chooseFiles": "Load files",
+      "takePhoto": "Take photo",
       "imageHint": "JPEG, PNG, GIF or WebP · max 5 MB",
       "comprovantos": "Additional proof photos",
       "comprovantosHint": "Optional. You can add more files later from the attachments panel.",
@@ -870,6 +884,8 @@
       "title": "Proof attachments",
       "subtitle": "Occurrence OC-{id}",
       "addFiles": "Add images",
+      "chooseFiles": "Load files",
+      "takePhoto": "Take photo",
       "listTitle": "Uploaded files",
       "empty": "No proof images yet.",
       "uploading": "Uploading…",
@@ -1646,7 +1662,10 @@
       "pickSupervisor": "Choose…",
       "estado": "Supervision status",
       "observacoes": "Notes",
-      "images": "Images (optional)"
+      "images": "Images (optional)",
+      "chooseFiles": "Load files",
+      "takePhoto": "Take photo",
+      "filesSummary": "{count, plural, one {# file selected} other {# files selected}}"
     },
     "detail": { "title": "Supervision #{id}" },
     "tabs": {
@@ -1655,7 +1674,13 @@
       "efetivos": "Staff",
       "materiais": "Materials"
     },
-    "images": { "add": "Add images", "remove": "Remove", "empty": "No images." },
+    "images": {
+      "add": "Add images",
+      "chooseFiles": "Load files",
+      "takePhoto": "Take photo",
+      "remove": "Remove",
+      "empty": "No images."
+    },
     "efetivos": {
       "addTitle": "Add staff line",
       "editTitle": "Edit staff line",

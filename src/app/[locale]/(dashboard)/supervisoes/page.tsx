@@ -1,10 +1,11 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- imagens no storage da API */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import axios, { type AxiosInstance } from "axios";
 import {
+  Camera,
   ClipboardList,
   Eye,
   ImagePlus,
@@ -15,6 +16,8 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import CameraCaptureModal from "@/components/media/CameraCaptureModal";
+import { fileToFileList } from "@/lib/file-list";
 import { useAuth } from "@/hooks/useAuth";
 import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
 import type { Material, MaterialListResponse } from "@/types/material";
@@ -199,6 +202,10 @@ export default function Page() {
   const [imgUploading, setImgUploading] = useState(false);
   const [imgDeletingId, setImgDeletingId] = useState<number | null>(null);
   const [imgFileKey, setImgFileKey] = useState(0);
+  const createFilesInputRef = useRef<HTMLInputElement>(null);
+  const detailImagensInputRef = useRef<HTMLInputElement>(null);
+  const supervisaoCameraTargetRef = useRef<"create" | "detail" | null>(null);
+  const [supervisaoCameraOpen, setSupervisaoCameraOpen] = useState(false);
 
   const [efForm, setEfForm] = useState({
     efetivo_id: "" as string,
@@ -559,6 +566,26 @@ export default function Page() {
       setImgUploading(false);
     }
   };
+
+  function openSupervisaoCamera(target: "create" | "detail") {
+    supervisaoCameraTargetRef.current = target;
+    setSupervisaoCameraOpen(true);
+  }
+
+  function handleSupervisaoCameraFile(file: File) {
+    const target = supervisaoCameraTargetRef.current;
+    supervisaoCameraTargetRef.current = null;
+    if (target === "create") {
+      setCreateForm((f) => ({ ...f, files: [...f.files, file] }));
+    } else if (target === "detail") {
+      void uploadImagens(fileToFileList(file));
+    }
+  }
+
+  function closeSupervisaoCamera() {
+    supervisaoCameraTargetRef.current = null;
+    setSupervisaoCameraOpen(false);
+  }
 
   const deleteImagem = async (img: SupervisaoImagem) => {
     if (!organizacaoId || !detail) return;
@@ -1017,15 +1044,42 @@ export default function Page() {
                 <label className="mb-1 block text-xs ca-muted">{t("form.images")}</label>
                 <input
                   key={createFileKey}
+                  ref={createFilesInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
                   multiple
-                  className="block w-full text-sm"
+                  className="hidden"
                   onChange={(e) => {
                     const fl = e.target.files;
                     setCreateForm((f) => ({ ...f, files: fl ? Array.from(fl) : [] }));
+                    e.target.value = "";
                   }}
                 />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn-outline flex items-center justify-center gap-2 text-sm"
+                    onClick={() => createFilesInputRef.current?.click()}
+                  >
+                    <ImagePlus className="h-4 w-4" />
+                    {t("form.chooseFiles")}
+                  </button>
+                  <button
+                    type="button"
+                    className="ca-btn-outline flex items-center justify-center gap-2 text-sm"
+                    onClick={() => openSupervisaoCamera("create")}
+                  >
+                    <Camera className="h-4 w-4" />
+                    {t("form.takePhoto")}
+                  </button>
+                </div>
+                {createForm.files.length > 0 ? (
+                  <p className="mt-2 text-xs ca-muted">
+                    {createForm.files.length === 1
+                      ? createForm.files[0]?.name ?? ""
+                      : t("form.filesSummary", { count: createForm.files.length })}
+                  </p>
+                ) : null}
               </div>
             </div>
             <div className="mt-5 flex justify-end gap-2">
@@ -1143,19 +1197,37 @@ export default function Page() {
               ) : detailTab === "imagens" ? (
                 <div className="space-y-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <label className="ca-btn-outline cursor-pointer">
-                      <ImagePlus className="mr-1 inline h-4 w-4" />
-                      {t("images.add")}
-                      <input
-                        key={imgFileKey}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="hidden"
-                        disabled={imgUploading}
-                        onChange={(e) => void uploadImagens(e.target.files)}
-                      />
-                    </label>
+                    <input
+                      key={imgFileKey}
+                      ref={detailImagensInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      multiple
+                      className="hidden"
+                      disabled={imgUploading}
+                      onChange={(e) => {
+                        void uploadImagens(e.target.files);
+                        e.target.value = "";
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="ca-btn-outline flex items-center gap-2 text-sm"
+                      disabled={imgUploading}
+                      onClick={() => detailImagensInputRef.current?.click()}
+                    >
+                      <ImagePlus className="h-4 w-4" />
+                      {t("images.chooseFiles")}
+                    </button>
+                    <button
+                      type="button"
+                      className="ca-btn-outline flex items-center gap-2 text-sm"
+                      disabled={imgUploading}
+                      onClick={() => openSupervisaoCamera("detail")}
+                    >
+                      <Camera className="h-4 w-4" />
+                      {t("images.takePhoto")}
+                    </button>
                     {imgUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -1457,6 +1529,12 @@ export default function Page() {
           </div>
         </div>
       ) : null}
+
+      <CameraCaptureModal
+        open={supervisaoCameraOpen}
+        onClose={closeSupervisaoCamera}
+        onCapture={handleSupervisaoCameraFile}
+      />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { applySessionCookie, getSession } from "@/lib/session";
+import { applySessionCookie, getSession, normalizeSessionUser } from "@/lib/session";
 import type { AuthUser } from "@/types/auth";
 
 // GET: devolve a sessão atual (a partir do cookie)
@@ -24,10 +24,10 @@ export async function POST(request: Request) {
       );
     }
     const session = {
-      user: {
+      user: normalizeSessionUser({
         ...user,
         token,
-      },
+      }),
     };
     const res = NextResponse.json({ session });
     applySessionCookie(res, session);

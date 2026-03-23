@@ -44,13 +44,6 @@ export default function LoginPage() {
     router.push(newPath);
   }
 
-  function showViewportSize() {
-    if (typeof window === "undefined") return;
-    window.alert(
-      `Viewport: ${window.innerWidth} x ${window.innerHeight}\nScreen: ${window.screen.width} x ${window.screen.height}\nDPR: ${window.devicePixelRatio}`
-    );
-  }
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -193,13 +186,6 @@ export default function LoginPage() {
                 <div className="text-xs text-slate-500 tablet-app:text-sm">
                   {t("system")}
                 </div>
-                <button
-                  type="button"
-                  onClick={showViewportSize}
-                  className="mt-1 rounded-md border border-slate-300 bg-white/90 px-2 py-1 text-[11px] font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-200"
-                >
-                  Ver largura
-                </button>
               </div>
             </div>
 
@@ -284,8 +270,9 @@ export default function LoginPage() {
                     value={pin}
                     onChange={(e) => setPin(digitsPin(e.target.value))}
                     placeholder="••••"
+                    type="password"
                     inputMode="numeric"
-                    autoComplete="one-time-code"
+                    autoComplete="off"
                     maxLength={4}
                     required
                     aria-invalid={pin.length > 0 && pin.length < 4}

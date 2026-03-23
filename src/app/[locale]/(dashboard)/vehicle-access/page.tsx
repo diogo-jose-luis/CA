@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
+import CameraCaptureModal from "@/components/media/CameraCaptureModal";
+import { fileToFileList } from "@/lib/file-list";
 import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
 import type { AcessoVeiculo, AcessoVeiculoListResponse } from "@/types/acesso-veiculo";
 import type { AcessoImagem, AcessoImagemListResponse } from "@/types/acesso-imagem";
@@ -337,7 +339,7 @@ export default function Page() {
   const [attachmentsUploading, setAttachmentsUploading] = useState(false);
   const [attachmentsDeletingId, setAttachmentsDeletingId] = useState<number | null>(null);
   const attachmentsFileInputRef = useRef<HTMLInputElement>(null);
-  const attachmentsCameraInputRef = useRef<HTMLInputElement>(null);
+  const [attachmentsCameraOpen, setAttachmentsCameraOpen] = useState(false);
 
   /** Skip refetching host/user lists when reopening the panel for the same organization. */
   const panelSelectsPrimedRef = useRef<{ orgId: number } | null>(null);
@@ -2046,14 +2048,6 @@ export default function Page() {
                   className="hidden"
                   onChange={handleAttachmentsFileChange}
                 />
-                <input
-                  ref={attachmentsCameraInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  className="hidden"
-                  onChange={handleAttachmentsFileChange}
-                />
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     type="button"
@@ -2066,16 +2060,16 @@ export default function Page() {
                     ) : (
                       <Upload size={18} />
                     )}
-                    {t("attachments.add")}
+                    {t("attachments.chooseFiles")}
                   </button>
                   <button
                     type="button"
                     className="px-4 py-2 rounded-xl border ca-border flex items-center justify-center gap-2"
                     disabled={attachmentsUploading}
-                    onClick={() => attachmentsCameraInputRef.current?.click()}
+                    onClick={() => setAttachmentsCameraOpen(true)}
                   >
                     <Camera size={18} />
-                    Tirar foto
+                    {t("attachments.takePhoto")}
                   </button>
                 </div>
               </div>
@@ -2083,6 +2077,12 @@ export default function Page() {
           </div>
         </div>
       )}
+
+      <CameraCaptureModal
+        open={attachmentsCameraOpen}
+        onClose={() => setAttachmentsCameraOpen(false)}
+        onCapture={(file) => void handleAttachmentsFiles(fileToFileList(file))}
+      />
     </div>
   );
 }

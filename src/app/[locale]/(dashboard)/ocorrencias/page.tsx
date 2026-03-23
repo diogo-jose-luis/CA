@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
+import CameraCaptureModal from "@/components/media/CameraCaptureModal";
+import { fileToFileList } from "@/lib/file-list";
 import useLocale from "@/hooks/useLocale";
 import type {
   Ocorrencia,
@@ -155,7 +157,8 @@ export default function Page() {
   const [comprovantoUploading, setComprovantoUploading] = useState(false);
   const [deletingComprovantoId, setDeletingComprovantoId] = useState<number | null>(null);
   const panelFilesInputRef = useRef<HTMLInputElement>(null);
-  const panelCameraInputRef = useRef<HTMLInputElement>(null);
+  const cameraTargetRef = useRef<"panel" | "formMain" | "formComprov" | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -175,9 +178,7 @@ export default function Page() {
     comprovantoFiles: [] as File[],
   });
   const formMainFileInputRef = useRef<HTMLInputElement>(null);
-  const formMainCameraInputRef = useRef<HTMLInputElement>(null);
   const formComprovFilesInputRef = useRef<HTMLInputElement>(null);
-  const formComprovCameraInputRef = useRef<HTMLInputElement>(null);
 
   const canEdit = user != null && NIVEIS_EDITAR.includes(Number(user.nivel));
   const canDelete = user != null && NIVEIS_ELIMINAR.includes(Number(user.nivel));
@@ -416,6 +417,25 @@ export default function Page() {
       setComprovantoUploading(false);
     }
   };
+
+  function openOccurrenceCamera(target: "panel" | "formMain" | "formComprov") {
+    cameraTargetRef.current = target;
+    setCameraOpen(true);
+  }
+
+  function handleOccurrenceCameraFile(file: File) {
+    const target = cameraTargetRef.current;
+    cameraTargetRef.current = null;
+    if (target === "panel") void handleUploadComprovantos(fileToFileList(file));
+    else if (target === "formMain") setForm((f) => ({ ...f, imagem: file }));
+    else if (target === "formComprov")
+      setForm((f) => ({ ...f, comprovantoFiles: [...f.comprovantoFiles, file] }));
+  }
+
+  function closeOccurrenceCamera() {
+    cameraTargetRef.current = null;
+    setCameraOpen(false);
+  }
 
   const handleDeleteComprovanto = async (imagemId: number) => {
     if (!organizacaoId || !imagesPanelRow || !confirm(t("imagesPanel.deleteConfirm"))) return;
@@ -1221,18 +1241,6 @@ export default function Page() {
                       e.target.value = "";
                     }}
                   />
-                  <input
-                    ref={panelCameraInputRef}
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    className="hidden"
-                    disabled={comprovantoUploading}
-                    onChange={(e) => {
-                      void handleUploadComprovantos(e.target.files);
-                      e.target.value = "";
-                    }}
-                  />
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <button
                       type="button"
@@ -1241,16 +1249,16 @@ export default function Page() {
                       onClick={() => panelFilesInputRef.current?.click()}
                     >
                       <Images size={16} />
-                      Dispositivo
+                      {t("imagesPanel.chooseFiles")}
                     </button>
                     <button
                       type="button"
                       className="px-4 py-2 rounded-xl border ca-border flex items-center justify-center gap-2"
                       disabled={comprovantoUploading}
-                      onClick={() => panelCameraInputRef.current?.click()}
+                      onClick={() => openOccurrenceCamera("panel")}
                     >
                       <Camera size={16} />
-                      Tirar foto
+                      {t("imagesPanel.takePhoto")}
                     </button>
                   </div>
                   <p className="text-xs ca-muted">{t("form.imageHint")}</p>
@@ -1460,31 +1468,20 @@ export default function Page() {
                     e.target.value = "";
                   }}
                 />
-                <input
-                  ref={formMainCameraInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  className="hidden"
-                  onChange={(e) => {
-                    setForm((f) => ({ ...f, imagem: e.target.files?.[0] ?? null }));
-                    e.target.value = "";
-                  }}
-                />
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     type="button"
                     className="px-3 py-2 rounded-xl border ca-border text-sm"
                     onClick={() => formMainFileInputRef.current?.click()}
                   >
-                    Escolher do dispositivo
+                    {t("form.chooseFiles")}
                   </button>
                   <button
                     type="button"
                     className="px-3 py-2 rounded-xl border ca-border text-sm"
-                    onClick={() => formMainCameraInputRef.current?.click()}
+                    onClick={() => openOccurrenceCamera("formMain")}
                   >
-                    Tirar foto agora
+                    {t("form.takePhoto")}
                   </button>
                 </div>
                 <p className="text-xs ca-muted">{t("form.imageHint")}</p>
@@ -1508,35 +1505,20 @@ export default function Page() {
                         e.target.value = "";
                       }}
                     />
-                    <input
-                      ref={formComprovCameraInputRef}
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      className="hidden"
-                      onChange={(e) => {
-                        const cameraFiles = e.target.files?.length ? Array.from(e.target.files) : [];
-                        setForm((f) => ({
-                          ...f,
-                          comprovantoFiles: [...f.comprovantoFiles, ...cameraFiles],
-                        }));
-                        e.target.value = "";
-                      }}
-                    />
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <button
                         type="button"
                         className="px-3 py-2 rounded-xl border ca-border text-sm"
                         onClick={() => formComprovFilesInputRef.current?.click()}
                       >
-                        Escolher comprovativos
+                        {t("form.chooseFiles")}
                       </button>
                       <button
                         type="button"
                         className="px-3 py-2 rounded-xl border ca-border text-sm"
-                        onClick={() => formComprovCameraInputRef.current?.click()}
+                        onClick={() => openOccurrenceCamera("formComprov")}
                       >
-                        Tirar foto comprovativo
+                        {t("form.takePhoto")}
                       </button>
                     </div>
                     <p className="text-xs ca-muted">{t("form.comprovantosHint")}</p>
@@ -1562,6 +1544,12 @@ export default function Page() {
           </div>
         </div>
       )}
+
+      <CameraCaptureModal
+        open={cameraOpen}
+        onClose={closeOccurrenceCamera}
+        onCapture={handleOccurrenceCameraFile}
+      />
     </div>
   );
 }

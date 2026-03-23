@@ -115,6 +115,14 @@
     "more": "Plus",
     "closeMore": "Fermer le menu"
   },
+  "cameraCapture": {
+    "title": "Prendre une photo",
+    "hint": "Utilisez l'appareil photo. Appuyez sur Capturer lorsque c'est prêt.",
+    "capture": "Capturer",
+    "cancel": "Annuler",
+    "noCamera": "Impossible d'accéder à la caméra. Vérifiez les permissions du navigateur ou de l'application.",
+    "notSupported": "Cet appareil ou navigateur ne prend pas en charge la capture par caméra (getUserMedia)."
+  },
   "selectOrg": {
     "title": "Sélectionner une organisation",
     "subtitle": "Choisissez l'organisation que vous souhaitez gérer.",
@@ -249,6 +257,8 @@
       "title": "Photos de l'accès",
       "empty": "Aucune image pour cet enregistrement.",
       "add": "Ajouter des images",
+      "chooseFiles": "Charger des fichiers",
+      "takePhoto": "Prendre une photo",
       "remove": "Supprimer l'image",
       "loadError": "Impossible de charger les images.",
       "uploaded": "Images envoyées avec succès.",
@@ -411,6 +421,8 @@
       "title": "Photos du véhicule",
       "empty": "Aucune image pour cet enregistrement.",
       "add": "Ajouter des images",
+      "chooseFiles": "Charger des fichiers",
+      "takePhoto": "Prendre une photo",
       "remove": "Supprimer l'image",
       "loadError": "Impossible de charger les images.",
       "uploaded": "Images téléversées avec succès.",
@@ -788,6 +800,8 @@
       "medidasPlaceholder": "Décrivez les mesures prises suite à l'incident",
       "observations": "Observations",
       "image": "Photo",
+      "chooseFiles": "Charger des fichiers",
+      "takePhoto": "Prendre une photo",
       "imageHint": "JPEG, PNG, GIF ou WebP · max. 5 Mo",
       "comprovantos": "Photos de preuve supplémentaires",
       "comprovantosHint": "Facultatif. Vous pourrez ajouter d'autres fichiers plus tard depuis le panneau des pièces jointes.",
@@ -806,6 +820,8 @@
       "title": "Pièces justificatives",
       "subtitle": "Incident OC-{id}",
       "addFiles": "Ajouter des images",
+      "chooseFiles": "Charger des fichiers",
+      "takePhoto": "Prendre une photo",
       "listTitle": "Fichiers téléversés",
       "empty": "Aucune image de preuve pour le moment.",
       "uploading": "Téléversement…",
@@ -1987,7 +2003,10 @@
       "pickSupervisor": "Sélectionnez…",
       "estado": "État de la supervision",
       "observacoes": "Observations",
-      "images": "Images (optionnel)"
+      "images": "Images (optionnel)",
+      "chooseFiles": "Charger des fichiers",
+      "takePhoto": "Prendre une photo",
+      "filesSummary": "{count, plural, one {# fichier sélectionné} other {# fichiers sélectionnés}}"
     },
     "detail": { "title": "Supervision #{id}" },
     "tabs": {
@@ -1996,7 +2015,13 @@
       "efetivos": "Effectifs",
       "materiais": "Matériels"
     },
-    "images": { "add": "Ajouter des images", "remove": "Supprimer", "empty": "Aucune image." },
+    "images": {
+      "add": "Ajouter des images",
+      "chooseFiles": "Charger des fichiers",
+      "takePhoto": "Prendre une photo",
+      "remove": "Supprimer",
+      "empty": "Aucune image."
+    },
     "efetivos": {
       "addTitle": "Ajouter un effectif",
       "editTitle": "Modifier l'effectif",

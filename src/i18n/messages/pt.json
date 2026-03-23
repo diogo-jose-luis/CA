@@ -119,6 +119,14 @@
     "more": "Mais",
     "closeMore": "Fechar menu"
   },
+  "cameraCapture": {
+    "title": "Tirar fotografia",
+    "hint": "Use a câmara do dispositivo. Toque em Capturar quando estiver pronto.",
+    "capture": "Capturar",
+    "cancel": "Cancelar",
+    "noCamera": "Não foi possível aceder à câmara. Verifique as permissões do browser ou da app.",
+    "notSupported": "Este dispositivo ou browser não suporta captura por câmara (getUserMedia)."
+  },
   "selectOrg": {
     "title": "Selecionar Organização",
     "subtitle": "Escolha a organização que pretende gerir.",
@@ -262,6 +270,8 @@
       "title": "Fotografias do acesso",
       "empty": "Não há imagens neste registo.",
       "add": "Adicionar imagens",
+      "chooseFiles": "Carregar ficheiros",
+      "takePhoto": "Tirar foto",
       "remove": "Remover imagem",
       "loadError": "Não foi possível carregar as imagens.",
       "uploaded": "Imagens enviadas com sucesso.",
@@ -440,6 +450,8 @@
       "title": "Fotos do veículo",
       "empty": "Sem imagens para este registo.",
       "add": "Adicionar imagens",
+      "chooseFiles": "Carregar ficheiros",
+      "takePhoto": "Tirar foto",
       "remove": "Remover imagem",
       "loadError": "Não foi possível carregar as imagens.",
       "uploaded": "Imagens enviadas com sucesso.",
@@ -851,6 +863,8 @@
       "medidasPlaceholder": "Descreva as medidas adotadas face à ocorrência",
       "observations": "Observações",
       "image": "Fotografia",
+      "chooseFiles": "Carregar ficheiros",
+      "takePhoto": "Tirar foto",
       "imageHint": "JPEG, PNG, GIF ou WebP · máx. 5 MB",
       "comprovantos": "Fotos de comprovativo adicionais",
       "comprovantosHint": "Opcional. Pode acrescentar mais ficheiros depois no painel de anexos.",
@@ -871,6 +885,8 @@
       "title": "Comprovativos",
       "subtitle": "Ocorrência OC-{id}",
       "addFiles": "Adicionar imagens",
+      "chooseFiles": "Carregar ficheiros",
+      "takePhoto": "Tirar foto",
       "listTitle": "Ficheiros carregados",
       "empty": "Ainda não existem imagens de comprovativo.",
       "uploading": "A enviar…",
@@ -1647,7 +1663,10 @@
       "pickSupervisor": "Selecione…",
       "estado": "Estado da supervisão",
       "observacoes": "Observações",
-      "images": "Imagens (opcional)"
+      "images": "Imagens (opcional)",
+      "chooseFiles": "Carregar ficheiros",
+      "takePhoto": "Tirar foto",
+      "filesSummary": "{count, plural, one {# ficheiro selecionado} other {# ficheiros selecionados}}"
     },
     "detail": { "title": "Supervisão #{id}" },
     "tabs": {
@@ -1656,7 +1675,13 @@
       "efetivos": "Efetivos",
       "materiais": "Materiais"
     },
-    "images": { "add": "Adicionar imagens", "remove": "Eliminar", "empty": "Sem imagens." },
+    "images": {
+      "add": "Adicionar imagens",
+      "chooseFiles": "Carregar ficheiros",
+      "takePhoto": "Tirar foto",
+      "remove": "Eliminar",
+      "empty": "Sem imagens."
+    },
     "efetivos": {
       "addTitle": "Adicionar efetivo",
       "editTitle": "Editar efetivo",
