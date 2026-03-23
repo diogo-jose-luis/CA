@@ -7,8 +7,8 @@ import axios from "axios";
 import { LockKeyhole, Mail, ChevronDown, KeyRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-//const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "https://api-ca.alv-jamba.com/api";
-const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "http://127.0.0.1:8000/api";
+const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "https://api-ca.alv-jamba.com/api";
+//const API_LOGIN = process.env.NEXT_PUBLIC_KUKAXI_API_BASE_URL_REQUEST || "http://127.0.0.1:8000/api";
 
 export default function LoginPage() {
   
