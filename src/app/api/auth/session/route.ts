@@ -5,10 +5,11 @@ import type { AuthUser } from "@/types/auth";
 // GET: devolve a sessão atual (a partir do cookie)
 export async function GET() {
   const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ session: null }, { status: 200 });
-  }
-  return NextResponse.json({ session });
+  const res = session
+    ? NextResponse.json({ session })
+    : NextResponse.json({ session: null }, { status: 200 });
+  res.headers.set("Cache-Control", "private, no-store, must-revalidate");
+  return res;
 }
 
 // POST: define a sessão (após login no backend) e define o cookie
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
     };
     const res = NextResponse.json({ session });
     applySessionCookie(res, session);
+    res.headers.set("Cache-Control", "private, no-store, must-revalidate");
     return res;
   } catch (e) {
     return NextResponse.json(

@@ -93,7 +93,9 @@ export default function LoginPage() {
           setError(t("errors.authError"));
           return;
         }
-        router.replace(`/${locale}/post-login`);
+        // Navegação completa: em WebView Android (e alguns browsers) o cookie do POST
+        // pode não ir no pedido imediato a seguir a router.replace() (SPA).
+        window.location.assign(`/${locale}/post-login`);
         return;
       }
     } catch (err: unknown) {
