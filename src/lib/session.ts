@@ -18,7 +18,8 @@ export function normalizeSessionUser(user: AuthUser): AuthUser {
     const n = Number(v);
     return Number.isFinite(n) ? Math.trunc(n) : fallback;
   };
-  const org = user.organizacao_id;
+  /** Cookie/API podem serializar IDs como string ou `""`; o tipo declara só `number | null`. */
+  const org = user.organizacao_id as number | string | null | undefined;
   const organizacao_id =
     org === null || org === undefined || org === ""
       ? null
