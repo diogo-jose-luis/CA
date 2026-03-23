@@ -11,7 +11,6 @@ import { getKukaxiApiRequestBaseUrl } from "@/lib/kukaxi-api";
 const API_LOGIN = getKukaxiApiRequestBaseUrl();
 
 export default function LoginPage() {
-  
   const router = useRouter();
   const sp = useSearchParams();
   const pathname = usePathname();
@@ -35,6 +34,7 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const showViewportDebug = process.env.NODE_ENV === "development";
 
   function digitsPin(value: string) {
     return value.replace(/\D/g, "").slice(0, 4);
@@ -43,6 +43,13 @@ export default function LoginPage() {
   function changeLanguage(lang: string) {
     const newPath = pathname.replace(/^\/(pt|en|fr)/, `/${lang}`);
     router.push(newPath);
+  }
+
+  function showViewportSize() {
+    if (typeof window === "undefined") return;
+    window.alert(
+      `Viewport: ${window.innerWidth} x ${window.innerHeight}\nScreen: ${window.screen.width} x ${window.screen.height}\nDPR: ${window.devicePixelRatio}`
+    );
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -176,6 +183,15 @@ export default function LoginPage() {
         </div>
 
         <div className="relative w-full max-w-md tablet-app:max-w-[26.5rem] tablet-app:rounded-[1.75rem] tablet-app:border tablet-app:border-slate-200/90 tablet-app:bg-white/95 tablet-app:p-10 tablet-app:shadow-2xl tablet-app:shadow-black/20 tablet-app:ring-1 tablet-app:ring-black/5 tablet-app:backdrop-blur-md tablet-app:dark:border-slate-700/90 tablet-app:dark:bg-slate-950/95 desktop-auth:max-w-md desktop-auth:rounded-none desktop-auth:border-0 desktop-auth:bg-transparent desktop-auth:p-0 desktop-auth:shadow-none desktop-auth:ring-0 desktop-auth:backdrop-blur-none">
+          {showViewportDebug ? (
+            <button
+              type="button"
+              onClick={showViewportSize}
+              className="absolute bottom-3 right-3 rounded-lg border border-slate-300 bg-white/90 px-2.5 py-1.5 text-[11px] font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-200"
+            >
+              Ver largura
+            </button>
+          ) : null}
           {/* Logo */}
           <div className="mb-10 tablet-app:mb-12">
             <div className="mb-8 flex items-center gap-3 tablet-app:gap-4">

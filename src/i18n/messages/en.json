@@ -111,7 +111,11 @@
     "home": "Home",
     "people": "People",
     "vehicles": "Vehicles",
-    "incidents": "Incidents"
+    "incidents": "Incidents",
+    "alerts": "Alerts",
+    "supervision": "Supervisions",
+    "more": "More",
+    "closeMore": "Close menu"
   },
   "selectOrg": {
     "title": "Select Organization",

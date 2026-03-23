@@ -227,7 +227,7 @@ export default function DashboardShell({
         <div className="tablet-app:hidden">
           <Footer />
         </div>
-        <TabletOperatorBottomNav />
+        <TabletOperatorBottomNav nivel={nivel} items={items} />
       </div>
     </div>
   );

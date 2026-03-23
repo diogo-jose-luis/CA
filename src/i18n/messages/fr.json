@@ -108,7 +108,11 @@
     "home": "Accueil",
     "people": "Personnes",
     "vehicles": "Véhicules",
-    "incidents": "Incidents"
+    "incidents": "Incidents",
+    "alerts": "Alertes",
+    "supervision": "Supervisions",
+    "more": "Plus",
+    "closeMore": "Fermer le menu"
   },
   "selectOrg": {
     "title": "Sélectionner une organisation",
