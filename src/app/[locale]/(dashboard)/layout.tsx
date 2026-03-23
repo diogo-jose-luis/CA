@@ -21,7 +21,7 @@ export default function DashboardShell({
 }) {
   const router = useRouter();
 
-  const { data } = useSession();
+  const { data, status } = useSession();
   const nivel = data?.user?.nivel;
 
   const [collapsed, setCollapsed] = useState(false);
@@ -52,6 +52,12 @@ export default function DashboardShell({
 
     setLoaded(true);
   }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    if (status !== "unauthenticated") return;
+    router.replace(`/${locale}/login?expired=1`);
+  }, [loaded, status, router, locale]);
 
   function toggleSidebar() {
     setCollapsed((v) => {

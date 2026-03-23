@@ -9,6 +9,11 @@ import {
   resolveApiClientBase,
 } from "@/lib/kukaxi-api";
 
+function getLocaleFromPathname(pathname: string): string {
+  const match = pathname.match(/^\/(pt|en|fr)(\/|$)/);
+  return match?.[1] ?? "pt";
+}
+
 export function useAuth() {
   const { data } = useSession();
   const session = data;
@@ -31,6 +36,35 @@ export function useAuth() {
       },
     });
   }, [api_base_url_request, viaProxy, token]);
+
+  useEffect(() => {
+    const interceptorId = http.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const status = error?.response?.status;
+        if (status === 401 || status === 419) {
+          if (typeof window !== "undefined") {
+            const state = window as Window & { __caAuthRedirecting?: boolean };
+            if (!state.__caAuthRedirecting) {
+              state.__caAuthRedirecting = true;
+              try {
+                await fetch("/api/auth/logout", { method: "POST" });
+              } catch {
+                /* ignore */
+              }
+              const locale = getLocaleFromPathname(window.location.pathname);
+              window.location.assign(`/${locale}/login?expired=1`);
+            }
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      http.interceptors.response.eject(interceptorId);
+    };
+  }, [http]);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") return;
