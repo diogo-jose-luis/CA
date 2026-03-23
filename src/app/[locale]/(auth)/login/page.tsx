@@ -34,7 +34,6 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const showViewportDebug = process.env.NODE_ENV === "development";
 
   function digitsPin(value: string) {
     return value.replace(/\D/g, "").slice(0, 4);
@@ -194,15 +193,13 @@ export default function LoginPage() {
                 <div className="text-xs text-slate-500 tablet-app:text-sm">
                   {t("system")}
                 </div>
-                {showViewportDebug ? (
-                  <button
-                    type="button"
-                    onClick={showViewportSize}
-                    className="mt-1 rounded-md border border-slate-300 bg-white/90 px-2 py-1 text-[11px] font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-200"
-                  >
-                    Ver largura
-                  </button>
-                ) : null}
+                <button
+                  type="button"
+                  onClick={showViewportSize}
+                  className="mt-1 rounded-md border border-slate-300 bg-white/90 px-2 py-1 text-[11px] font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-200"
+                >
+                  Ver largura
+                </button>
               </div>
             </div>
 
