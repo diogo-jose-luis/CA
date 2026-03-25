@@ -40,3 +40,15 @@ export function resolveApiClientBase(): { base: string; viaProxy: boolean } {
   }
   return { base: upstream, viaProxy: false };
 }
+
+/**
+ * Se as imagens devem ir por `/api/backend-storage` (sessão + Bearer no servidor).
+ * Em `production` fica ativo por omissão (Vercel); em dev usa URL directa à API.
+ * Desativar: `NEXT_PUBLIC_USE_STORAGE_PROXY=0`. Forçar: `=1`.
+ */
+export function shouldServeStorageViaAppProxy(viaProxy: boolean): boolean {
+  const e = process.env.NEXT_PUBLIC_USE_STORAGE_PROXY;
+  if (e === "0" || e === "false") return false;
+  if (e === "1" || e === "true") return true;
+  return viaProxy || process.env.NODE_ENV === "production";
+}

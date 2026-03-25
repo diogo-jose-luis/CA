@@ -15,12 +15,22 @@ const nextConfig: NextConfig = {
    */
   images: {
     remotePatterns: [
-      // Exemplo — duplica o bloco e altera `hostname` (e `pathname` se precisares restringir):
       {
-         protocol: "https",
-         hostname: "api-ca.alv-jamba.com",
-         pathname: "/**",
-       },
+        protocol: "https",
+        hostname: "api-ca.alv-jamba.com",
+        pathname: "/**",
+      },
+      /** App em produção na Vercel (e previews no mesmo projeto). */
+      {
+        protocol: "https",
+        hostname: "ca-sigma-one.vercel.app",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.vercel.app",
+        pathname: "/**",
+      },
     ],
   },
 };

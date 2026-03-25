@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
+import { shouldServeStorageViaAppProxy } from "@/lib/kukaxi-api";
 import CameraCaptureModal from "@/components/media/CameraCaptureModal";
 import { fileToFileList } from "@/lib/file-list";
 import { storageImagePublicUrl } from "@/lib/storage-public-url";
@@ -252,7 +253,8 @@ function rowVisualStatus(row: AcessoPessoa, t: (k: string) => string): { key: st
 
 export default function Page() {
   const t = useTranslations("peopleAccess");
-  const { http, api_base_url, user: authUser } = useAuth();
+  const { http, api_base_url, user: authUser, viaProxy } = useAuth();
+  const useAppStorageProxy = shouldServeStorageViaAppProxy(viaProxy);
 
   const [organizacaoId, setOrganizacaoId] = useState<number | null>(null);
   const [orgTipoNum, setOrgTipoNum] = useState<number | null>(null);
@@ -359,8 +361,9 @@ export default function Page() {
   }, []);
 
   const buildImageUrl = useCallback(
-    (path: string | null | undefined) => storageImagePublicUrl(api_base_url, path),
-    [api_base_url],
+    (path: string | null | undefined) =>
+      storageImagePublicUrl(api_base_url, path, { useAppStorageProxy }),
+    [api_base_url, useAppStorageProxy],
   );
 
   const fetchDestinations = useCallback(async () => {

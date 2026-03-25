@@ -91,5 +91,5 @@ export function useAuth() {
     console.info(`[auth] modo HTTP: ${mode} | baseURL: ${api_base_url_request}`);
   }, [api_base_url_request, viaProxy]);
 
-  return { token, user, http, api_base_url, api_base_url_request };
+  return { token, user, http, api_base_url, api_base_url_request, viaProxy };
 }
