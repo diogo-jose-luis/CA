@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { getKukaxiPublicBaseUrl } from "@/lib/kukaxi-api";
-import { normalizePublicBaseForFiles, storageImagePublicUrl } from "@/lib/storage-public-url";
+import { expandStoragePathCandidates, storageImagePublicUrl } from "@/lib/storage-public-url";
 
 export const dynamic = "force-dynamic";
 
@@ -21,36 +21,30 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
   }
 
-  const targetUrl = storageImagePublicUrl(getKukaxiPublicBaseUrl(), raw);
-  if (!targetUrl) {
-    return NextResponse.json({ message: "Invalid path" }, { status: 400 });
-  }
-
+  const apiBase = getKukaxiPublicBaseUrl();
+  const candidates = expandStoragePathCandidates(raw);
   const authHeaders = { Authorization: `Bearer ${session.user.token}` };
-  let upstream = await fetch(targetUrl, {
-    headers: authHeaders,
-    redirect: "follow",
-  });
 
-  if (!upstream.ok && upstream.status === 404 && !/^https?:\/\//i.test(raw)) {
-    const fileBase = normalizePublicBaseForFiles(getKukaxiPublicBaseUrl());
-    const tail = raw
-      .replace(/^\/+/, "")
-      .split("/")
-      .filter(Boolean)
-      .map((s) => encodeURIComponent(s))
-      .join("/");
-    if (tail) {
-      const alt = `${fileBase}/${tail}`;
-      if (alt !== targetUrl) {
-        const second = await fetch(alt, { headers: authHeaders, redirect: "follow" });
-        if (second.ok) upstream = second;
-      }
+  let upstream: Response | null = null;
+  let lastStatus = 404;
+
+  for (const c of candidates) {
+    const targetUrl = storageImagePublicUrl(apiBase, c);
+    if (!targetUrl) continue;
+    const res = await fetch(targetUrl, {
+      headers: authHeaders,
+      redirect: "follow",
+    });
+    lastStatus = res.status;
+    if (res.ok) {
+      upstream = res;
+      break;
     }
+    await res.arrayBuffer().catch(() => {});
   }
 
-  if (!upstream.ok) {
-    return NextResponse.json({ message: "Upstream error" }, { status: upstream.status });
+  if (!upstream?.ok) {
+    return NextResponse.json({ message: "Upstream error" }, { status: lastStatus });
   }
 
   const res = new NextResponse(upstream.body, { status: upstream.status });
