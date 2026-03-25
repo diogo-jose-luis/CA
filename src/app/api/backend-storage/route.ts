@@ -5,6 +5,13 @@ import { expandStoragePathCandidates, storageImagePublicUrl } from "@/lib/storag
 
 export const dynamic = "force-dynamic";
 
+async function fetchUpstream(
+  url: string,
+  headers: HeadersInit,
+): Promise<Response> {
+  return fetch(url, { headers, redirect: "follow" });
+}
+
 /**
  * Proxy same-origin para ficheiros em `/storage` na API, com Bearer da sessão.
  * Em produção (Vercel / WebView), `<img src="https://api…/storage/…">` falha comum
@@ -23,24 +30,30 @@ export async function GET(request: NextRequest) {
 
   const apiBase = getKukaxiPublicBaseUrl();
   const candidates = expandStoragePathCandidates(raw);
-  const authHeaders = { Authorization: `Bearer ${session.user.token}` };
+  const token = session.user.token;
+  const ua = request.headers.get("user-agent");
+  const forwardHeaders = (withAuth: boolean): HeadersInit => {
+    const h: Record<string, string> = {};
+    if (withAuth) h.Authorization = `Bearer ${token}`;
+    if (ua) h["User-Agent"] = ua;
+    return h;
+  };
 
   let upstream: Response | null = null;
   let lastStatus = 404;
 
-  for (const c of candidates) {
-    const targetUrl = storageImagePublicUrl(apiBase, c);
-    if (!targetUrl) continue;
-    const res = await fetch(targetUrl, {
-      headers: authHeaders,
-      redirect: "follow",
-    });
-    lastStatus = res.status;
-    if (res.ok) {
-      upstream = res;
-      break;
+  outer: for (const withAuth of [true, false]) {
+    for (const c of candidates) {
+      const targetUrl = storageImagePublicUrl(apiBase, c);
+      if (!targetUrl) continue;
+      const res = await fetchUpstream(targetUrl, forwardHeaders(withAuth));
+      lastStatus = res.status;
+      if (res.ok) {
+        upstream = res;
+        break outer;
+      }
+      await res.arrayBuffer().catch(() => {});
     }
-    await res.arrayBuffer().catch(() => {});
   }
 
   if (!upstream?.ok) {

@@ -18,9 +18,14 @@ export function normalizePublicBaseForFiles(apiBaseUrl: string): string {
   return b;
 }
 
+/** Remove `storage/` inicial se a API devolver caminho já com esse prefixo (evita `/storage/storage/…`). */
+export function stripLeadingStorageFolder(relativePath: string): string {
+  return relativePath.replace(/^\/+/, "").replace(/^storage\//i, "");
+}
+
 /**
  * A API por vezes devolve `acesso_imagens/…`, `acesso_images/…` ou `acesso_imangens/…`,
- * mas no disco (Laravel `storage/app/public`) a pasta real pode ser `acess/` (cPanel).
+ * mas no disco (Laravel `storage/app/public`) a pasta real pode ser `acess/` ou `access/` (cPanel).
  * Gera variantes a tentar no proxy até uma responder 200.
  */
 export function expandStoragePathCandidates(filename: string): string[] {
@@ -28,23 +33,29 @@ export function expandStoragePathCandidates(filename: string): string[] {
   if (!trimmed) return [];
   if (/^https?:\/\//i.test(trimmed)) return [trimmed];
 
-  const normalized = trimmed.replace(/^\/+/, "");
+  const normalized = stripLeadingStorageFolder(trimmed);
   const out: string[] = [];
   const add = (s: string) => {
-    if (s && !out.includes(s)) out.push(s);
+    const x = stripLeadingStorageFolder(s);
+    if (x && !out.includes(x)) out.push(x);
   };
 
   add(normalized);
 
   const wrongFolder = /^(acesso_imagens|acesso_images|acesso_imangens|acesso_imagem)\//i;
   if (wrongFolder.test(normalized)) {
-    add(normalized.replace(wrongFolder, "acess/"));
+    const tail = normalized.replace(wrongFolder, "");
+    add(`acess/${tail}`);
+    add(`access/${tail}`);
   }
 
   const parts = normalized.split("/").filter(Boolean);
   if (parts.length >= 2) {
     const file = parts[parts.length - 1];
-    if (file) add(`acess/${file}`);
+    if (file) {
+      add(`acess/${file}`);
+      add(`access/${file}`);
+    }
   }
 
   return out;
@@ -67,16 +78,34 @@ export function storageImagePublicUrl(
 
   if (options?.useAppStorageProxy) {
     /** Sempre path absoluto na origem (evita resolver como `/pt/backend-storage` em páginas com locale). */
-    return `/api/backend-storage?p=${encodeURIComponent(trimmed)}`;
+    return `/api/backend-storage?p=${encodeURIComponent(stripLeadingStorageFolder(trimmed))}`;
   }
 
   const base = normalizePublicBaseForFiles(apiBaseUrl);
-  const segments = trimmed.replace(/^\/+/, "").split("/").filter(Boolean).map((p) => encodeURIComponent(p));
-  if (segments.length === 0) return null;
 
-  const path = segments.join("/");
   if (trimmed.startsWith("/")) {
-    return `${base}/${path}`;
+    const inner = trimmed.replace(/^\/+/, "");
+    const segments = inner.split("/").filter(Boolean).map((p) => encodeURIComponent(p));
+    if (segments.length === 0) return null;
+    return `${base}/${segments.join("/")}`;
   }
-  return `${base}/storage/${path}`;
+
+  const rel = stripLeadingStorageFolder(trimmed);
+  const segments = rel.split("/").filter(Boolean).map((p) => encodeURIComponent(p));
+  if (segments.length === 0) return null;
+  return `${base}/storage/${segments.join("/")}`;
+}
+
+/**
+ * Garante `<img src>` com proxy correcto (alguns browsers/WebViews resolvem URLs mal).
+ */
+export function normalizeAppStorageImgSrc(src: string | null | undefined): string | null {
+  if (src == null || src === "") return null;
+  if (src.startsWith("/api/backend-storage")) return src;
+  if (/^https?:\/\//i.test(src)) return src;
+  if (src.startsWith("/backend-storage") || src.startsWith("backend-storage")) {
+    const q = src.includes("?") ? src.slice(src.indexOf("?")) : "";
+    return `/api/backend-storage${q}`;
+  }
+  return src;
 }

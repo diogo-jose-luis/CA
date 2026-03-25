@@ -27,19 +27,19 @@ export function middleware(req: NextRequest) {
    * `<img src="backend-storage?…">` (URL relativa) resolve para `/pt/backend-storage` nas páginas com locale.
    * Reescreve para a rota real em `/api/backend-storage`.
    */
-  if (pathname === "/backend-storage") {
+  if (pathname === "/backend-storage" || pathname === "/backend-storage/") {
     const url = req.nextUrl.clone();
     url.pathname = "/api/backend-storage";
     return NextResponse.rewrite(url);
   }
-  const localeBackendStorage = pathname.match(/^\/(pt|en|fr)\/backend-storage$/);
+  const localeBackendStorage = pathname.match(/^\/(pt|en|fr)\/backend-storage\/?$/);
   if (localeBackendStorage) {
     const url = req.nextUrl.clone();
     url.pathname = "/api/backend-storage";
     return NextResponse.rewrite(url);
   }
   /** Relativo `api/backend-storage?…` a partir de `/pt/…` → `/pt/api/backend-storage`. */
-  const localePrefixedApiStorage = pathname.match(/^\/(pt|en|fr)\/api\/backend-storage$/);
+  const localePrefixedApiStorage = pathname.match(/^\/(pt|en|fr)\/api\/backend-storage\/?$/);
   if (localePrefixedApiStorage) {
     const url = req.nextUrl.clone();
     url.pathname = "/api/backend-storage";

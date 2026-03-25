@@ -27,7 +27,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { shouldServeStorageViaAppProxy } from "@/lib/kukaxi-api";
 import CameraCaptureModal from "@/components/media/CameraCaptureModal";
 import { fileToFileList } from "@/lib/file-list";
-import { storageImagePublicUrl } from "@/lib/storage-public-url";
+import { normalizeAppStorageImgSrc, storageImagePublicUrl } from "@/lib/storage-public-url";
 import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
 import type { AcessoPessoa, AcessoPessoaListResponse } from "@/types/acesso-pessoa";
 import type { AcessoImagem, AcessoImagemListResponse } from "@/types/acesso-imagem";
@@ -362,7 +362,9 @@ export default function Page() {
 
   const buildImageUrl = useCallback(
     (path: string | null | undefined) =>
-      storageImagePublicUrl(api_base_url, path, { useAppStorageProxy }),
+      normalizeAppStorageImgSrc(
+        storageImagePublicUrl(api_base_url, path, { useAppStorageProxy }),
+      ),
     [api_base_url, useAppStorageProxy],
   );
 
