@@ -24,6 +24,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
 import CameraCaptureModal from "@/components/media/CameraCaptureModal";
 import { fileToFileList } from "@/lib/file-list";
+import { storageImagePublicUrl } from "@/lib/storage-public-url";
 import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
 import type { AcessoVeiculo, AcessoVeiculoListResponse } from "@/types/acesso-veiculo";
 import type { AcessoImagem, AcessoImagemListResponse } from "@/types/acesso-imagem";
@@ -377,12 +378,7 @@ export default function Page() {
   }, []);
 
   const buildImageUrl = useCallback(
-    (path: string | null | undefined) => {
-      if (!path) return null;
-      const base = api_base_url.replace(/\/$/, "");
-      const p = path.startsWith("/") ? path : `/storage/${path}`;
-      return `${base}${p}`;
-    },
+    (path: string | null | undefined) => storageImagePublicUrl(api_base_url, path),
     [api_base_url],
   );
 

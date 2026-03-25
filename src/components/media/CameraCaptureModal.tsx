@@ -84,11 +84,69 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
     if (el && el.videoWidth > 0) setReady(true);
   }, []);
 
-  function handleCapture() {
+  /** Garante que há pelo menos um frame de vídeo antes de desenhar no canvas (evita JPEG em branco em tablets / alguns browsers). */
+  const waitForPaintableFrame = useCallback((video: HTMLVideoElement) => {
+    return new Promise<void>((resolve) => {
+      const rvf = (
+        video as HTMLVideoElement & {
+          requestVideoFrameCallback?: (cb: () => void) => void;
+        }
+      ).requestVideoFrameCallback;
+      if (typeof rvf === "function") {
+        rvf.call(video, () => resolve());
+        return;
+      }
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+  }, []);
+
+  const finishCaptureFromCanvas = useCallback(
+    (canvas: HTMLCanvasElement) => {
+      canvas.toBlob(
+        (blob) => {
+          const deliver = (b: Blob) => {
+            stopStream();
+            const file = new File([b], `foto-${Date.now()}.jpg`, { type: "image/jpeg" });
+            onCapture(file);
+            onClose();
+          };
+          if (blob) {
+            try {
+              deliver(blob);
+            } finally {
+              setCapturing(false);
+            }
+            return;
+          }
+          try {
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+            const comma = dataUrl.indexOf(",");
+            if (comma < 0) return;
+            const byteString = atob(dataUrl.slice(comma + 1));
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+            deliver(new Blob([ab], { type: "image/jpeg" }));
+          } catch {
+            /* ignore */
+          } finally {
+            setCapturing(false);
+          }
+        },
+        "image/jpeg",
+        0.92,
+      );
+    },
+    [onCapture, onClose, stopStream],
+  );
+
+  const handleCapture = useCallback(async () => {
     const video = videoRef.current;
     if (!video || video.videoWidth <= 0 || video.videoHeight <= 0) return;
     setCapturing(true);
     try {
+      await video.play().catch(() => {});
+      await waitForPaintableFrame(video);
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -98,22 +156,11 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
         return;
       }
       ctx.drawImage(video, 0, 0);
-      canvas.toBlob(
-        (blob) => {
-          setCapturing(false);
-          if (!blob) return;
-          stopStream();
-          const file = new File([blob], `foto-${Date.now()}.jpg`, { type: "image/jpeg" });
-          onCapture(file);
-          onClose();
-        },
-        "image/jpeg",
-        0.92
-      );
+      finishCaptureFromCanvas(canvas);
     } catch {
       setCapturing(false);
     }
-  }
+  }, [finishCaptureFromCanvas, waitForPaintableFrame]);
 
   if (!open) return null;
 
@@ -162,7 +209,7 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
           type="button"
           disabled={!!err || !ready || capturing}
           className="ca-btn flex items-center gap-2 px-6 py-3 disabled:opacity-50"
-          onClick={handleCapture}
+          onClick={() => void handleCapture()}
         >
           {capturing ? <Loader2 className="size-5 animate-spin" /> : <Camera className="size-5" />}
           {t("capture")}
