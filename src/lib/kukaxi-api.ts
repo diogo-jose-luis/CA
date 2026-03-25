@@ -19,9 +19,11 @@ export function getKukaxiPublicBaseUrl(): string {
 }
 
 /**
- * Base usada pelo axios no browser. No Android WebView as chamadas diretas à API
- * falham frequentemente (CORS / Origin / rede); o mesmo origin via `/api/backend`
- * contorna isso.
+ * Base usada pelo axios no browser. Chamadas directas da origem Vercel → API externa
+ * falham no preflight CORS se o Laravel não listar esse domínio; `/api/backend` é same-origin.
+ * — Produção no browser: proxy por omissão.
+ * — Desactivar: `NEXT_PUBLIC_USE_BACKEND_PROXY=0` (dev local com API noutro host sem proxy).
+ * — Forçar sempre proxy: `=1` (ou WebView Android, detectado por UA).
  */
 export function resolveApiClientBase(): { base: string; viaProxy: boolean } {
   const upstream = getKukaxiApiRequestBaseUrl();
@@ -31,8 +33,14 @@ export function resolveApiClientBase(): { base: string; viaProxy: boolean } {
   const forceProxy =
     process.env.NEXT_PUBLIC_USE_BACKEND_PROXY === "true" ||
     process.env.NEXT_PUBLIC_USE_BACKEND_PROXY === "1";
+  const disableProxy =
+    process.env.NEXT_PUBLIC_USE_BACKEND_PROXY === "false" ||
+    process.env.NEXT_PUBLIC_USE_BACKEND_PROXY === "0";
   const androidWebView = /\b; wv\b/i.test(navigator.userAgent || "");
-  if (forceProxy || androidWebView) {
+  if (disableProxy) {
+    return { base: upstream, viaProxy: false };
+  }
+  if (forceProxy || androidWebView || process.env.NODE_ENV === "production") {
     return {
       base: `${window.location.origin}/api/backend`,
       viaProxy: true,

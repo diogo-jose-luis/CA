@@ -6,9 +6,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import axios from "axios";
 import { LockKeyhole, Mail, ChevronDown, KeyRound } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { getKukaxiApiRequestBaseUrl } from "@/lib/kukaxi-api";
-
-const API_LOGIN = getKukaxiApiRequestBaseUrl();
+import { resolveApiClientBase } from "@/lib/kukaxi-api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -63,8 +61,10 @@ export default function LoginPage() {
         : { email, password };
 
     try {
-      const loginRes = await axios.post(`${API_LOGIN}/login`, payload, {
+      const { base: apiBase, viaProxy } = resolveApiClientBase();
+      const loginRes = await axios.post(`${apiBase}/login`, payload, {
         headers: { "Content-Type": "application/json" },
+        withCredentials: viaProxy,
       });
 
       const data = loginRes.data;
