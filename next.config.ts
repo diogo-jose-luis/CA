@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value: "camera=(self), microphone=(self)",
+          },
+        ],
+      },
+    ];
+  },
   /**
    * Origens externas permitidas para `next/image` (otimização + Vercel).
    * Sem isto, URLs como https://outro-servidor.com/foto.jpg são recusadas em runtime.

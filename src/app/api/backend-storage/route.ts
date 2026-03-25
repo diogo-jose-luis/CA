@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { getKukaxiPublicBaseUrl } from "@/lib/kukaxi-api";
-import { storageImagePublicUrl } from "@/lib/storage-public-url";
+import { normalizePublicBaseForFiles, storageImagePublicUrl } from "@/lib/storage-public-url";
 
 export const dynamic = "force-dynamic";
 
@@ -11,12 +11,7 @@ export const dynamic = "force-dynamic";
  * por referer, cookies ou ficheiros protegidos — este endpoint reutiliza o token como `/api/backend`.
  */
 export async function GET(request: NextRequest) {
-  let raw: string;
-  try {
-    raw = decodeURIComponent(request.nextUrl.searchParams.get("p") ?? "");
-  } catch {
-    return NextResponse.json({ message: "Invalid path" }, { status: 400 });
-  }
+  const raw = request.nextUrl.searchParams.get("p") ?? "";
   if (!raw.trim() || raw.includes("..")) {
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   }
@@ -31,10 +26,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   }
 
-  const upstream = await fetch(targetUrl, {
-    headers: { Authorization: `Bearer ${session.user.token}` },
+  const authHeaders = { Authorization: `Bearer ${session.user.token}` };
+  let upstream = await fetch(targetUrl, {
+    headers: authHeaders,
     redirect: "follow",
   });
+
+  if (!upstream.ok && upstream.status === 404 && !/^https?:\/\//i.test(raw)) {
+    const fileBase = normalizePublicBaseForFiles(getKukaxiPublicBaseUrl());
+    const tail = raw
+      .replace(/^\/+/, "")
+      .split("/")
+      .filter(Boolean)
+      .map((s) => encodeURIComponent(s))
+      .join("/");
+    if (tail) {
+      const alt = `${fileBase}/${tail}`;
+      if (alt !== targetUrl) {
+        const second = await fetch(alt, { headers: authHeaders, redirect: "follow" });
+        if (second.ok) upstream = second;
+      }
+    }
+  }
 
   if (!upstream.ok) {
     return NextResponse.json({ message: "Upstream error" }, { status: upstream.status });

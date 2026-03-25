@@ -23,6 +23,13 @@ const PUBLIC_ASSET_EXT =
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  /** Alguns ambientes/WebViews pedem `/backend-storage` em vez de `/api/backend-storage`. */
+  if (pathname === "/backend-storage") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/api/backend-storage";
+    return NextResponse.rewrite(url);
+  }
+
   // Rotas de API não devem passar pelo next-intl: em produção isso pode gerar
   // redirecionamentos (ex.: 307) e o browser pode não persistir o Set-Cookie do login.
   if (

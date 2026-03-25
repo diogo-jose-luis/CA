@@ -7,6 +7,18 @@ export type StorageImageUrlOptions = {
 };
 
 /**
+ * Ficheiros estáticos (`/storage/...`) ficam na raiz do host da API, não sob `/api`.
+ * Se `NEXT_PUBLIC_KUKAXI_API_BASE_URL` terminar em `/api`, remove-se para evitar 404.
+ */
+export function normalizePublicBaseForFiles(apiBaseUrl: string): string {
+  let b = apiBaseUrl.replace(/\/$/, "");
+  if (b.endsWith("/api")) {
+    b = b.slice(0, -4).replace(/\/$/, "");
+  }
+  return b;
+}
+
+/**
  * Constrói URL pública para ficheiros na API Kukaxi.
  * — URLs absolutas http(s) são devolvidas sem alteração;
  * — caminho com "/" inicial: anexado à base (ex.: `/storage/...` ou `/acessos/...`), com segmentos codificados;
@@ -25,7 +37,7 @@ export function storageImagePublicUrl(
     return `/api/backend-storage?p=${encodeURIComponent(trimmed)}`;
   }
 
-  const base = apiBaseUrl.replace(/\/$/, "");
+  const base = normalizePublicBaseForFiles(apiBaseUrl);
   const segments = trimmed.replace(/^\/+/, "").split("/").filter(Boolean).map((p) => encodeURIComponent(p));
   if (segments.length === 0) return null;
 
