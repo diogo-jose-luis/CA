@@ -11,13 +11,24 @@ function invalidPath(segments: string[]) {
   );
 }
 
+/** Rotas da API que o browser pode chamar sem sessão Next (ex.: login cria o token). */
+function allowsAnonymousProxy(segments: string[], method: string): boolean {
+  const first = segments[0]?.toLowerCase() ?? "";
+  if (first === "login" && method === "POST") return true;
+  if (first === "sanctum") return true;
+  if (first === "register" && method === "POST") return true;
+  return false;
+}
+
 async function proxy(request: NextRequest, pathSegments: string[]) {
   if (invalidPath(pathSegments)) {
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   }
 
   const session = await getSession();
-  if (!session?.user?.token) {
+  const token = session?.user?.token;
+  const isPublic = allowsAnonymousProxy(pathSegments, request.method);
+  if (!isPublic && !token) {
     return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
   }
 
@@ -26,7 +37,9 @@ async function proxy(request: NextRequest, pathSegments: string[]) {
   const url = `${root}/${sub}${request.nextUrl.search}`;
 
   const headers = new Headers();
-  headers.set("Authorization", `Bearer ${session.user.token}`);
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
   const accept = request.headers.get("accept");
   if (accept) headers.set("Accept", accept);
   const contentType = request.headers.get("content-type");
