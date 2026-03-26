@@ -15,6 +15,7 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
   const t = useTranslations("cameraCapture");
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const fileCaptureInputRef = useRef<HTMLInputElement>(null);
   const [err, setErr] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [capturing, setCapturing] = useState(false);
@@ -28,6 +29,7 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
   const handleClose = useCallback(() => {
     stopStream();
     setErr(null);
+    if (fileCaptureInputRef.current) fileCaptureInputRef.current.value = "";
     onClose();
   }, [onClose, stopStream]);
 
@@ -83,6 +85,22 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
     const el = videoRef.current;
     if (el && el.videoWidth > 0) setReady(true);
   }, []);
+
+  const openNativeCameraCapture = useCallback(() => {
+    fileCaptureInputRef.current?.click();
+  }, []);
+
+  const handleNativeCaptureChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0] ?? null;
+      e.target.value = "";
+      if (!file) return;
+      stopStream();
+      onCapture(file);
+      onClose();
+    },
+    [onCapture, onClose, stopStream],
+  );
 
   /** Garante que há pelo menos um frame de vídeo antes de desenhar no canvas (evita JPEG em branco em tablets / alguns browsers). */
   const waitForPaintableFrame = useCallback((video: HTMLVideoElement) => {
@@ -183,7 +201,16 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
 
       <div className="relative flex-1 min-h-0 flex items-center justify-center p-2">
         {err ? (
-          <p className="text-center text-sm text-red-200 px-4">{err}</p>
+          <div className="px-4 text-center">
+            <p className="text-sm text-red-200">{err}</p>
+            <button
+              type="button"
+              className="mt-4 rounded-xl border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10"
+              onClick={openNativeCameraCapture}
+            >
+              {t("fallbackPick")}
+            </button>
+          </div>
         ) : (
           <video
             ref={videoRef}
@@ -197,6 +224,15 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
         )}
       </div>
 
+      <input
+        ref={fileCaptureInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleNativeCaptureChange}
+      />
+
       <div className="flex flex-wrap items-center justify-center gap-3 border-t border-white/10 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
@@ -207,12 +243,18 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
         </button>
         <button
           type="button"
-          disabled={!!err || !ready || capturing}
+          disabled={capturing || (!err && !ready)}
           className="ca-btn flex items-center gap-2 px-6 py-3 disabled:opacity-50"
-          onClick={() => void handleCapture()}
+          onClick={() => {
+            if (err) {
+              openNativeCameraCapture();
+              return;
+            }
+            void handleCapture();
+          }}
         >
           {capturing ? <Loader2 className="size-5 animate-spin" /> : <Camera className="size-5" />}
-          {t("capture")}
+          {err ? t("fallbackCapture") : t("capture")}
         </button>
       </div>
     </div>

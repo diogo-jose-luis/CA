@@ -123,6 +123,8 @@
     "title": "Tirar fotografia",
     "hint": "Use a câmara do dispositivo. Toque em Capturar quando estiver pronto.",
     "capture": "Capturar",
+    "fallbackCapture": "Usar câmara do dispositivo",
+    "fallbackPick": "Abrir câmara / galeria",
     "cancel": "Cancelar",
     "noCamera": "Não foi possível aceder à câmara. Verifique as permissões do browser ou da app.",
     "notSupported": "Este dispositivo ou browser não suporta captura por câmara (getUserMedia)."

@@ -119,6 +119,8 @@
     "title": "Prendre une photo",
     "hint": "Utilisez l'appareil photo. Appuyez sur Capturer lorsque c'est prêt.",
     "capture": "Capturer",
+    "fallbackCapture": "Utiliser la caméra de l'appareil",
+    "fallbackPick": "Ouvrir caméra / galerie",
     "cancel": "Annuler",
     "noCamera": "Impossible d'accéder à la caméra. Vérifiez les permissions du navigateur ou de l'application.",
     "notSupported": "Cet appareil ou navigateur ne prend pas en charge la capture par caméra (getUserMedia)."

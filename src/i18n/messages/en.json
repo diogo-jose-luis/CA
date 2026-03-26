@@ -122,6 +122,8 @@
     "title": "Take photo",
     "hint": "Use the device camera. Tap Capture when ready.",
     "capture": "Capture",
+    "fallbackCapture": "Use device camera",
+    "fallbackPick": "Open camera / gallery",
     "cancel": "Cancel",
     "noCamera": "Could not access the camera. Check browser or app permissions.",
     "notSupported": "This device or browser does not support camera capture (getUserMedia)."
