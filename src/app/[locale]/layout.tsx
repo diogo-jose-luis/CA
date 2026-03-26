@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   title: { default: "CA · Controle de Acesso", template: "%s · CA" },
   description:
     "Painel de gestão de controle de acesso para portarias de condomínios e portarias industriais.",
+  icons: {
+    icon: [
+      { url: "/logo.jpg", type: "image/jpeg" },
+    ],
+    shortcut: ["/logo.jpg"],
+    apple: [{ url: "/logo.jpg" }],
+  },
 };
 
 /** Permite `env(safe-area-inset-*)` em tablets / PWA com entalhes. */
