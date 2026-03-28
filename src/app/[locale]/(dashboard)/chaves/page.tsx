@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Key,
   CheckCircle,
@@ -13,7 +13,10 @@ import {
   Loader2,
   Image as ImageIcon,
   Undo2,
+  Camera,
+  Upload,
 } from "lucide-react";
+import CameraCaptureModal from "@/components/media/CameraCaptureModal";
 import { useLocale, useTranslations } from "next-intl";
 import axios, { type AxiosInstance } from "axios";
 import { useAuth } from "@/hooks/useAuth";
@@ -232,6 +235,11 @@ export default function Page() {
     imagemPreviewUrl: null as string | null,
   });
   const [returnSubmitting, setReturnSubmitting] = useState(false);
+
+  const formImagemInputRef = useRef<HTMLInputElement>(null);
+  const returnImagemInputRef = useRef<HTMLInputElement>(null);
+  const [keyImageCameraOpen, setKeyImageCameraOpen] = useState(false);
+  const keyImageCameraTargetRef = useRef<"form" | "return" | null>(null);
 
   const [form, setForm] = useState({
     data_entrega: "",
@@ -902,7 +910,7 @@ export default function Page() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="hidden overflow-x-auto desktop-auth:block">
               <table className="w-full text-sm min-w-[900px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/40">
                   <tr>
@@ -918,95 +926,213 @@ export default function Page() {
                   </tr>
                 </thead>
                 <tbody className="divide-y ca-border">
-                  {list.map((row) => {
-                    const { date, time } = formatDateTimeParts(row.data_entrega, locale);
-                    const ret = row.data_devolucao
-                      ? formatDateTimeParts(row.data_devolucao, locale)
-                      : null;
-                    return (
-                      <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                        <td className="px-4 py-3 font-medium">#{row.id}</td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          {date} {time}
-                        </td>
-                        <td className="px-4 py-3 max-w-[140px] truncate" title={row.chave}>
-                          {row.chave}
-                        </td>
-                        <td className="px-4 py-3">{residenciaLabel(row.residencia)}</td>
-                        <td className="px-4 py-3">{handedByName(row)}</td>
-                        <td className="px-4 py-3">{receiverName(row)}</td>
-                        <td className="px-4 py-3">
-                          {isOngoing(row) ? (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                              {t("status.ongoing")}
-                            </span>
-                          ) : (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                              {t("status.returned")}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-xs ca-muted whitespace-nowrap">
-                          {ret ? (
-                            <>
-                              {ret.date} {ret.time}
-                              <div>{returnedToMoradorName(row)}</div>
-                            </>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <div className="flex justify-end gap-2 flex-wrap">
-                            <button
-                              type="button"
-                              className="ca-icon-btn"
-                              title={t("actions.view")}
-                              onClick={() => openDetail(row)}
-                            >
-                              <Eye size={16} />
-                            </button>
-                            {canEdit && (
+                  {list.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-10 text-center text-sm ca-muted">
+                        {t("empty")}
+                      </td>
+                    </tr>
+                  ) : (
+                    list.map((row) => {
+                      const { date, time } = formatDateTimeParts(row.data_entrega, locale);
+                      const ret = row.data_devolucao
+                        ? formatDateTimeParts(row.data_devolucao, locale)
+                        : null;
+                      return (
+                        <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                          <td className="px-4 py-3 font-medium">#{row.id}</td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            {date} {time}
+                          </td>
+                          <td className="px-4 py-3 max-w-[140px] truncate" title={row.chave}>
+                            {row.chave}
+                          </td>
+                          <td className="px-4 py-3">{residenciaLabel(row.residencia)}</td>
+                          <td className="px-4 py-3">{handedByName(row)}</td>
+                          <td className="px-4 py-3">{receiverName(row)}</td>
+                          <td className="px-4 py-3">
+                            {isOngoing(row) ? (
+                              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                                {t("status.ongoing")}
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                {t("status.returned")}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-xs ca-muted whitespace-nowrap">
+                            {ret ? (
+                              <>
+                                {ret.date} {ret.time}
+                                <div>{returnedToMoradorName(row)}</div>
+                              </>
+                            ) : (
+                              "—"
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex justify-end gap-2 flex-wrap">
                               <button
                                 type="button"
                                 className="ca-icon-btn"
-                                title={t("actions.edit")}
-                                onClick={() => openEdit(row)}
+                                title={t("actions.view")}
+                                onClick={() => openDetail(row)}
                               >
-                                <Pencil size={16} />
+                                <Eye size={16} />
                               </button>
-                            )}
-                            {canEdit && isOngoing(row) && (
-                              <button
-                                type="button"
-                                className="ca-icon-btn text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
-                                title={t("actions.registerReturn")}
-                                onClick={() => openReturn(row)}
-                              >
-                                <Undo2 size={16} />
-                              </button>
-                            )}
-                            {canDelete && (
-                              <button
-                                type="button"
-                                className="ca-icon-btn text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
-                                title={t("actions.remove")}
-                                onClick={() => handleDelete(row.id)}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                              {canEdit && (
+                                <button
+                                  type="button"
+                                  className="ca-icon-btn"
+                                  title={t("actions.edit")}
+                                  onClick={() => openEdit(row)}
+                                >
+                                  <Pencil size={16} />
+                                </button>
+                              )}
+                              {canEdit && isOngoing(row) && (
+                                <button
+                                  type="button"
+                                  className="ca-icon-btn text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
+                                  title={t("actions.registerReturn")}
+                                  onClick={() => openReturn(row)}
+                                >
+                                  <Undo2 size={16} />
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button
+                                  type="button"
+                                  className="ca-icon-btn text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                                  title={t("actions.remove")}
+                                  onClick={() => handleDelete(row.id)}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
-            {list.length === 0 && !loading && (
-              <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>
-            )}
+
+            <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
+              {list.length === 0 ? (
+                <div className="py-12 text-center text-sm ca-muted">{t("empty")}</div>
+              ) : (
+                list.map((row) => {
+                  const { date, time } = formatDateTimeParts(row.data_entrega, locale);
+                  const ret = row.data_devolucao ? formatDateTimeParts(row.data_devolucao, locale) : null;
+                  return (
+                    <article
+                      key={row.id}
+                      className="overflow-hidden rounded-2xl border ca-border bg-[var(--panel)] shadow-md ring-1 ring-black/[0.04] dark:ring-white/[0.06]"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2 border-b ca-border bg-slate-50/90 px-4 py-3 dark:bg-slate-800/50">
+                        <div>
+                          <div className="text-xs font-medium ca-muted">{t("table.id")}</div>
+                          <div className="text-lg font-semibold">#{row.id}</div>
+                        </div>
+                        {isOngoing(row) ? (
+                          <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                            {t("status.ongoing")}
+                          </span>
+                        ) : (
+                          <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                            {t("status.returned")}
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-3 px-4 py-3 text-sm">
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.delivery")}</div>
+                          <div className="font-medium">
+                            {date} {time}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.key")}</div>
+                          <div className="font-semibold">{row.chave}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.residence")}</div>
+                          <div className="font-medium">{residenciaLabel(row.residencia)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.handedBy")}</div>
+                          <div className="font-medium">{handedByName(row)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.receivedBy")}</div>
+                          <div className="font-medium">{receiverName(row)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.return")}</div>
+                          <div className="text-sm">
+                            {ret ? (
+                              <>
+                                <div className="font-medium">
+                                  {ret.date} {ret.time}
+                                </div>
+                                <div className="ca-muted">{returnedToMoradorName(row)}</div>
+                              </>
+                            ) : (
+                              "—"
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap justify-end gap-1 border-t ca-border bg-slate-50/60 px-2 py-2 dark:bg-slate-800/30">
+                          <button
+                            type="button"
+                            className="ca-icon-btn min-h-10 min-w-10"
+                            title={t("actions.view")}
+                            onClick={() => openDetail(row)}
+                          >
+                            <Eye size={18} />
+                          </button>
+                          {canEdit && (
+                            <button
+                              type="button"
+                              className="ca-icon-btn min-h-10 min-w-10"
+                              title={t("actions.edit")}
+                              onClick={() => openEdit(row)}
+                            >
+                              <Pencil size={18} />
+                            </button>
+                          )}
+                          {canEdit && isOngoing(row) && (
+                            <button
+                              type="button"
+                              className="ca-icon-btn min-h-10 min-w-10 text-emerald-600"
+                              title={t("actions.registerReturn")}
+                              onClick={() => openReturn(row)}
+                            >
+                              <Undo2 size={18} />
+                            </button>
+                          )}
+                          {canDelete && (
+                            <button
+                              type="button"
+                              className="ca-icon-btn min-h-10 min-w-10 text-red-600"
+                              title={t("actions.remove")}
+                              onClick={() => handleDelete(row.id)}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
+            </div>
+
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t ca-border">
                 <span className="text-sm ca-muted">
@@ -1039,7 +1165,7 @@ export default function Page() {
       {showPanel && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={closePanel} />
-          <div className="relative ml-auto h-full w-full max-w-md ca-panel shadow-2xl flex flex-col">
+          <div className="relative ml-auto h-full w-full max-w-md ca-panel shadow-2xl flex flex-col tablet-app:max-w-none">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <h2 className="text-lg font-semibold">
                 {editingId ? t("form.edit") : t("form.title")}
@@ -1190,16 +1316,39 @@ export default function Page() {
                   {t("form.image")}
                 </label>
                 <input
+                  ref={formImagemInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
-                  className="ca-input w-full"
+                  className="hidden"
                   onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
                 />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn flex w-full items-center justify-center gap-2"
+                    onClick={() => formImagemInputRef.current?.click()}
+                  >
+                    <Upload size={18} />
+                    {t("form.chooseFromDevice")}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                    onClick={() => {
+                      keyImageCameraTargetRef.current = "form";
+                      setKeyImageCameraOpen(true);
+                    }}
+                  >
+                    <Camera size={18} />
+                    {t("form.takePhoto")}
+                  </button>
+                </div>
                 {form.imagemPreviewUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={form.imagemPreviewUrl}
                     alt=""
-                    className="max-h-40 rounded-lg border ca-border object-contain"
+                    className="mt-2 max-h-48 w-full rounded-xl border ca-border object-contain"
                   />
                 )}
               </div>
@@ -1228,7 +1377,7 @@ export default function Page() {
       {returnRow && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={closeReturn} />
-          <div className="relative m-auto w-full max-w-md ca-panel shadow-2xl rounded-2xl overflow-hidden">
+          <div className="relative m-auto w-full max-w-md ca-panel shadow-2xl rounded-2xl overflow-hidden tablet-app:max-w-none">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <h2 className="text-lg font-semibold">{t("returnPanel.title")}</h2>
               <button type="button" onClick={closeReturn}>
@@ -1346,16 +1495,39 @@ export default function Page() {
                 {t("form.image")}
               </label>
               <input
+                ref={returnImagemInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
-                className="ca-input w-full"
+                className="hidden"
                 onChange={(e) => onReturnFile(e.target.files?.[0] ?? null)}
               />
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  className="ca-btn flex w-full items-center justify-center gap-2"
+                  onClick={() => returnImagemInputRef.current?.click()}
+                >
+                  <Upload size={18} />
+                  {t("form.chooseFromDevice")}
+                </button>
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                  onClick={() => {
+                    keyImageCameraTargetRef.current = "return";
+                    setKeyImageCameraOpen(true);
+                  }}
+                >
+                  <Camera size={18} />
+                  {t("form.takePhoto")}
+                </button>
+              </div>
               {returnForm.imagemPreviewUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={returnForm.imagemPreviewUrl}
                   alt=""
-                  className="max-h-36 rounded-lg border ca-border object-contain"
+                  className="mt-2 max-h-40 w-full rounded-xl border ca-border object-contain"
                 />
               )}
               <div className="flex justify-end gap-2 pt-2">
@@ -1442,6 +1614,21 @@ export default function Page() {
           </div>
         </div>
       )}
+
+      <CameraCaptureModal
+        open={keyImageCameraOpen}
+        onClose={() => {
+          keyImageCameraTargetRef.current = null;
+          setKeyImageCameraOpen(false);
+        }}
+        onCapture={(file) => {
+          setKeyImageCameraOpen(false);
+          const tgt = keyImageCameraTargetRef.current;
+          keyImageCameraTargetRef.current = null;
+          if (tgt === "form") onFileChange(file);
+          else if (tgt === "return") onReturnFile(file);
+        }}
+      />
     </div>
   );
 }

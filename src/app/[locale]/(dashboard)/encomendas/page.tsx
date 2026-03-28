@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Package,
   CheckCircle,
@@ -12,7 +12,10 @@ import {
   Trash2,
   Loader2,
   Image as ImageIcon,
+  Camera,
+  Upload,
 } from "lucide-react";
+import CameraCaptureModal from "@/components/media/CameraCaptureModal";
 import { useLocale, useTranslations } from "next-intl";
 import axios, { type AxiosInstance } from "axios";
 import { useAuth } from "@/hooks/useAuth";
@@ -195,6 +198,9 @@ export default function Page() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [detailRow, setDetailRow] = useState<EncomendaApi | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
+
+  const formImagemInputRef = useRef<HTMLInputElement>(null);
+  const [formImageCameraOpen, setFormImageCameraOpen] = useState(false);
 
   const [form, setForm] = useState({
     data: "",
@@ -720,78 +726,168 @@ export default function Page() {
           </div>
         ) : (
           <>
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-800/40">
-                <tr>
-                  <th className="py-3 px-4 text-left">{t("table.order")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.date")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.time")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.sender")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.receiver")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.description")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.status")}</th>
-                  <th className="py-3 px-4 text-left">{t("table.deliveredTo")}</th>
-                  <th className="py-3 px-4 text-right">{t("table.actions")}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y ca-border">
-                {list.map((row) => {
+            <div className="hidden overflow-x-auto desktop-auth:block">
+              <table className="w-full min-w-[960px] text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-800/40">
+                  <tr>
+                    <th className="py-3 px-4 text-left">{t("table.order")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.date")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.time")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.sender")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.receiver")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.description")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.status")}</th>
+                    <th className="py-3 px-4 text-left">{t("table.deliveredTo")}</th>
+                    <th className="py-3 px-4 text-right">{t("table.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y ca-border">
+                  {list.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-10 text-center text-sm ca-muted">
+                        {t("empty")}
+                      </td>
+                    </tr>
+                  ) : (
+                    list.map((row) => {
+                      const { date, time } = formatDateTimeParts(row.data, locale);
+                      return (
+                        <tr
+                          key={row.id}
+                          className="hover:bg-slate-50 dark:hover:bg-slate-800/30"
+                        >
+                          <td className="px-4 py-3 font-medium">#{row.id}</td>
+                          <td className="px-4 py-3">{date}</td>
+                          <td className="px-4 py-3">{time}</td>
+                          <td className="px-4 py-3">{partyName(row, "remetente")}</td>
+                          <td className="px-4 py-3">{partyName(row, "destinatario")}</td>
+                          <td className="px-4 py-3 max-w-[200px] truncate" title={row.descricao}>
+                            {row.descricao}
+                          </td>
+                          <td className="px-4 py-3">{statusBadge(row.estado)}</td>
+                          <td className="px-4 py-3">{deliveredName(row)}</td>
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                type="button"
+                                className="ca-icon-btn"
+                                title={t("actions.view")}
+                                onClick={() => openDetail(row)}
+                              >
+                                <Eye size={16} />
+                              </button>
+                              {canEdit && (
+                                <button
+                                  type="button"
+                                  className="ca-icon-btn"
+                                  title={t("actions.edit")}
+                                  onClick={() => openEdit(row)}
+                                >
+                                  <Pencil size={16} />
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button
+                                  type="button"
+                                  className="ca-icon-btn text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                                  title={t("actions.remove")}
+                                  onClick={() => handleDelete(row.id)}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
+              {list.length === 0 ? (
+                <div className="py-12 text-center text-sm ca-muted">{t("empty")}</div>
+              ) : (
+                list.map((row) => {
                   const { date, time } = formatDateTimeParts(row.data, locale);
                   return (
-                    <tr
+                    <article
                       key={row.id}
-                      className="hover:bg-slate-50 dark:hover:bg-slate-800/30"
+                      className="overflow-hidden rounded-2xl border ca-border bg-[var(--panel)] shadow-md ring-1 ring-black/[0.04] dark:ring-white/[0.06]"
                     >
-                      <td className="px-4 py-3 font-medium">#{row.id}</td>
-                      <td className="px-4 py-3">{date}</td>
-                      <td className="px-4 py-3">{time}</td>
-                      <td className="px-4 py-3">{partyName(row, "remetente")}</td>
-                      <td className="px-4 py-3">{partyName(row, "destinatario")}</td>
-                      <td className="px-4 py-3 max-w-[200px] truncate" title={row.descricao}>
-                        {row.descricao}
-                      </td>
-                      <td className="px-4 py-3">{statusBadge(row.estado)}</td>
-                      <td className="px-4 py-3">{deliveredName(row)}</td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex justify-end gap-2">
+                      <div className="flex flex-wrap items-start justify-between gap-2 border-b ca-border bg-slate-50/90 px-4 py-3 dark:bg-slate-800/50">
+                        <div>
+                          <div className="text-xs font-medium ca-muted">{t("table.order")}</div>
+                          <div className="text-lg font-semibold">#{row.id}</div>
+                        </div>
+                        {statusBadge(row.estado)}
+                      </div>
+                      <div className="space-y-3 px-4 py-3 text-sm">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <div className="text-xs ca-muted">{t("table.date")}</div>
+                            <div className="font-medium">{date}</div>
+                          </div>
+                          <div>
+                            <div className="text-xs ca-muted">{t("table.time")}</div>
+                            <div className="font-medium">{time}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.sender")}</div>
+                          <div className="font-medium">{partyName(row, "remetente")}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.receiver")}</div>
+                          <div className="font-medium">{partyName(row, "destinatario")}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.description")}</div>
+                          <div className="text-sm leading-snug">{row.descricao}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs ca-muted">{t("table.deliveredTo")}</div>
+                          <div className="font-medium">{deliveredName(row)}</div>
+                        </div>
+                        <div className="flex flex-wrap justify-end gap-1 border-t ca-border bg-slate-50/60 px-2 py-2 dark:bg-slate-800/30">
                           <button
                             type="button"
-                            className="ca-icon-btn"
+                            className="ca-icon-btn min-h-10 min-w-10"
                             title={t("actions.view")}
                             onClick={() => openDetail(row)}
                           >
-                            <Eye size={16} />
+                            <Eye size={18} />
                           </button>
                           {canEdit && (
                             <button
                               type="button"
-                              className="ca-icon-btn"
+                              className="ca-icon-btn min-h-10 min-w-10"
                               title={t("actions.edit")}
                               onClick={() => openEdit(row)}
                             >
-                              <Pencil size={16} />
+                              <Pencil size={18} />
                             </button>
                           )}
                           {canDelete && (
                             <button
                               type="button"
-                              className="ca-icon-btn text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                              className="ca-icon-btn min-h-10 min-w-10 text-red-600"
                               title={t("actions.remove")}
                               onClick={() => handleDelete(row.id)}
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={18} />
                             </button>
                           )}
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </article>
                   );
-                })}
-              </tbody>
-            </table>
-            {list.length === 0 && !loading && (
-              <div className="py-8 text-center ca-muted text-sm">{t("empty")}</div>
-            )}
+                })
+              )}
+            </div>
+
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t ca-border">
                 <span className="text-sm ca-muted">
@@ -824,7 +920,7 @@ export default function Page() {
       {showPanel && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={closePanel} />
-          <div className="relative ml-auto h-full w-full max-w-md ca-panel shadow-2xl flex flex-col">
+          <div className="relative ml-auto h-full w-full max-w-md ca-panel shadow-2xl flex flex-col tablet-app:max-w-none">
             <div className="flex items-center justify-between p-4 border-b ca-border">
               <h2 className="text-lg font-semibold">
                 {editingId ? t("form.edit") : t("form.title")}
@@ -1052,16 +1148,36 @@ export default function Page() {
                   {t("form.image")}
                 </label>
                 <input
+                  ref={formImagemInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
-                  className="ca-input w-full"
+                  className="hidden"
                   onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
                 />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn flex w-full items-center justify-center gap-2"
+                    onClick={() => formImagemInputRef.current?.click()}
+                  >
+                    <Upload size={18} />
+                    {t("form.chooseFromDevice")}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                    onClick={() => setFormImageCameraOpen(true)}
+                  >
+                    <Camera size={18} />
+                    {t("form.takePhoto")}
+                  </button>
+                </div>
                 {form.imagemPreviewUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={form.imagemPreviewUrl}
                     alt=""
-                    className="max-h-40 rounded-lg border ca-border object-contain"
+                    className="mt-2 max-h-48 w-full rounded-xl border ca-border object-contain"
                   />
                 )}
               </div>
@@ -1140,6 +1256,15 @@ export default function Page() {
           </div>
         </div>
       )}
+
+      <CameraCaptureModal
+        open={formImageCameraOpen}
+        onClose={() => setFormImageCameraOpen(false)}
+        onCapture={(file) => {
+          setFormImageCameraOpen(false);
+          onFileChange(file);
+        }}
+      />
     </div>
   );
 }

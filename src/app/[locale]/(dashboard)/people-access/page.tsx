@@ -208,6 +208,17 @@ async function fetchMergedUsers(http: AxiosInstance, organizacaoId: number): Pro
   return Array.from(map.values()).sort((a, b) => (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }));
 }
 
+type UtilizadoresAssociadosResponse = { data: Utilizador[] };
+
+/** Utilizadores associados ao utilizador autenticado (anfitrião) na organização. */
+async function fetchAssociatedUsers(http: AxiosInstance, organizacaoId: number): Promise<Utilizador[]> {
+  const res = await http.get<UtilizadoresAssociadosResponse>(`/utilizadores-associados/${organizacaoId}`);
+  const rows = Array.isArray(res.data?.data) ? res.data.data : [];
+  return rows
+    .filter((u): u is Utilizador => u != null && typeof u.id === "number")
+    .sort((a, b) => (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }));
+}
+
 function rowVisualStatus(row: AcessoPessoa, t: (k: string) => string): { key: string; className: string; label: string } {
   const timing = getTimingFlags(row);
   if (timing.isExpiredWindow) {
@@ -280,6 +291,8 @@ export default function Page() {
   const [statExpiredUnused, setStatExpiredUnused] = useState(0);
 
   const [allUsers, setAllUsers] = useState<Utilizador[]>([]);
+  /** Ao editar como anfitrião, garante que o solicitante atual aparece no select se já não estiver na lista de associados. */
+  const [existingSelectUserFallback, setExistingSelectUserFallback] = useState<Utilizador | null>(null);
   const [anfitrioes, setAnfitrioes] = useState<Utilizador[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [anfitrioesLoading, setAnfitrioesLoading] = useState(false);
@@ -353,6 +366,7 @@ export default function Page() {
     panelSelectsPrimedRef.current = null;
     setAllUsers([]);
     setAnfitrioes([]);
+    setExistingSelectUserFallback(null);
   }, [organizacaoId]);
 
   const showToast = useCallback((message: string, isError?: boolean) => {
@@ -459,7 +473,9 @@ export default function Page() {
     }
     setUsersLoading(true);
     try {
-      const merged = await fetchMergedUsers(http, organizacaoId);
+      const merged = isHostUser
+        ? await fetchAssociatedUsers(http, organizacaoId)
+        : await fetchMergedUsers(http, organizacaoId);
       setAllUsers(merged);
     } catch {
       setAllUsers([]);
@@ -467,7 +483,7 @@ export default function Page() {
     } finally {
       setUsersLoading(false);
     }
-  }, [http, organizacaoId, showToast, t]);
+  }, [http, organizacaoId, isHostUser, showToast, t]);
 
   const ensurePanelSelectUsers = useCallback(
     async (opts?: { force?: boolean; includeDestinations?: boolean }) => {
@@ -647,6 +663,16 @@ export default function Page() {
     [t],
   );
 
+  const usersForExistingSelect = useMemo(() => {
+    if (!isHostUser || !existingSelectUserFallback) return allUsers;
+    const map = new Map(allUsers.map((u) => [u.id, u]));
+    const f = existingSelectUserFallback;
+    if (!map.has(f.id)) map.set(f.id, f);
+    return Array.from(map.values()).sort((a, b) =>
+      (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }),
+    );
+  }, [allUsers, isHostUser, existingSelectUserFallback]);
+
   const motivoLabel = useCallback(
     (raw: string | null | undefined) => {
       if (!raw?.trim()) return "—";
@@ -731,6 +757,7 @@ export default function Page() {
   );
 
   const resetForm = () => {
+    setExistingSelectUserFallback(null);
     setSolicitanteMode("existing");
     setFormUserId("");
     setFormVisitanteNome("");
@@ -773,6 +800,7 @@ export default function Page() {
     if (row.user_id) {
       setSolicitanteMode("existing");
       setFormUserId(String(row.user_id));
+      setExistingSelectUserFallback(row.user?.id ? row.user : null);
       setFormVisitanteNome("");
       setFormVisitanteEmail("");
       setFormVisitanteTelefone("");
@@ -780,6 +808,7 @@ export default function Page() {
       setFormDocumentUi(inferDocumentUi(row));
     } else {
       setSolicitanteMode("visitante");
+      setExistingSelectUserFallback(null);
       setFormUserId("");
       setFormVisitanteNome(u?.name?.trim() ?? "");
       setFormVisitanteEmail(u?.email?.trim() ?? "");
@@ -1628,7 +1657,7 @@ export default function Page() {
                     disabled={usersLoading}
                   >
                     <option value="">{usersLoading ? t("form.loadingUsers") : t("form.selectUser")}</option>
-                    {allUsers.map((u) => (
+                    {usersForExistingSelect.map((u) => (
                       <option key={u.id} value={u.id}>
                         {u.name} ({tipoLabel(u)})
                       </option>

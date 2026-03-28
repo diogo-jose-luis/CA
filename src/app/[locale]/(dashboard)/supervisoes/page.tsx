@@ -8,12 +8,12 @@ import {
   Camera,
   ClipboardList,
   Eye,
-  ImagePlus,
   Loader2,
   Pencil,
   Plus,
   RefreshCw,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import CameraCaptureModal from "@/components/media/CameraCaptureModal";
@@ -187,6 +187,7 @@ export default function Page() {
     files: [] as File[],
   });
   const [createFileKey, setCreateFileKey] = useState(0);
+  const [createPreviewUrls, setCreatePreviewUrls] = useState<string[]>([]);
 
   const [detail, setDetail] = useState<SupervisaoApi | null>(null);
   const [detailTab, setDetailTab] = useState<TabKey>("detalhes");
@@ -409,6 +410,21 @@ export default function Page() {
   useEffect(() => {
     void fetchList();
   }, [fetchList]);
+
+  useEffect(() => {
+    const urls = createForm.files.map((file) => URL.createObjectURL(file));
+    setCreatePreviewUrls(urls);
+    return () => {
+      urls.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [createForm.files]);
+
+  const removeCreateFileAt = (index: number) => {
+    setCreateForm((f) => ({
+      ...f,
+      files: f.files.filter((_, i) => i !== index),
+    }));
+  };
 
   const openCreate = () => {
     const sup = supervisorLocked && selfId > 0 ? String(selfId) : "";
@@ -895,40 +911,82 @@ export default function Page() {
       </div>
 
       <div className="ca-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
-            <thead className="border-b ca-border bg-[var(--panel-alt)]">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">{t("table.when")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.supervisor")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.estado")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.observacoes")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("table.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center ca-muted">
-                    <Loader2 className="mx-auto h-6 w-6 animate-spin opacity-60" />
-                  </td>
-                </tr>
-              ) : list.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center ca-muted">
-                    {t("table.empty")}
-                  </td>
-                </tr>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+          </div>
+        ) : (
+          <>
+            <div className="hidden overflow-x-auto desktop-auth:block">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead className="border-b ca-border bg-[var(--panel-alt)]">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.when")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.supervisor")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.estado")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.observacoes")}</th>
+                    <th className="px-4 py-3 text-right font-medium">{t("table.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-10 text-center ca-muted">
+                        {t("table.empty")}
+                      </td>
+                    </tr>
+                  ) : (
+                    list.map((row) => (
+                      <tr key={row.id} className="border-b ca-border">
+                        <td className="px-4 py-3 whitespace-nowrap">{formatDt(row.data_hora, locale)}</td>
+                        <td className="px-4 py-3">
+                          {row.supervisor?.name || row.supervisor?.email || `#${row.supervisor_id}`}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                              row.estado === 2
+                                ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                                : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                            }`}
+                          >
+                            {row.estado === 2 ? t("estadoSupervisao.anormal") : t("estadoSupervisao.normal")}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 max-w-[240px] truncate">{row.observacoes?.trim() || "—"}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button
+                            type="button"
+                            className="ca-icon-btn"
+                            onClick={() => openDetail(row)}
+                            title={t("actions.view")}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
+              {list.length === 0 ? (
+                <div className="py-12 text-center text-sm ca-muted">{t("table.empty")}</div>
               ) : (
                 list.map((row) => (
-                  <tr key={row.id} className="border-b ca-border">
-                    <td className="px-4 py-3 whitespace-nowrap">{formatDt(row.data_hora, locale)}</td>
-                    <td className="px-4 py-3">
-                      {row.supervisor?.name || row.supervisor?.email || `#${row.supervisor_id}`}
-                    </td>
-                    <td className="px-4 py-3">
+                  <article
+                    key={row.id}
+                    className="overflow-hidden rounded-2xl border ca-border bg-[var(--panel)] shadow-md ring-1 ring-black/[0.04] dark:ring-white/[0.06]"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-2 border-b ca-border bg-slate-50/90 px-4 py-3 dark:bg-slate-800/50">
+                      <div className="min-w-0">
+                        <div className="text-xs font-medium ca-muted">{t("table.when")}</div>
+                        <div className="font-semibold leading-snug">{formatDt(row.data_hora, locale)}</div>
+                      </div>
                       <span
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
                           row.estado === 2
                             ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
                             : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
@@ -936,19 +994,31 @@ export default function Page() {
                       >
                         {row.estado === 2 ? t("estadoSupervisao.anormal") : t("estadoSupervisao.normal")}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 max-w-[240px] truncate">{row.observacoes?.trim() || "—"}</td>
-                    <td className="px-4 py-3 text-right">
-                      <button type="button" className="ca-icon-btn" onClick={() => openDetail(row)} title={t("actions.view")}>
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="space-y-3 px-4 py-3 text-sm">
+                      <div>
+                        <div className="text-xs ca-muted">{t("table.supervisor")}</div>
+                        <div className="font-medium">
+                          {row.supervisor?.name || row.supervisor?.email || `#${row.supervisor_id}`}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs ca-muted">{t("table.observacoes")}</div>
+                        <div className="text-sm leading-snug">{row.observacoes?.trim() || "—"}</div>
+                      </div>
+                      <div className="flex justify-end border-t ca-border pt-2">
+                        <button type="button" className="ca-btn min-h-10 px-4 text-sm" onClick={() => openDetail(row)}>
+                          <Eye className="mr-2 inline h-4 w-4" />
+                          {t("actions.view")}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          </>
+        )}
         {total > 0 && (
           <div className="flex flex-col gap-2 border-t ca-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs ca-muted">
@@ -988,7 +1058,7 @@ export default function Page() {
 
       {showCreate ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
-          <div className="ca-card max-h-[90vh] w-full max-w-lg overflow-y-auto p-5 shadow-xl">
+          <div className="ca-card max-h-[90vh] w-full max-w-lg overflow-y-auto p-5 shadow-xl tablet-app:max-w-none">
             <div className="mb-4 flex items-center justify-between gap-2">
               <h2 className="text-lg font-semibold">{t("create.title")}</h2>
               <button type="button" className="ca-icon-btn" onClick={() => setShowCreate(false)}>
@@ -1058,27 +1128,40 @@ export default function Page() {
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     type="button"
-                    className="ca-btn-outline flex items-center justify-center gap-2 text-sm"
+                    className="ca-btn flex w-full items-center justify-center gap-2"
                     onClick={() => createFilesInputRef.current?.click()}
                   >
-                    <ImagePlus className="h-4 w-4" />
-                    {t("form.chooseFiles")}
+                    <Upload className="h-4 w-4" />
+                    {t("form.chooseFromDevice")}
                   </button>
                   <button
                     type="button"
-                    className="ca-btn-outline flex items-center justify-center gap-2 text-sm"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
                     onClick={() => openSupervisaoCamera("create")}
                   >
                     <Camera className="h-4 w-4" />
                     {t("form.takePhoto")}
                   </button>
                 </div>
-                {createForm.files.length > 0 ? (
-                  <p className="mt-2 text-xs ca-muted">
-                    {createForm.files.length === 1
-                      ? createForm.files[0]?.name ?? ""
-                      : t("form.filesSummary", { count: createForm.files.length })}
-                  </p>
+                {createPreviewUrls.length > 0 ? (
+                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {createPreviewUrls.map((src, i) => (
+                      <div
+                        key={`${src}-${i}`}
+                        className="relative overflow-hidden rounded-xl border ca-border bg-slate-100/80 dark:bg-slate-800/50"
+                      >
+                        <img src={src} alt="" className="h-28 w-full object-cover" />
+                        <button
+                          type="button"
+                          className="absolute right-1.5 top-1.5 rounded-lg bg-red-600 p-1.5 text-white shadow-md hover:bg-red-700"
+                          title={t("images.remove")}
+                          onClick={() => removeCreateFileAt(i)}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 ) : null}
               </div>
             </div>
@@ -1096,7 +1179,7 @@ export default function Page() {
 
       {detail ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
-          <div className="ca-card flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden shadow-xl">
+          <div className="ca-card flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden shadow-xl tablet-app:max-w-none">
             <div className="flex items-start justify-between gap-2 border-b ca-border p-4">
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold">{t("detail.title", { id: detail.id })}</h2>
@@ -1196,7 +1279,7 @@ export default function Page() {
                 </div>
               ) : detailTab === "imagens" ? (
                 <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                     <input
                       key={imgFileKey}
                       ref={detailImagensInputRef}
@@ -1212,23 +1295,27 @@ export default function Page() {
                     />
                     <button
                       type="button"
-                      className="ca-btn-outline flex items-center gap-2 text-sm"
+                      className="ca-btn inline-flex items-center justify-center gap-2 disabled:opacity-50"
                       disabled={imgUploading}
                       onClick={() => detailImagensInputRef.current?.click()}
                     >
-                      <ImagePlus className="h-4 w-4" />
-                      {t("images.chooseFiles")}
+                      {imgUploading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4" />
+                      )}
+                      {t("images.chooseFromDevice")}
                     </button>
                     <button
                       type="button"
-                      className="ca-btn-outline flex items-center gap-2 text-sm"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm disabled:opacity-50"
                       disabled={imgUploading}
                       onClick={() => openSupervisaoCamera("detail")}
                     >
                       <Camera className="h-4 w-4" />
                       {t("images.takePhoto")}
                     </button>
-                    {imgUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    <span className="text-xs ca-muted sm:ml-1">{t("images.addHint")}</span>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                     {imagens.map((img) => {
@@ -1355,47 +1442,103 @@ export default function Page() {
                     </div>
                   </div>
 
-                  <div className="overflow-x-auto rounded-xl border ca-border">
-                    <table className="w-full min-w-[720px] text-sm">
-                      <thead className="bg-[var(--panel-alt)]">
-                        <tr>
-                          <th className="px-3 py-2 text-left font-medium">{t("efetivos.colNome")}</th>
-                          <th className="px-3 py-2 text-left font-medium">{t("efetivos.colCargo")}</th>
-                          <th className="px-3 py-2 text-left font-medium">{t("efetivos.colEstado")}</th>
-                          <th className="px-3 py-2 text-right font-medium">{t("table.actions")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {efetivos.map((row) => (
-                            <tr key={row.id} className="border-t ca-border">
-                              <td className="px-3 py-2">{efetivoNomeDisplay(row)}</td>
-                              <td className="px-3 py-2">{efetivoCargoDisplay(row)}</td>
-                              <td className="px-3 py-2">
-                                {row.estado === 2 ? t("estadoEfetivo.bad") : t("estadoEfetivo.ok")}
-                              </td>
-                              <td className="px-3 py-2 text-right">
-                                <button
-                                  type="button"
-                                  className="ca-icon-btn mr-1"
-                                  title={t("actions.edit")}
-                                  onClick={() => startEditEfetivo(row)}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </button>
-                                <button
-                                  type="button"
-                                  className="ca-icon-btn text-red-600"
-                                  title={t("actions.delete")}
-                                  onClick={() => void deleteEfetivo(row)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
+                  <div className="rounded-xl border ca-border">
+                    <div className="hidden overflow-x-auto desktop-auth:block">
+                      <table className="w-full min-w-[720px] text-sm">
+                        <thead className="bg-[var(--panel-alt)]">
+                          <tr>
+                            <th className="px-3 py-2 text-left font-medium">{t("efetivos.colNome")}</th>
+                            <th className="px-3 py-2 text-left font-medium">{t("efetivos.colCargo")}</th>
+                            <th className="px-3 py-2 text-left font-medium">{t("efetivos.colEstado")}</th>
+                            <th className="px-3 py-2 text-right font-medium">{t("table.actions")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {efetivos.length === 0 ? (
+                            <tr>
+                              <td colSpan={4} className="px-3 py-8 text-center text-sm ca-muted">
+                                {t("efetivos.empty")}
                               </td>
                             </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {efetivos.length === 0 ? <p className="p-4 text-sm ca-muted">{t("efetivos.empty")}</p> : null}
+                          ) : (
+                            efetivos.map((row) => (
+                              <tr key={row.id} className="border-t ca-border">
+                                <td className="px-3 py-2">{efetivoNomeDisplay(row)}</td>
+                                <td className="px-3 py-2">{efetivoCargoDisplay(row)}</td>
+                                <td className="px-3 py-2">
+                                  {row.estado === 2 ? t("estadoEfetivo.bad") : t("estadoEfetivo.ok")}
+                                </td>
+                                <td className="px-3 py-2 text-right">
+                                  <button
+                                    type="button"
+                                    className="ca-icon-btn mr-1"
+                                    title={t("actions.edit")}
+                                    onClick={() => startEditEfetivo(row)}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="ca-icon-btn text-red-600"
+                                    title={t("actions.delete")}
+                                    onClick={() => void deleteEfetivo(row)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="space-y-3 p-3 desktop-auth:hidden">
+                      {efetivos.length === 0 ? (
+                        <p className="py-4 text-center text-sm ca-muted">{t("efetivos.empty")}</p>
+                      ) : (
+                        efetivos.map((row) => (
+                          <article
+                            key={row.id}
+                            className="rounded-2xl border ca-border bg-[var(--panel)] p-4 shadow-sm ring-1 ring-black/[0.04] dark:ring-white/[0.06]"
+                          >
+                            <div className="space-y-2 text-sm">
+                              <div>
+                                <div className="text-xs ca-muted">{t("efetivos.colNome")}</div>
+                                <div className="font-semibold">{efetivoNomeDisplay(row)}</div>
+                              </div>
+                              <div>
+                                <div className="text-xs ca-muted">{t("efetivos.colCargo")}</div>
+                                <div>{efetivoCargoDisplay(row)}</div>
+                              </div>
+                              <div>
+                                <div className="text-xs ca-muted">{t("efetivos.colEstado")}</div>
+                                <div className="font-medium">
+                                  {row.estado === 2 ? t("estadoEfetivo.bad") : t("estadoEfetivo.ok")}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="mt-3 flex justify-end gap-1 border-t ca-border pt-3">
+                              <button
+                                type="button"
+                                className="ca-icon-btn min-h-10 min-w-10"
+                                title={t("actions.edit")}
+                                onClick={() => startEditEfetivo(row)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                className="ca-icon-btn min-h-10 min-w-10 text-red-600"
+                                title={t("actions.delete")}
+                                onClick={() => void deleteEfetivo(row)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </article>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -1479,30 +1622,89 @@ export default function Page() {
                     </div>
                   </div>
 
-                  <div className="overflow-x-auto rounded-xl border ca-border">
-                    <table className="w-full min-w-[640px] text-sm">
-                      <thead className="bg-[var(--panel-alt)]">
-                        <tr>
-                          <th className="px-3 py-2 text-left font-medium">{t("materiais.colMaterial")}</th>
-                          <th className="px-3 py-2 text-left font-medium">{t("materiais.colQty")}</th>
-                          <th className="px-3 py-2 text-left font-medium">{t("materiais.colEstado")}</th>
-                          <th className="px-3 py-2 text-right font-medium">{t("table.actions")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {matRows.map((row) => (
-                          <tr key={row.id} className="border-t ca-border">
-                            <td className="px-3 py-2">{materialLabel(row.material)}</td>
-                            <td className="px-3 py-2">
-                              {row.quantidade != null && row.quantidade !== ""
-                                ? `${row.quantidade}${row.unidade ? `\u00A0${row.unidade}` : ""}`
-                                : "—"}
-                            </td>
-                            <td className="px-3 py-2">{materialEstadoLabel(row.estado)}</td>
-                            <td className="px-3 py-2 text-right">
+                  <div className="rounded-xl border ca-border">
+                    <div className="hidden overflow-x-auto desktop-auth:block">
+                      <table className="w-full min-w-[640px] text-sm">
+                        <thead className="bg-[var(--panel-alt)]">
+                          <tr>
+                            <th className="px-3 py-2 text-left font-medium">{t("materiais.colMaterial")}</th>
+                            <th className="px-3 py-2 text-left font-medium">{t("materiais.colQty")}</th>
+                            <th className="px-3 py-2 text-left font-medium">{t("materiais.colEstado")}</th>
+                            <th className="px-3 py-2 text-right font-medium">{t("table.actions")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {matRows.length === 0 ? (
+                            <tr>
+                              <td colSpan={4} className="px-3 py-8 text-center text-sm ca-muted">
+                                {t("materiais.empty")}
+                              </td>
+                            </tr>
+                          ) : (
+                            matRows.map((row) => (
+                              <tr key={row.id} className="border-t ca-border">
+                                <td className="px-3 py-2">{materialLabel(row.material)}</td>
+                                <td className="px-3 py-2">
+                                  {row.quantidade != null && row.quantidade !== ""
+                                    ? `${row.quantidade}${row.unidade ? `\u00A0${row.unidade}` : ""}`
+                                    : "—"}
+                                </td>
+                                <td className="px-3 py-2">{materialEstadoLabel(row.estado)}</td>
+                                <td className="px-3 py-2 text-right">
+                                  <button
+                                    type="button"
+                                    className="ca-icon-btn mr-1"
+                                    title={t("actions.edit")}
+                                    onClick={() => startEditMaterial(row)}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="ca-icon-btn text-red-600"
+                                    title={t("actions.delete")}
+                                    onClick={() => void deleteMaterial(row)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="space-y-3 p-3 desktop-auth:hidden">
+                      {matRows.length === 0 ? (
+                        <p className="py-4 text-center text-sm ca-muted">{t("materiais.empty")}</p>
+                      ) : (
+                        matRows.map((row) => (
+                          <article
+                            key={row.id}
+                            className="rounded-2xl border ca-border bg-[var(--panel)] p-4 shadow-sm ring-1 ring-black/[0.04] dark:ring-white/[0.06]"
+                          >
+                            <div className="space-y-2 text-sm">
+                              <div>
+                                <div className="text-xs ca-muted">{t("materiais.colMaterial")}</div>
+                                <div className="font-semibold">{materialLabel(row.material)}</div>
+                              </div>
+                              <div>
+                                <div className="text-xs ca-muted">{t("materiais.colQty")}</div>
+                                <div>
+                                  {row.quantidade != null && row.quantidade !== ""
+                                    ? `${row.quantidade}${row.unidade ? `\u00A0${row.unidade}` : ""}`
+                                    : "—"}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-xs ca-muted">{t("materiais.colEstado")}</div>
+                                <div className="font-medium">{materialEstadoLabel(row.estado)}</div>
+                              </div>
+                            </div>
+                            <div className="mt-3 flex justify-end gap-1 border-t ca-border pt-3">
                               <button
                                 type="button"
-                                className="ca-icon-btn mr-1"
+                                className="ca-icon-btn min-h-10 min-w-10"
                                 title={t("actions.edit")}
                                 onClick={() => startEditMaterial(row)}
                               >
@@ -1510,18 +1712,17 @@ export default function Page() {
                               </button>
                               <button
                                 type="button"
-                                className="ca-icon-btn text-red-600"
+                                className="ca-icon-btn min-h-10 min-w-10 text-red-600"
                                 title={t("actions.delete")}
                                 onClick={() => void deleteMaterial(row)}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {matRows.length === 0 ? <p className="p-4 text-sm ca-muted">{t("materiais.empty")}</p> : null}
+                            </div>
+                          </article>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

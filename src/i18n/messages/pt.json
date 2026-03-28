@@ -959,6 +959,8 @@
       "entregueA": "Entregue por (utilizador)",
       "state": "Estado",
       "image": "Imagem (opcional)",
+      "chooseFromDevice": "Carregar do dispositivo",
+      "takePhoto": "Usar câmara",
       "selectUser": "Selecionar utilizador",
       "selectSender": "Selecionar remetente",
       "selectReceiver": "Selecionar destinatário",
@@ -1074,6 +1076,8 @@
       "selectOperator": "Seleccionar operador da portaria",
       "notes": "Observações",
       "image": "Fotografia",
+      "chooseFromDevice": "Carregar do dispositivo",
+      "takePhoto": "Usar câmara",
       "modeExisting": "Existente",
       "modeNew": "Novo",
       "newMoradorHint": "Será criado um novo morador na organização (como na página de moradores).",
@@ -1667,7 +1671,8 @@
       "observacoes": "Observações",
       "images": "Imagens (opcional)",
       "chooseFiles": "Carregar ficheiros",
-      "takePhoto": "Tirar foto",
+      "chooseFromDevice": "Carregar do dispositivo",
+      "takePhoto": "Usar câmara",
       "filesSummary": "{count, plural, one {# ficheiro selecionado} other {# ficheiros selecionados}}"
     },
     "detail": { "title": "Supervisão #{id}" },
@@ -1680,7 +1685,9 @@
     "images": {
       "add": "Adicionar imagens",
       "chooseFiles": "Carregar ficheiros",
-      "takePhoto": "Tirar foto",
+      "chooseFromDevice": "Carregar do dispositivo",
+      "takePhoto": "Usar câmara",
+      "addHint": "Adicione fotos do dispositivo ou capture com a câmara.",
       "remove": "Eliminar",
       "empty": "Sem imagens."
     },
@@ -1787,7 +1794,15 @@
     },
     "detail": { "title": "Troca/dobra #{id}" },
     "tabs": { "geral": "Geral", "imagens": "Imagens extra" },
-    "images": { "add": "Adicionar imagens", "remove": "Eliminar", "emptySlot": "Sem imagem.", "emptyExtra": "Sem imagens extra." }
+    "images": {
+      "add": "Adicionar imagens",
+      "addHint": "Adicione fotos do dispositivo ou capture com a câmara.",
+      "chooseFromDevice": "Carregar do dispositivo",
+      "takePhoto": "Usar câmara",
+      "remove": "Eliminar",
+      "emptySlot": "Sem imagem.",
+      "emptyExtra": "Sem imagens extra."
+    }
   },
   "materialContratoPage": {
     "title": "Material de contrato",

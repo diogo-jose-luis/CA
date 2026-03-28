@@ -887,6 +887,8 @@
       "entregueA": "Remis par (utilisateur)",
       "state": "Statut",
       "image": "Image (optionnel)",
+      "chooseFromDevice": "Choisir sur l'appareil",
+      "takePhoto": "Prendre une photo",
       "selectUser": "Sélectionner un utilisateur",
       "selectSender": "Sélectionner l'expéditeur",
       "selectReceiver": "Sélectionner le destinataire",
@@ -1000,6 +1002,8 @@
       "selectOperator": "Choisir un opérateur d'accueil",
       "notes": "Observations",
       "image": "Photo",
+      "chooseFromDevice": "Choisir sur l'appareil",
+      "takePhoto": "Prendre une photo",
       "modeExisting": "Existant",
       "modeNew": "Nouveau",
       "newMoradorHint": "Un nouveau copropriétaire sera créé (comme sur la page Copropriétaires).",
@@ -2007,6 +2011,7 @@
       "observacoes": "Observations",
       "images": "Images (optionnel)",
       "chooseFiles": "Charger des fichiers",
+      "chooseFromDevice": "Choisir sur l'appareil",
       "takePhoto": "Prendre une photo",
       "filesSummary": "{count, plural, one {# fichier sélectionné} other {# fichiers sélectionnés}}"
     },
@@ -2020,7 +2025,9 @@
     "images": {
       "add": "Ajouter des images",
       "chooseFiles": "Charger des fichiers",
+      "chooseFromDevice": "Choisir sur l'appareil",
       "takePhoto": "Prendre une photo",
+      "addHint": "Ajoutez des photos depuis l'appareil ou prenez une photo.",
       "remove": "Supprimer",
       "empty": "Aucune image."
     },
@@ -2139,6 +2146,9 @@
     "tabs": { "geral": "Général", "imagens": "Images supplémentaires" },
     "images": {
       "add": "Ajouter des images",
+      "addHint": "Ajoutez des photos depuis l'appareil ou prenez une photo.",
+      "chooseFromDevice": "Choisir sur l'appareil",
+      "takePhoto": "Prendre une photo",
       "remove": "Supprimer",
       "emptySlot": "Pas d'image.",
       "emptyExtra": "Pas d'images supplémentaires."

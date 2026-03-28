@@ -1,19 +1,22 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- imagens no storage da API */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import axios, { type AxiosInstance } from "axios";
 import {
   ArrowLeftRight,
+  Camera,
   Eye,
-  ImagePlus,
   Loader2,
   Plus,
   RefreshCw,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
+import CameraCaptureModal from "@/components/media/CameraCaptureModal";
+import { fileToFileList } from "@/lib/file-list";
 import { useAuth } from "@/hooks/useAuth";
 import type { AuthUser } from "@/types/auth";
 import type { Utilizador, UtilizadorListResponse } from "@/types/utilizador";
@@ -256,6 +259,26 @@ export default function Page() {
   const [imgUploading, setImgUploading] = useState(false);
   const [imgDeletingId, setImgDeletingId] = useState<number | null>(null);
   const [imgFileKey, setImgFileKey] = useState(0);
+
+  type CameraTarget = "create-img1" | "create-img2" | "create-extras" | "detail-img1" | "detail-img2" | "detail-extras";
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const cameraTargetRef = useRef<CameraTarget | null>(null);
+  const createImg1InputRef = useRef<HTMLInputElement>(null);
+  const createImg2InputRef = useRef<HTMLInputElement>(null);
+  const createExtrasInputRef = useRef<HTMLInputElement>(null);
+  const detailImg1InputRef = useRef<HTMLInputElement>(null);
+  const detailImg2InputRef = useRef<HTMLInputElement>(null);
+  const detailExtrasInputRef = useRef<HTMLInputElement>(null);
+
+  const openCameraFor = (target: CameraTarget) => {
+    cameraTargetRef.current = target;
+    setCameraOpen(true);
+  };
+
+  const closeCamera = () => {
+    cameraTargetRef.current = null;
+    setCameraOpen(false);
+  };
 
   const showToast = useCallback((message: string, isError?: boolean) => {
     setToast({ message, isError });
@@ -614,6 +637,61 @@ export default function Page() {
     }
   };
 
+  const handleCameraCapture = (file: File) => {
+    setCameraOpen(false);
+    const target = cameraTargetRef.current;
+    cameraTargetRef.current = null;
+    if (!target) return;
+
+    if (target === "create-img1") {
+      setCreatePreview((prev) => {
+        if (prev.img1) URL.revokeObjectURL(prev.img1);
+        return { ...prev, img1: URL.createObjectURL(file) };
+      });
+      setCreateForm((f) => ({ ...f, img1: file }));
+      setCreateFileKey((k) => k + 1);
+      return;
+    }
+    if (target === "create-img2") {
+      setCreatePreview((prev) => {
+        if (prev.img2) URL.revokeObjectURL(prev.img2);
+        return { ...prev, img2: URL.createObjectURL(file) };
+      });
+      setCreateForm((f) => ({ ...f, img2: file }));
+      setCreateFileKey((k) => k + 1);
+      return;
+    }
+    if (target === "create-extras") {
+      setCreatePreview((prev) => ({
+        ...prev,
+        extras: [...prev.extras, URL.createObjectURL(file)],
+      }));
+      setCreateForm((f) => ({ ...f, extras: [...f.extras, file] }));
+      return;
+    }
+    if (target === "detail-img1") {
+      setDetailSlotPreview((prev) => {
+        if (prev.img1) URL.revokeObjectURL(prev.img1);
+        return { ...prev, img1: URL.createObjectURL(file) };
+      });
+      setDetailForm((f) => ({ ...f, img1: file }));
+      setDetailFileKey((k) => k + 1);
+      return;
+    }
+    if (target === "detail-img2") {
+      setDetailSlotPreview((prev) => {
+        if (prev.img2) URL.revokeObjectURL(prev.img2);
+        return { ...prev, img2: URL.createObjectURL(file) };
+      });
+      setDetailForm((f) => ({ ...f, img2: file }));
+      setDetailFileKey((k) => k + 1);
+      return;
+    }
+    if (target === "detail-extras") {
+      void uploadImagens(fileToFileList(file));
+    }
+  };
+
   const imagensExtra = detail?.imagens ?? [];
 
   const auditActorLabel = useCallback((row: unknown, kind: "registado" | "atualizado") => {
@@ -748,59 +826,107 @@ export default function Page() {
       </div>
 
       <div className="ca-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px] text-sm">
-            <thead className="border-b ca-border bg-[var(--panel-alt)]">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">{t("table.when")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.tipo")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.entrante")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.sainte")}</th>
-                <th className="px-4 py-3 text-left font-medium">{t("table.photos")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("table.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center ca-muted">
-                    <Loader2 className="mx-auto h-6 w-6 animate-spin opacity-60" />
-                  </td>
-                </tr>
-              ) : list.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center ca-muted">
-                    {t("table.empty")}
-                  </td>
-                </tr>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+          </div>
+        ) : (
+          <>
+            <div className="hidden overflow-x-auto desktop-auth:block">
+              <table className="w-full min-w-[800px] text-sm">
+                <thead className="border-b ca-border bg-[var(--panel-alt)]">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.when")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.tipo")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.entrante")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.sainte")}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t("table.photos")}</th>
+                    <th className="px-4 py-3 text-right font-medium">{t("table.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-10 text-center ca-muted">
+                        {t("table.empty")}
+                      </td>
+                    </tr>
+                  ) : (
+                    list.map((row) => (
+                      <tr key={row.id} className="border-b ca-border">
+                        <td className="whitespace-nowrap px-4 py-3">{formatDt(row.data_hora, locale)}</td>
+                        <td className="px-4 py-3">
+                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                            {row.tipo === 2 ? t("tipo.2") : t("tipo.1")}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">{displayUser(row.entrante)}</td>
+                        <td className="px-4 py-3">{displayUser(row.sainte)}</td>
+                        <td className="px-4 py-3">{photoCount(row)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button
+                            type="button"
+                            className="ca-icon-btn"
+                            onClick={() => openDetail(row)}
+                            title={t("actions.view")}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-4 px-3 py-3 tablet-app:px-4 tablet-app:py-4 desktop-auth:hidden">
+              {list.length === 0 ? (
+                <div className="py-12 text-center text-sm ca-muted">{t("table.empty")}</div>
               ) : (
                 list.map((row) => (
-                  <tr key={row.id} className="border-b ca-border">
-                    <td className="whitespace-nowrap px-4 py-3">{formatDt(row.data_hora, locale)}</td>
-                    <td className="px-4 py-3">
-                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  <article
+                    key={row.id}
+                    className="overflow-hidden rounded-2xl border ca-border bg-[var(--panel)] shadow-md ring-1 ring-black/[0.04] dark:ring-white/[0.06]"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b ca-border bg-slate-50/90 px-4 py-3 dark:bg-slate-800/50">
+                      <div className="min-w-0">
+                        <div className="text-xs font-medium ca-muted">{t("table.when")}</div>
+                        <div className="font-semibold leading-snug">{formatDt(row.data_hora, locale)}</div>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                         {row.tipo === 2 ? t("tipo.2") : t("tipo.1")}
                       </span>
-                    </td>
-                    <td className="px-4 py-3">{displayUser(row.entrante)}</td>
-                    <td className="px-4 py-3">{displayUser(row.sainte)}</td>
-                    <td className="px-4 py-3">{photoCount(row)}</td>
-                    <td className="px-4 py-3 text-right">
-                      <button
-                        type="button"
-                        className="ca-icon-btn"
-                        onClick={() => openDetail(row)}
-                        title={t("actions.view")}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="space-y-2 px-4 py-3 text-sm">
+                      <div>
+                        <span className="text-xs ca-muted">{t("table.entrante")}</span>
+                        <div className="font-medium">{displayUser(row.entrante)}</div>
+                      </div>
+                      <div>
+                        <span className="text-xs ca-muted">{t("table.sainte")}</span>
+                        <div className="font-medium">{displayUser(row.sainte)}</div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 pt-1">
+                        <span className="text-xs ca-muted">
+                          {t("table.photos")}: <span className="font-medium text-[var(--fg)]">{photoCount(row)}</span>
+                        </span>
+                        <button
+                          type="button"
+                          className="ca-btn min-h-10 px-4 text-sm"
+                          onClick={() => openDetail(row)}
+                        >
+                          <Eye className="mr-2 inline h-4 w-4" />
+                          {t("actions.view")}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          </>
+        )}
         {total > 0 ? (
           <div className="flex flex-col gap-2 border-t ca-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs ca-muted">
@@ -840,7 +966,7 @@ export default function Page() {
 
       {showCreate ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
-          <div className="ca-card max-h-[90vh] w-full max-w-lg overflow-y-auto p-5 shadow-xl">
+          <div className="ca-card max-h-[90vh] w-full max-w-lg overflow-y-auto p-5 shadow-xl tablet-app:max-w-none">
             <div className="mb-4 flex items-center justify-between gap-2">
               <h2 className="text-lg font-semibold">{t("create.title")}</h2>
               <button type="button" className="ca-icon-btn" onClick={closeCreateModal}>
@@ -925,10 +1051,11 @@ export default function Page() {
               <div>
                 <label className="mb-1 block text-xs ca-muted">{t("form.img1")}</label>
                 <input
+                  ref={createImg1InputRef}
                   key={`c1-${createFileKey}`}
                   type="file"
-                  accept="image/*"
-                  className="block w-full text-sm"
+                  accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                  className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0] ?? null;
                     setCreatePreview((prev) => {
@@ -938,6 +1065,24 @@ export default function Page() {
                     setCreateForm((f) => ({ ...f, img1: file }));
                   }}
                 />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn flex w-full items-center justify-center gap-2"
+                    onClick={() => createImg1InputRef.current?.click()}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {t("images.chooseFromDevice")}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                    onClick={() => openCameraFor("create-img1")}
+                  >
+                    <Camera className="h-4 w-4" />
+                    {t("images.takePhoto")}
+                  </button>
+                </div>
                 {createPreview.img1 ? (
                   <div className="mt-2 overflow-hidden rounded-xl border ca-border bg-slate-100/80 p-2 dark:bg-slate-800/50">
                     <img
@@ -951,10 +1096,11 @@ export default function Page() {
               <div>
                 <label className="mb-1 block text-xs ca-muted">{t("form.img2")}</label>
                 <input
+                  ref={createImg2InputRef}
                   key={`c2-${createFileKey}`}
                   type="file"
-                  accept="image/*"
-                  className="block w-full text-sm"
+                  accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                  className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0] ?? null;
                     setCreatePreview((prev) => {
@@ -964,6 +1110,24 @@ export default function Page() {
                     setCreateForm((f) => ({ ...f, img2: file }));
                   }}
                 />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn flex w-full items-center justify-center gap-2"
+                    onClick={() => createImg2InputRef.current?.click()}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {t("images.chooseFromDevice")}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                    onClick={() => openCameraFor("create-img2")}
+                  >
+                    <Camera className="h-4 w-4" />
+                    {t("images.takePhoto")}
+                  </button>
+                </div>
                 {createPreview.img2 ? (
                   <div className="mt-2 overflow-hidden rounded-xl border ca-border bg-slate-100/80 p-2 dark:bg-slate-800/50">
                     <img
@@ -977,11 +1141,12 @@ export default function Page() {
               <div>
                 <label className="mb-1 block text-xs ca-muted">{t("form.extras")}</label>
                 <input
+                  ref={createExtrasInputRef}
                   key={`ce-${createFileKey}`}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
                   multiple
-                  className="block w-full text-sm"
+                  className="hidden"
                   onChange={(e) => {
                     const files = e.target.files ? Array.from(e.target.files) : [];
                     setCreatePreview((prev) => {
@@ -991,6 +1156,24 @@ export default function Page() {
                     setCreateForm((f) => ({ ...f, extras: files }));
                   }}
                 />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    className="ca-btn flex w-full items-center justify-center gap-2"
+                    onClick={() => createExtrasInputRef.current?.click()}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {t("images.chooseFromDevice")}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                    onClick={() => openCameraFor("create-extras")}
+                  >
+                    <Camera className="h-4 w-4" />
+                    {t("images.takePhoto")}
+                  </button>
+                </div>
                 {createPreview.extras.length > 0 ? (
                   <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {createPreview.extras.map((src, i) => (
@@ -1019,7 +1202,7 @@ export default function Page() {
 
       {detail ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
-          <div className="ca-card flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden shadow-xl">
+          <div className="ca-card flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden shadow-xl tablet-app:max-w-none">
             <div className="flex items-start justify-between gap-2 border-b ca-border p-4">
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold">{t("detail.title", { id: detail.id })}</h2>
@@ -1182,10 +1365,11 @@ export default function Page() {
                             </label>
                           ) : null}
                           <input
+                            ref={detailImg1InputRef}
                             key={`d1-${detailFileKey}`}
                             type="file"
-                            accept="image/*"
-                            className="block w-full text-sm"
+                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                            className="hidden"
                             onChange={(e) => {
                               const file = e.target.files?.[0] ?? null;
                               setDetailSlotPreview((prev) => {
@@ -1195,6 +1379,24 @@ export default function Page() {
                               setDetailForm((f) => ({ ...f, img1: file }));
                             }}
                           />
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            <button
+                              type="button"
+                              className="ca-btn flex w-full items-center justify-center gap-2"
+                              onClick={() => detailImg1InputRef.current?.click()}
+                            >
+                              <Upload className="h-4 w-4" />
+                              {t("images.chooseFromDevice")}
+                            </button>
+                            <button
+                              type="button"
+                              className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                              onClick={() => openCameraFor("detail-img1")}
+                            >
+                              <Camera className="h-4 w-4" />
+                              {t("images.takePhoto")}
+                            </button>
+                          </div>
                         </>
                       ) : null}
                     </div>
@@ -1232,10 +1434,11 @@ export default function Page() {
                             </label>
                           ) : null}
                           <input
+                            ref={detailImg2InputRef}
                             key={`d2-${detailFileKey}`}
                             type="file"
-                            accept="image/*"
-                            className="block w-full text-sm"
+                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                            className="hidden"
                             onChange={(e) => {
                               const file = e.target.files?.[0] ?? null;
                               setDetailSlotPreview((prev) => {
@@ -1245,6 +1448,24 @@ export default function Page() {
                               setDetailForm((f) => ({ ...f, img2: file }));
                             }}
                           />
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            <button
+                              type="button"
+                              className="ca-btn flex w-full items-center justify-center gap-2"
+                              onClick={() => detailImg2InputRef.current?.click()}
+                            >
+                              <Upload className="h-4 w-4" />
+                              {t("images.chooseFromDevice")}
+                            </button>
+                            <button
+                              type="button"
+                              className="flex w-full items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm"
+                              onClick={() => openCameraFor("detail-img2")}
+                            >
+                              <Camera className="h-4 w-4" />
+                              {t("images.takePhoto")}
+                            </button>
+                          </div>
                         </>
                       ) : null}
                     </div>
@@ -1274,21 +1495,40 @@ export default function Page() {
               ) : (
                 <div className="space-y-4">
                   {canGestao ? (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <label className="ca-btn-outline cursor-pointer">
-                        <ImagePlus className="mr-1 inline h-4 w-4" />
-                        {t("images.add")}
-                        <input
-                          key={imgFileKey}
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          className="hidden"
-                          disabled={imgUploading}
-                          onChange={(e) => void uploadImagens(e.target.files)}
-                        />
-                      </label>
-                      {imgUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                      <input
+                        ref={detailExtrasInputRef}
+                        key={imgFileKey}
+                        type="file"
+                        accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                        multiple
+                        className="hidden"
+                        disabled={imgUploading}
+                        onChange={(e) => void uploadImagens(e.target.files)}
+                      />
+                      <button
+                        type="button"
+                        className="ca-btn inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                        disabled={imgUploading}
+                        onClick={() => detailExtrasInputRef.current?.click()}
+                      >
+                        {imgUploading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Upload className="h-4 w-4" />
+                        )}
+                        {t("images.chooseFromDevice")}
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border ca-border px-4 py-2 text-sm disabled:opacity-50"
+                        disabled={imgUploading}
+                        onClick={() => openCameraFor("detail-extras")}
+                      >
+                        <Camera className="h-4 w-4" />
+                        {t("images.takePhoto")}
+                      </button>
+                      <span className="text-xs ca-muted sm:ml-1">{t("images.addHint")}</span>
                     </div>
                   ) : null}
                   <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -1332,6 +1572,12 @@ export default function Page() {
           </div>
         </div>
       ) : null}
+
+      <CameraCaptureModal
+        open={cameraOpen}
+        onClose={closeCamera}
+        onCapture={(file) => handleCameraCapture(file)}
+      />
     </div>
   );
 }

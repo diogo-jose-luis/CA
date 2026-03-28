@@ -958,6 +958,8 @@
       "entregueA": "Delivered by (user)",
       "state": "Status",
       "image": "Image (optional)",
+      "chooseFromDevice": "Choose from device",
+      "takePhoto": "Take photo",
       "selectUser": "Select user",
       "selectSender": "Select sender",
       "selectReceiver": "Select recipient",
@@ -1073,6 +1075,8 @@
       "selectOperator": "Select reception operator",
       "notes": "Notes",
       "image": "Photo",
+      "chooseFromDevice": "Choose from device",
+      "takePhoto": "Take photo",
       "modeExisting": "Existing",
       "modeNew": "New",
       "newMoradorHint": "A new resident will be created (same flow as the Residents page).",
@@ -1666,6 +1670,7 @@
       "observacoes": "Notes",
       "images": "Images (optional)",
       "chooseFiles": "Load files",
+      "chooseFromDevice": "Choose from device",
       "takePhoto": "Take photo",
       "filesSummary": "{count, plural, one {# file selected} other {# files selected}}"
     },
@@ -1679,7 +1684,9 @@
     "images": {
       "add": "Add images",
       "chooseFiles": "Load files",
+      "chooseFromDevice": "Choose from device",
       "takePhoto": "Take photo",
+      "addHint": "Add photos from the device or take a picture.",
       "remove": "Remove",
       "empty": "No images."
     },
@@ -1786,7 +1793,15 @@
     },
     "detail": { "title": "Handover #{id}" },
     "tabs": { "geral": "General", "imagens": "Extra images" },
-    "images": { "add": "Add images", "remove": "Remove", "emptySlot": "No image.", "emptyExtra": "No extra images." }
+    "images": {
+      "add": "Add images",
+      "addHint": "Add one or more photos from the device or take a picture.",
+      "chooseFromDevice": "Choose from device",
+      "takePhoto": "Take photo",
+      "remove": "Remove",
+      "emptySlot": "No image.",
+      "emptyExtra": "No extra images."
+    }
   },
   "materialContratoPage": {
     "title": "Contract materials",
