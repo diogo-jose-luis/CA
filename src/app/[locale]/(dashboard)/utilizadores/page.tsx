@@ -25,6 +25,15 @@ import { NIVEL_LABEL } from "@/types/utilizador";
 const API_PREFIX = "/utilizadores";
 const API_GLOBAL_PREFIX = "/utilizadores-globais/nivel_acesso";
 const ORG_KEY = "ca.selected.organization";
+const TYPE_ROUTE_PREFIX: Record<number, string> = {
+  1: "utilizadores",
+  2: "colaboradores",
+  3: "clientes",
+  4: "fornecedores",
+  5: "guardas",
+  6: "visitantes",
+  7: "moradores",
+};
 
 /* ================
    Stats (dinâmicas via API)
@@ -79,6 +88,7 @@ export default function Page() {
 
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingScope, setEditingScope] = useState<{ prefix: string; organizacaoId: number } | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -137,6 +147,13 @@ export default function Page() {
     [api_base_url]
   );
 
+  const getScopeForUser = useCallback((u: Utilizador) => {
+    const prefix = TYPE_ROUTE_PREFIX[Number(u.tipo)];
+    const orgId = Number(u.organizacao_id);
+    if (!prefix || !Number.isFinite(orgId) || orgId <= 0) return null;
+    return { prefix, organizacaoId: orgId };
+  }, []);
+
   const fetchList = useCallback(async () => {
     let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
     if (!organizacaoId) {
@@ -154,10 +171,7 @@ export default function Page() {
       if (filtroEstado == "0" || filtroEstado == "1") {
         params.estado = Number(filtroEstado);
       }
-      const res = await http.get<UtilizadorListResponse>(
-        API_GLOBAL_PREFIX,
-        { params }
-      );
+      const res = await http.get<UtilizadorListResponse>(API_GLOBAL_PREFIX, { params });
       const payload = res.data as unknown as {
         utilizadores?: Utilizador[];
         data?: Utilizador[];
@@ -173,7 +187,7 @@ export default function Page() {
       const filtered = users.filter((u) => {
         if (nameFilter && !(u.name ?? "").toLowerCase().includes(nameFilter)) return false;
         if (emailFilter && !(u.email ?? "").toLowerCase().includes(emailFilter)) return false;
-        if (filtroTipo && ["1", "2", "3", "4", "5", "6"].includes(filtroTipo) && Number(u.tipo) != Number(filtroTipo)) return false;
+        if (filtroTipo && ["1", "2", "3", "4", "5", "6", "7"].includes(filtroTipo) && Number(u.tipo) != Number(filtroTipo)) return false;
         if (filtroNivel && ["1", "2", "3", "4", "5", "6"].includes(filtroNivel) && Number(u.nivel) != Number(filtroNivel)) return false;
         return true;
       });
@@ -233,7 +247,13 @@ export default function Page() {
   };
 
   const openEdit = (u: Utilizador) => {
+    const scope = getScopeForUser(u);
+    if (!scope) {
+      showToast(t("toast.orgRequired"), true);
+      return;
+    }
     setEditingId(u.id);
+    setEditingScope(scope);
     setForm({
       name: u.name ?? "",
       email: u.email ?? "",
@@ -251,6 +271,7 @@ export default function Page() {
     if (form.imagemPreviewUrl) URL.revokeObjectURL(form.imagemPreviewUrl);
     setShowModal(false);
     setEditingId(null);
+    setEditingScope(null);
   };
 
   const closePasswordModal = () => {
@@ -273,7 +294,7 @@ export default function Page() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!organizacaoId) {
+    if (!editingId && !organizacaoId) {
       showToast(t("toast.orgRequired"), true);
       return;
     }
@@ -293,9 +314,13 @@ export default function Page() {
 
       const config = { headers: { "Content-Type": undefined } };
       if (editingId) {
+        if (!editingScope) {
+          showToast(t("toast.orgRequired"), true);
+          return;
+        }
         formData.append("_method", "PUT");
         await http.post(
-          `${API_PREFIX}/${organizacaoId}/${editingId}`,
+          `/${editingScope.prefix}/${editingScope.organizacaoId}/${editingId}`,
           formData,
           config as never
         );
@@ -329,14 +354,15 @@ export default function Page() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (u: Utilizador) => {
     if (!confirm(t("confirm.deleteOne"))) return;
-    if (!organizacaoId) {
+    const scope = getScopeForUser(u);
+    if (!scope) {
       showToast(t("toast.orgRequired"), true);
       return;
     }
     try {
-      await http.delete(`${API_PREFIX}/${organizacaoId}/${id}`);
+      await http.delete(`/${scope.prefix}/${scope.organizacaoId}/${u.id}`);
       showToast(t("toast.deleted"));
       fetchList();
     } catch {
@@ -344,13 +370,14 @@ export default function Page() {
     }
   };
 
-  const handleActivate = async (id: number) => {
-    if (!organizacaoId) {
+  const handleActivate = async (u: Utilizador) => {
+    const scope = getScopeForUser(u);
+    if (!scope) {
       showToast(t("toast.orgRequired"), true);
       return;
     }
     try {
-      await http.post(`${API_PREFIX}/${organizacaoId}/${id}/ativar`);
+      await http.post(`/${scope.prefix}/${scope.organizacaoId}/${u.id}/ativar`);
       showToast(t("toast.activated"));
       fetchList();
     } catch {
@@ -358,13 +385,14 @@ export default function Page() {
     }
   };
 
-  const handleDeactivate = async (id: number) => {
-    if (!organizacaoId) {
+  const handleDeactivate = async (u: Utilizador) => {
+    const scope = getScopeForUser(u);
+    if (!scope) {
       showToast(t("toast.orgRequired"), true);
       return;
     }
     try {
-      await http.post(`${API_PREFIX}/${organizacaoId}/${id}/desativar`);
+      await http.post(`/${scope.prefix}/${scope.organizacaoId}/${u.id}/desativar`);
       showToast(t("toast.deactivated"));
       fetchList();
     } catch {
@@ -372,8 +400,9 @@ export default function Page() {
     }
   };
 
-  const handleGerarSenha = async (id: number) => {
-    if (!organizacaoId) {
+  const handleGerarSenha = async (u: Utilizador) => {
+    const scope = getScopeForUser(u);
+    if (!scope) {
       showToast(t("toast.orgRequired"), true);
       return;
     }
@@ -381,7 +410,7 @@ export default function Page() {
       const res = await http.post<{
         password: string;
         user: { email: string };
-      }>(`${API_PREFIX}/${organizacaoId}/${id}/gerar-senha`);
+      }>(`/${scope.prefix}/${scope.organizacaoId}/${u.id}/gerar-senha`);
       setPasswordGenerated({
         password: res.data?.password ?? "",
         email: res.data?.user?.email ?? "",
@@ -420,11 +449,6 @@ export default function Page() {
     }
     if (action == "eliminar" && !confirm(t("confirm.deleteBulk"))) return;
 
-    const endpointByAction = {
-      ativar: `${API_PREFIX}/${organizacaoId}/ativar-bulk`,
-      desativar: `${API_PREFIX}/${organizacaoId}/desativar-bulk`,
-      eliminar: `${API_PREFIX}/${organizacaoId}/eliminar-bulk`,
-    };
     const successByAction = {
       ativar: t("toast.bulkActivated"),
       desativar: t("toast.bulkDeactivated"),
@@ -433,7 +457,25 @@ export default function Page() {
 
     try {
       setBulkActionLoading(action);
-      await http.post(endpointByAction[action], { ids: selectedIds });
+      const selectedUsers = list.filter((row) => selectedIds.includes(row.id));
+      const grouped = new Map<string, { prefix: string; organizacaoId: number; ids: number[] }>();
+      for (const user of selectedUsers) {
+        const scope = getScopeForUser(user);
+        if (!scope) continue;
+        const key = `${scope.prefix}:${scope.organizacaoId}`;
+        const item = grouped.get(key) ?? { ...scope, ids: [] };
+        item.ids.push(user.id);
+        grouped.set(key, item);
+      }
+      if (grouped.size == 0) {
+        showToast(t("toast.orgRequired"), true);
+        return;
+      }
+      await Promise.all(
+        Array.from(grouped.values()).map((group) =>
+          http.post(`/${group.prefix}/${group.organizacaoId}/${action}-bulk`, { ids: group.ids })
+        )
+      );
       showToast(successByAction[action]);
       setSelectedIds([]);
       fetchList();
@@ -495,7 +537,7 @@ export default function Page() {
     <div className="p-4 md:p-6 space-y-6">
       {toast && (
         <div
-          className={`fixed top-4 right-4 z-[100] px-4 py-2 rounded-xl shadow-lg text-sm ${
+          className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-[220] max-w-[90vw] px-4 py-2 rounded-xl shadow-lg text-sm ${
             toast.isError
               ? "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200"
               : "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200"
@@ -745,7 +787,7 @@ export default function Page() {
                             type="button"
                             className="ca-icon-btn text-amber-600"
                             title={t("actions.newPassword")}
-                            onClick={() => handleGerarSenha(row.id)}
+                            onClick={() => handleGerarSenha(row)}
                           >
                             <KeyRound size={16} />
                           </button>
@@ -762,7 +804,7 @@ export default function Page() {
                               type="button"
                               className="ca-icon-btn text-amber-600"
                               title={t("actions.deactivate")}
-                              onClick={() => handleDeactivate(row.id)}
+                              onClick={() => handleDeactivate(row)}
                             >
                               {t("actions.deactivate")}
                             </button>
@@ -771,7 +813,7 @@ export default function Page() {
                               type="button"
                               className="ca-icon-btn text-green-600"
                               title={t("actions.activate")}
-                              onClick={() => handleActivate(row.id)}
+                              onClick={() => handleActivate(row)}
                             >
                               {t("actions.activate")}
                             </button>
@@ -780,7 +822,7 @@ export default function Page() {
                             type="button"
                             className="ca-icon-btn text-red-600"
                             title={t("actions.remove")}
-                            onClick={() => handleDelete(row.id)}
+                            onClick={() => handleDelete(row)}
                           >
                             <Trash2 size={16} />
                           </button>

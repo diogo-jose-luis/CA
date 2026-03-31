@@ -59,6 +59,45 @@ function Stars({ value }: { value: number }) {
   );
 }
 
+function StarRatingInput({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  const current = Number(value) || 0;
+  return (
+    <div>
+      <label className="mb-1 block text-xs ca-muted">{label}</label>
+      <div className="flex items-center gap-1 rounded-xl border ca-border px-3 py-2">
+        {[1, 2, 3, 4, 5].map((n) => {
+          const active = n <= current;
+          return (
+            <button
+              key={n}
+              type="button"
+              className="rounded p-1 transition-transform hover:scale-110"
+              onClick={() => onChange(String(n))}
+              aria-label={`${label}: ${n}`}
+              title={`${n}`}
+            >
+              <Star
+                size={20}
+                className={active ? "text-yellow-500" : "text-slate-300 dark:text-slate-600"}
+                fill={active ? "currentColor" : "none"}
+              />
+            </button>
+          );
+        })}
+        <span className="ml-2 text-sm font-medium text-slate-600 dark:text-slate-300">{current || 0}/5</span>
+      </div>
+    </div>
+  );
+}
+
 export default function Page() {
   const t = useTranslations("serviceEvaluation");
   const locale = useLocale();
@@ -308,7 +347,15 @@ export default function Page() {
                     <td className="px-4 py-3"><Stars value={row.tempo_resposta} /></td>
                     <td className="px-4 py-3"><Stars value={row.comunicacao} /></td>
                     <td className="px-4 py-3 font-medium">{row.avaliacao_geral}</td>
-                    <td className="px-4 py-3 max-w-xs truncate">{row.comentario || "—"}</td>
+                    <td className="px-4 py-3 max-w-xs">
+                      <span className="block truncate" title={row.comentario || "—"}>
+                        {row.comentario
+                          ? row.comentario.length > 90
+                            ? `${row.comentario.slice(0, 90)}...`
+                            : row.comentario
+                          : "—"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3">
                       {row.data_submissao ? new Date(row.data_submissao).toLocaleDateString(locale) : "—"}
                     </td>
@@ -366,26 +413,50 @@ export default function Page() {
               <button type="button" onClick={() => (!formSubmitting ? setShowForm(false) : null)}><X size={20} /></button>
             </div>
             <form className="p-4 space-y-4 overflow-y-auto flex-1 ca-scroll" onSubmit={onSubmit}>
-              <select className="ca-input" value={form.mes} required onChange={(e) => setForm((s) => ({ ...s, mes: e.target.value }))}>
-                <option value="">{t("form.selectMonth")}</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => (
-                  <option key={m} value={m}>{t(`months.${m}`)}</option>
-                ))}
-              </select>
-              <input type="number" min={2000} max={2100} className="ca-input" placeholder={t("form.year")} value={form.ano}
-                onChange={(e) => setForm((s) => ({ ...s, ano: e.target.value }))} required />
-              <input type="number" min={1} max={5} className="ca-input" placeholder={t("form.quality")} value={form.qualidade_servico}
-                onChange={(e) => setForm((s) => ({ ...s, qualidade_servico: e.target.value }))} required />
-              <input type="number" min={1} max={5} className="ca-input" placeholder={t("form.professionalism")} value={form.profissionalismo}
-                onChange={(e) => setForm((s) => ({ ...s, profissionalismo: e.target.value }))} required />
-              <input type="number" min={1} max={5} className="ca-input" placeholder={t("form.response")} value={form.tempo_resposta}
-                onChange={(e) => setForm((s) => ({ ...s, tempo_resposta: e.target.value }))} required />
-              <input type="number" min={1} max={5} className="ca-input" placeholder={t("form.communication")} value={form.comunicacao}
-                onChange={(e) => setForm((s) => ({ ...s, comunicacao: e.target.value }))} required />
-              <input type="number" min={1} max={5} className="ca-input" placeholder={t("form.general")} value={form.avaliacao_geral}
-                onChange={(e) => setForm((s) => ({ ...s, avaliacao_geral: e.target.value }))} required />
-              <textarea className="ca-input" rows={4} placeholder={t("form.comments")} value={form.comentario}
-                onChange={(e) => setForm((s) => ({ ...s, comentario: e.target.value }))} />
+              <div>
+                <label className="mb-1 block text-xs ca-muted">{t("form.month")}</label>
+                <select className="ca-input" value={form.mes} required onChange={(e) => setForm((s) => ({ ...s, mes: e.target.value }))}>
+                  <option value="">{t("form.selectMonth")}</option>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => (
+                    <option key={m} value={m}>{t(`months.${m}`)}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs ca-muted">{t("form.year")}</label>
+                <input type="number" min={2000} max={2100} className="ca-input" placeholder={t("form.year")} value={form.ano}
+                  onChange={(e) => setForm((s) => ({ ...s, ano: e.target.value }))} required />
+              </div>
+              <StarRatingInput
+                label={t("form.quality")}
+                value={form.qualidade_servico}
+                onChange={(next) => setForm((s) => ({ ...s, qualidade_servico: next }))}
+              />
+              <StarRatingInput
+                label={t("form.professionalism")}
+                value={form.profissionalismo}
+                onChange={(next) => setForm((s) => ({ ...s, profissionalismo: next }))}
+              />
+              <StarRatingInput
+                label={t("form.response")}
+                value={form.tempo_resposta}
+                onChange={(next) => setForm((s) => ({ ...s, tempo_resposta: next }))}
+              />
+              <StarRatingInput
+                label={t("form.communication")}
+                value={form.comunicacao}
+                onChange={(next) => setForm((s) => ({ ...s, comunicacao: next }))}
+              />
+              <StarRatingInput
+                label={t("form.general")}
+                value={form.avaliacao_geral}
+                onChange={(next) => setForm((s) => ({ ...s, avaliacao_geral: next }))}
+              />
+              <div>
+                <label className="mb-1 block text-xs ca-muted">{t("form.comments")}</label>
+                <textarea className="ca-input min-h-[140px]" rows={6} placeholder={t("form.comments")} value={form.comentario}
+                  onChange={(e) => setForm((s) => ({ ...s, comentario: e.target.value }))} />
+              </div>
 
               <div className="pt-2 flex justify-end gap-2">
                 <button type="button" className="px-4 py-2 rounded-xl border ca-border" onClick={() => setShowForm(false)}>

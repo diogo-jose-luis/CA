@@ -152,6 +152,7 @@ export default function Page() {
   const nivel = user?.nivel ?? 0;
   const canAccess = NIVEIS_LISTAR.includes(nivel as (typeof NIVEIS_LISTAR)[number]);
   const canDeleteSupervisao = NIVEIS_ELIMINAR.includes(nivel as (typeof NIVEIS_ELIMINAR)[number]);
+  const canCreateSupervisao = nivel !== 4;
   const supervisorLocked = nivel === 4 || nivel === 5;
   const selfId = user?.id ?? 0;
 
@@ -839,10 +840,12 @@ export default function Page() {
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             {t("actions.refresh")}
           </button>
-          <button type="button" className="ca-btn" onClick={openCreate}>
-            <Plus className="h-4 w-4" />
-            {t("actions.new")}
-          </button>
+          {canCreateSupervisao ? (
+            <button type="button" className="ca-btn" onClick={openCreate}>
+              <Plus className="h-4 w-4" />
+              {t("actions.new")}
+            </button>
+          ) : null}
         </div>
       </div>
 

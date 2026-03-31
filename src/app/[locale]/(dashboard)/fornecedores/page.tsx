@@ -337,7 +337,7 @@ export default function Page() {
     <div className="p-4 md:p-6 space-y-6">
       {toast && (
         <div
-          className={`fixed top-4 right-4 z-[100] px-4 py-2 rounded-xl shadow-lg text-sm ${
+          className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-[220] max-w-[90vw] px-4 py-2 rounded-xl shadow-lg text-sm ${
             toast.isError
               ? "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200"
               : "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200"
